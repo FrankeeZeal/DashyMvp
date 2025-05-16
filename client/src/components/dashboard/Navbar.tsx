@@ -172,9 +172,24 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
         </div>
 
         <div className="flex items-center ml-auto pr-4">
-          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
-            <RiNotification3Line className="h-6 w-6" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
+                <RiNotification3Line className="h-6 w-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80 bg-gradient-to-b from-gray-900 to-gray-950 border border-blue-500/20 shadow-lg shadow-blue-500/10 rounded-xl overflow-hidden text-gray-200 z-50">
+              <div className="p-4 border-b border-blue-500/20 bg-gradient-to-r from-blue-900/20 to-blue-700/10">
+                <h3 className="text-sm font-medium text-white">Notifications</h3>
+              </div>
+              <div className="p-6 flex flex-col items-center justify-center text-center">
+                <div className="w-12 h-12 bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
+                  <RiNotification3Line className="h-6 w-6 text-blue-400" />
+                </div>
+                <p className="text-sm text-gray-400">You have no new notifications 😲</p>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="ml-3 relative">
             {/* Mobile menu */}
