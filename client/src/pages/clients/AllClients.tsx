@@ -738,7 +738,7 @@ export const AllClients = () => {
                                               setDocumentFormData({name: '', url: ''});
                                             }}
                                             disabled={
-                                              (clientsExtendedData[client.id]?.documents?.length || 0) >= 5 ||
+                                              getClientDocuments(client.id).length >= 5 ||
                                               addingDocument === client.id
                                             }
                                           >
@@ -1075,7 +1075,8 @@ export const AllClients = () => {
                                             
                                             // Auto update active status based on end date
                                             const newEndDate = e.target.value;
-                                            const isActive = newEndDate ? !isContractExpired(newEndDate) : true;
+                                            // If there's an end date and it's in the past, mark as inactive
+                                            const isActive = newEndDate ? isClientActive(newEndDate) : true;
                                             handleUpdateClientData(client.id, 'isActive', isActive ? 'true' : 'false');
                                           }}
                                           onClick={(e) => e.stopPropagation()}
