@@ -1,0 +1,170 @@
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'wouter';
+import { Sidebar } from '@/components/dashboard/Sidebar';
+import { Navbar } from '@/components/dashboard/Navbar';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CampaignTable } from '@/components/dashboard/CampaignTable';
+import { ManualDataTable } from '@/components/clients/ManualDataTable';
+import { ClientIntegrations } from '@/components/clients/ClientIntegrations';
+import { ClientAnalytics } from '@/components/clients/ClientAnalytics';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Loader2, Mail, MessageSquare, BarChart3, Database, Zap } from "lucide-react";
+
+export const ClientDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [dataSourceType, setDataSourceType] = useState<string>("both");
+  const [displayMode, setDisplayMode] = useState<string>("analytics");
+  
+  // Get client details
+  const { data: client, isLoading: clientLoading } = useQuery({
+    queryKey: [`/api/clients/${id}`],
+    retry: false,
+  });
+  
+  // Fetch campaigns for this client
+  const { data: campaigns, isLoading: campaignsLoading } = useQuery({
+    queryKey: [`/api/clients/${id}/campaigns`],
+    retry: false,
+  });
+  
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+  
+  const handleLogout = () => {
+    window.location.href = '/api/logout';
+  };
+  
+  // For demo/beta test purposes - Using mock data if API returns null
+  const clientData = client || {
+    id: parseInt(id as string),
+    name: "Client " + id,
+    email: "client" + id + "@example.com",
+    phone: "+1 555-123-4567",
+    status: "active",
+    addedAt: new Date(),
+    logoUrl: "",
+    hasEmailData: true,
+    hasSmsData: true
+  };
+  
+  const hasData = (clientData.hasEmailData || clientData.hasSmsData);
+  
+  // Filter campaigns based on data source type
+  const filteredCampaigns = campaigns ? campaigns.filter((campaign: any) => {
+    if (dataSourceType === "both") return true;
+    return campaign.type.toLowerCase() === dataSourceType.toLowerCase();
+  }) : [];
+  
+  return (
+    <div className="flex h-screen bg-gray-900">
+      <Sidebar 
+        type="agency"
+        onLogout={handleLogout}
+        isCollapsed={sidebarCollapsed}
+        setIsCollapsed={setSidebarCollapsed}
+      />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar type="agency" onToggleSidebar={toggleSidebar} />
+        
+        <div className="flex-1 overflow-auto">
+          <main className="flex-1 h-screen overflow-auto bg-gray-900 text-white">
+            {/* Client Header */}
+            <div className="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
+              <div className="container mx-auto">
+                <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-white">{clientData.name}</h1>
+                    <p className="mt-1 text-gray-400">Client Dashboard</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Client Content */}
+            <div className="container mx-auto px-6 py-8">
+              {/* Data source toggle - Shown only if client has data */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+                <div>
+                  <p className="text-sm text-gray-400 mb-2">Data Source</p>
+                  <ToggleGroup 
+                    type="single" 
+                    value={dataSourceType}
+                    onValueChange={(value) => value && setDataSourceType(value)}
+                    variant="outline"
+                    className="bg-gray-800 border border-gray-700 rounded-md"
+                  >
+                    <ToggleGroupItem value="both" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Both
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="email" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <Mail className="h-4 w-4 mr-2" />
+                      Email
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="sms" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      SMS
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-gray-400 mb-2">Display Mode</p>
+                  <ToggleGroup 
+                    type="single" 
+                    value={displayMode}
+                    onValueChange={(value) => value && setDisplayMode(value)}
+                    variant="outline"
+                    className="bg-gray-800 border border-gray-700 rounded-md"
+                  >
+                    <ToggleGroupItem value="analytics" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Analytics
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="integrations" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <Zap className="h-4 w-4 mr-2" />
+                      Integrations
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="manual" className="data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-300 data-[state=on]:border-blue-500/30">
+                      <Database className="h-4 w-4 mr-2" />
+                      Manual
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+              </div>
+              
+              {/* Display appropriate content based on selected view */}
+              <div className="mt-6">
+                {displayMode === "analytics" && (
+                  hasData ? (
+                    <ClientAnalytics clientId={clientData.id} dataSourceType={dataSourceType} />
+                  ) : (
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-10 text-center">
+                      <p className="text-xl text-gray-400">No data available for this client</p>
+                      <p className="text-gray-500 mt-2">Connect an integration or add manual data to get started</p>
+                    </div>
+                  )
+                )}
+                
+                {displayMode === "integrations" && (
+                  <ClientIntegrations clientId={clientData.id} />
+                )}
+                
+                {displayMode === "manual" && (
+                  <ManualDataTable clientId={clientData.id} clientName={clientData.name} />
+                )}
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ClientDetail;
