@@ -133,25 +133,25 @@ export const AgencyOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 md:p-6 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       <div className="w-full max-w-2xl">
         <div className="mb-4 flex items-center">
           <div className="flex-1">
-            <Progress value={getProgress()} className="h-2" />
+            <Progress value={getProgress()} className="h-2 bg-gray-700" />
           </div>
-          <span className="ml-4 text-sm text-gray-500">
+          <span className="ml-4 text-sm text-gray-300">
             Step {step}/{totalSteps}
           </span>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-gray-800 border-0 shadow-xl">
+          <CardContent className="pt-6 text-white">
             <Form {...form}>
               <form>
                 {/* Step 1: Agency Name */}
                 {step === 1 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">What's the name of your agency?</h2>
+                    <h2 className="text-xl font-semibold mb-6 text-white">What's the name of your agency?</h2>
                     <FormField
                       control={form.control}
                       name="name"
@@ -174,7 +174,7 @@ export const AgencyOnboarding = () => {
                 {/* Step 2: Company Age */}
                 {step === 2 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">How long has your agency been in business?</h2>
+                    <h2 className="text-xl font-semibold mb-6 text-white">How long has your agency been in business?</h2>
                     <FormField
                       control={form.control}
                       name="age"
@@ -191,7 +191,7 @@ export const AgencyOnboarding = () => {
                 {/* Step 3: Number of Clients */}
                 {step === 3 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">How many clients does your agency currently have?</h2>
+                    <h2 className="text-xl font-semibold mb-6 text-white">How many clients does your agency currently have?</h2>
                     <FormField
                       control={form.control}
                       name="clientCount"
@@ -208,7 +208,7 @@ export const AgencyOnboarding = () => {
                 {/* Step 4: Tracking Tools */}
                 {step === 4 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">
+                    <h2 className="text-xl font-semibold mb-6 text-white">
                       How are you tracking your clients' email & SMS data outside of the platforms that provide them?
                     </h2>
                     <FormField
@@ -224,8 +224,8 @@ export const AgencyOnboarding = () => {
                                 variant={form.watch("trackingMethod") === option ? "default" : "outline"}
                                 className={
                                   form.watch("trackingMethod") === option
-                                    ? "bg-primary-50 text-primary-700 border-primary-500"
-                                    : ""
+                                    ? "bg-blue-800 text-white border-blue-400"
+                                    : "text-gray-200 border-gray-600"
                                 }
                                 onClick={() => form.setValue("trackingMethod", option, { shouldValidate: true })}
                               >
@@ -243,7 +243,7 @@ export const AgencyOnboarding = () => {
                 {/* Step 5: Team Size */}
                 {step === 5 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">How many team members do you have?</h2>
+                    <h2 className="text-xl font-semibold mb-6 text-white">How many team members do you have?</h2>
                     <FormField
                       control={form.control}
                       name="teamSize"
@@ -260,8 +260,8 @@ export const AgencyOnboarding = () => {
                 {/* Step 6: Add Team Now */}
                 {step === 6 && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-6">Would you like to add your team members now?</h2>
-                    <p className="text-gray-600 mb-6">You can always add them later from your dashboard.</p>
+                    <h2 className="text-xl font-semibold mb-6 text-white">Would you like to add your team members now?</h2>
+                    <p className="text-gray-400 mb-6">You can always add them later from your dashboard.</p>
                     <FormField
                       control={form.control}
                       name="addTeamNow"
