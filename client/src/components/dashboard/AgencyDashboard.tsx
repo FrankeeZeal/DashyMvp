@@ -232,12 +232,6 @@ export const AgencyDashboard = () => {
       title: 'Analytics',
       columns: 1,
       widgets: [
-        {
-          id: 'client-revenue-widget',
-          type: 'client-revenue',
-          title: 'Client Revenue',
-          size: { width: 'full', height: 'auto' }
-        },
         { 
           id: 'roi-widget', 
           type: 'roi-analytics', 

@@ -96,7 +96,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
           total: 0
         };
         
-        costs.total = Object.values(costs).reduce((sum, cost) => sum + (typeof cost === 'number' ? cost : 0), 0) - costs.total;
+        costs.total = Object.values(costs).reduce((sum, cost) => sum + (typeof cost === 'number' && cost !== costs.total ? cost : 0), 0);
         
         const roiValue = revenue - costs.total;
         const roiPercentage = (roiValue / costs.total) * 100;
@@ -154,7 +154,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
   
   const roiComparisonData = filteredData.map(data => ({
     name: data.campaignName,
-    roi: data.roi.percentage.toFixed(2),
+    roi: parseFloat(data.roi.percentage.toFixed(2)),
     revenue: data.revenue,
     cost: data.costs.total
   }));
@@ -173,7 +173,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
   const totalRevenue = filteredData.reduce((sum, data) => sum + data.revenue, 0);
   const totalCost = filteredData.reduce((sum, data) => sum + data.costs.total, 0);
   const totalROI = totalRevenue - totalCost;
-  const totalROIPercentage = (totalROI / totalCost) * 100;
+  const totalROIPercentage = totalCost > 0 ? (totalROI / totalCost) * 100 : 0;
   
   // Format number as currency
   const formatCurrency = (value: number) => {
@@ -319,7 +319,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                       <CardTitle className="text-md text-white">Cost Breakdown</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                      <div className="h-64">
+                      <div className="h-64" style={{ minWidth: "100px", minHeight: "250px" }}>
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -382,7 +382,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                           <div className="flex justify-between">
                             <span className="text-gray-300">Avg Cost per Conversion:</span>
                             <span className="font-medium text-white">
-                              {formatCurrency(totalCost / filteredData.reduce((sum, data) => sum + data.metrics.conversions, 0))}
+                              {formatCurrency(totalCost / Math.max(1, filteredData.reduce((sum, data) => sum + data.metrics.conversions, 0)))}
                             </span>
                           </div>
                         </div>
@@ -407,7 +407,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                     <CardTitle className="text-md text-white">Campaign ROI Comparison</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
-                    <div className="h-80">
+                    <div className="h-80" style={{ minWidth: "100px", minHeight: "300px" }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           data={roiComparisonData}
@@ -458,7 +458,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                       <CardTitle className="text-md text-white">Campaign Revenue vs. Costs</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                      <div className="h-80">
+                      <div className="h-80" style={{ minWidth: "100px", minHeight: "300px" }}>
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart
                             data={roiComparisonData}
@@ -512,7 +512,7 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                     <CardTitle className="text-md text-white">Conversion Funnel</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
-                    <div className="h-80">
+                    <div className="h-80" style={{ minWidth: "100px", minHeight: "300px" }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                           data={conversionFunnelData}
@@ -558,7 +558,9 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                         <div className="flex flex-col items-center">
                           <span className="text-sm text-gray-400 mb-1">Open Rate</span>
                           <span className="text-lg font-medium text-white">
-                            {(conversionFunnelData[1].value / conversionFunnelData[0].value * 100).toFixed(2)}%
+                            {conversionFunnelData[0].value > 0 
+                              ? (conversionFunnelData[1].value / conversionFunnelData[0].value * 100).toFixed(2) 
+                              : "0.00"}%
                           </span>
                         </div>
                       </div>
@@ -567,7 +569,9 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                         <div className="flex flex-col items-center">
                           <span className="text-sm text-gray-400 mb-1">Click Rate</span>
                           <span className="text-lg font-medium text-white">
-                            {(conversionFunnelData[2].value / conversionFunnelData[1].value * 100).toFixed(2)}%
+                            {conversionFunnelData[1].value > 0 
+                              ? (conversionFunnelData[2].value / conversionFunnelData[1].value * 100).toFixed(2) 
+                              : "0.00"}%
                           </span>
                         </div>
                       </div>
@@ -576,7 +580,9 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                         <div className="flex flex-col items-center">
                           <span className="text-sm text-gray-400 mb-1">Conversion Rate</span>
                           <span className="text-lg font-medium text-white">
-                            {(conversionFunnelData[3].value / conversionFunnelData[2].value * 100).toFixed(2)}%
+                            {conversionFunnelData[2].value > 0 
+                              ? (conversionFunnelData[3].value / conversionFunnelData[2].value * 100).toFixed(2) 
+                              : "0.00"}%
                           </span>
                         </div>
                       </div>
@@ -585,7 +591,9 @@ export const ROIReport = ({ campaigns = [], selectedClientId }: ROIReportProps) 
                         <div className="flex flex-col items-center">
                           <span className="text-sm text-gray-400 mb-1">Overall</span>
                           <span className="text-lg font-medium text-white">
-                            {(conversionFunnelData[3].value / conversionFunnelData[0].value * 100).toFixed(2)}%
+                            {conversionFunnelData[0].value > 0 
+                              ? (conversionFunnelData[3].value / conversionFunnelData[0].value * 100).toFixed(2) 
+                              : "0.00"}%
                           </span>
                         </div>
                       </div>
