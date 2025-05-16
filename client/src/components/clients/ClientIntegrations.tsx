@@ -110,11 +110,6 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
                   <CardTitle className="text-lg flex items-center">
                     <span className="mr-2">{integration.icon}</span>
                     {integration.name}
-                    {integration.comingSoon && (
-                      <span className="ml-2 text-xs px-1.5 py-0.5 bg-blue-900/40 text-blue-300 rounded-md">
-                        Coming Soon
-                      </span>
-                    )}
                   </CardTitle>
                   <span 
                     className={`px-2 py-1 text-xs rounded-full ${
@@ -155,9 +150,7 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
                 >
                   {integration.isConnected 
                     ? 'Sync Data Now' 
-                    : integration.comingSoon
-                      ? 'Coming Soon'
-                      : 'Connect'
+                    : 'Connect'
                   }
                 </Button>
               </CardFooter>

@@ -242,17 +242,17 @@ export const AllClients = () => {
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-4">
-                                  {client.hasEmailData && (
+                                  {(client as any).hasEmailData && (
                                     <Badge className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border-blue-800 mr-2">
                                       <Mail className="h-3 w-3 mr-1" /> Email
                                     </Badge>
                                   )}
-                                  {client.hasSmsData && (
+                                  {(client as any).hasSmsData && (
                                     <Badge className="bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border-purple-800 mr-2">
                                       <MessageSquare className="h-3 w-3 mr-1" /> SMS
                                     </Badge>
                                   )}
-                                  {getStatusBadge(client.status)}
+                                  {getStatusBadge(client.status || 'active')}
                                   <RiArrowRightSLine className="ml-2 text-gray-400" />
                                 </div>
                               </div>
