@@ -9,6 +9,7 @@ import { CampaignTable } from "@/components/dashboard/CampaignTable";
 import { ROICalculator } from "@/components/dashboard/ROICalculator";
 import { CampaignReport } from "@/components/dashboard/CampaignReport";
 import { ClientRevenueGraph } from "@/components/dashboard/ClientRevenueGraph";
+import { ROIReport } from "@/components/dashboard/ROIReport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -427,7 +428,7 @@ export const AgencyDashboard = () => {
       case 'roi-analytics':
         return (
           <Tabs defaultValue="roi" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-700 mb-6">
               <TabsTrigger 
                 value="roi" 
                 className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
@@ -435,7 +436,13 @@ export const AgencyDashboard = () => {
                 ROI Calculator
               </TabsTrigger>
               <TabsTrigger 
-                value="report" 
+                value="roi-report" 
+                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+              >
+                ROI Reports
+              </TabsTrigger>
+              <TabsTrigger 
+                value="campaign-report" 
                 className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
               >
                 Campaign Reports
@@ -452,7 +459,11 @@ export const AgencyDashboard = () => {
               <ROICalculator campaigns={campaigns as any} />
             </TabsContent>
             
-            <TabsContent value="report">
+            <TabsContent value="roi-report">
+              <ROIReport campaigns={campaigns as any} />
+            </TabsContent>
+            
+            <TabsContent value="campaign-report">
               <CampaignReport campaigns={campaigns as any} />
             </TabsContent>
             
