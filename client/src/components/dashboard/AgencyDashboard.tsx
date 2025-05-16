@@ -195,11 +195,11 @@ export const AgencyDashboard = () => {
           setIsCollapsed={setSidebarCollapsed}
         />
         
-        <div className="flex flex-col flex-1 w-full overflow-hidden transition-all duration-300">
+        <div className="flex flex-col flex-1 w-full overflow-hidden">
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
-          <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6 lg:p-8 w-full">
-            <div className="pb-6 w-full">
+          <main className="flex-1 relative overflow-y-auto p-6 w-full">
+            <div className="mb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
@@ -213,7 +213,7 @@ export const AgencyDashboard = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6 w-full">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
               <StatsCard
                 title="Total Clients"
                 value="4"
