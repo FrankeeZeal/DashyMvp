@@ -444,19 +444,29 @@ export const AgencyDashboard = () => {
     }
   };
 
-  // Custom drag handle component
-  const DragHandle = () => (
-    <div className="drag-handle cursor-move flex items-center justify-center rounded-md bg-gray-800 h-6 w-6 border border-gray-700 mr-2">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7 4H5V6H7V4Z" fill="#9CA3AF" />
-        <path d="M7 8H5V10H7V8Z" fill="#9CA3AF" />
-        <path d="M7 12H5V14H7V12Z" fill="#9CA3AF" />
-        <path d="M13 4H11V6H13V4Z" fill="#9CA3AF" />
-        <path d="M13 8H11V10H13V8Z" fill="#9CA3AF" />
-        <path d="M13 12H11V14H13V12Z" fill="#9CA3AF" />
-      </svg>
-    </div>
-  );
+  // Custom drag handle component with 6 dots
+  const DragHandle = ({ showInEditMode = false }: { showInEditMode?: boolean }) => {
+    // If this handle should only be visible in edit mode and we're not in edit mode, return null
+    if (showInEditMode && !editMode) {
+      return null;
+    }
+    
+    return (
+      <div className={`drag-handle cursor-move flex items-center justify-center rounded-md 
+        ${showInEditMode ? 'bg-blue-900/30 border-blue-700/50' : 'bg-gray-800 border-gray-700'} 
+        h-6 w-6 border mr-2 transition-all duration-200
+        ${showInEditMode ? 'opacity-100' : editMode ? 'opacity-0' : 'opacity-100'}`}>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 4H5V6H7V4Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+          <path d="M7 8H5V10H7V8Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+          <path d="M7 12H5V14H7V12Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+          <path d="M13 4H11V6H13V4Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+          <path d="M13 8H11V10H13V8Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+          <path d="M13 12H11V14H13V12Z" fill={showInEditMode ? "#60A5FA" : "#9CA3AF"} />
+        </svg>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -531,10 +541,33 @@ export const AgencyDashboard = () => {
                                   ${snapshot.isDragging ? 'border-blue-400 ring-2 ring-blue-400/30 scale-[1.02] rotate-1 z-50' : 'border-gray-700'}
                                   ${editMode && !snapshot.isDragging ? 'widget-edit-mode' : ''}`}
                               >
-                                <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800">
-                                  <div {...provided.dragHandleProps} className="mr-3">
-                                    <DragHandle />
-                                  </div>
+                                <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800 relative">
+                                  {/* Regular drag handle (hidden in edit mode) */}
+                                  {!editMode && (
+                                    <div {...provided.dragHandleProps} className="mr-3">
+                                      <DragHandle />
+                                    </div>
+                                  )}
+                                  
+                                  {/* Edit mode drag handle - centered inside widget */}
+                                  {editMode && (
+                                    <div 
+                                      {...provided.dragHandleProps} 
+                                      className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 edit-mode-drag-handle"
+                                    >
+                                      <div className="flex items-center justify-center w-6 h-6">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M8 5H6V7H8V5Z" fill="#60A5FA" />
+                                          <path d="M8 11H6V13H8V11Z" fill="#60A5FA" />
+                                          <path d="M8 17H6V19H8V17Z" fill="#60A5FA" />
+                                          <path d="M18 5H16V7H18V5Z" fill="#60A5FA" />
+                                          <path d="M18 11H16V13H18V11Z" fill="#60A5FA" />
+                                          <path d="M18 17H16V19H18V17Z" fill="#60A5FA" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  )}
+                                  
                                   <h3 className="text-lg font-medium text-white flex-1">{widget.title}</h3>
                                   <div className="flex space-x-2">
                                     <button 
