@@ -335,7 +335,7 @@ export const AgencyDashboard = () => {
       case 'roi-analytics':
         return (
           <Tabs defaultValue="roi" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-gray-700 mb-6">
+            <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
               <TabsTrigger 
                 value="roi" 
                 className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
@@ -343,16 +343,10 @@ export const AgencyDashboard = () => {
                 ROI Calculator
               </TabsTrigger>
               <TabsTrigger 
-                value="roi-report" 
+                value="reports" 
                 className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
               >
-                ROI Reports
-              </TabsTrigger>
-              <TabsTrigger 
-                value="campaign-report" 
-                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-              >
-                Campaign Reports
+                Reports
               </TabsTrigger>
               <TabsTrigger 
                 value="integrations" 
@@ -368,16 +362,33 @@ export const AgencyDashboard = () => {
               />
             </TabsContent>
             
-            <TabsContent value="roi-report" className="mt-0">
-              <ROIReport 
-                campaigns={campaigns as any}
-              />
-            </TabsContent>
-            
-            <TabsContent value="campaign-report" className="mt-0">
-              <CampaignReport 
-                campaigns={campaigns as any}
-              />
+            <TabsContent value="reports" className="mt-0">
+              <Tabs defaultValue="roi-report" className="w-full">
+                <TabsList className="inline-flex h-10 bg-gray-700 p-1 mb-4">
+                  <TabsTrigger 
+                    value="roi-report" 
+                    className="px-3 py-1.5 text-sm data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                  >
+                    ROI Reports
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="campaign-report" 
+                    className="px-3 py-1.5 text-sm data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                  >
+                    Campaign Reports
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="roi-report" className="mt-0">
+                  <ROIReport 
+                    campaigns={campaigns as any}
+                  />
+                </TabsContent>
+                <TabsContent value="campaign-report" className="mt-0">
+                  <CampaignReport 
+                    campaigns={campaigns as any}
+                  />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
             
             <TabsContent value="integrations" className="mt-0">
