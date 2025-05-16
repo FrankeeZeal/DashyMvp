@@ -397,8 +397,9 @@ export const AllClients = () => {
       .toUpperCase();
   };
   
-  const getStatusBadge = (clientId: number) => {
-    const clientData = clientsExtendedData[clientId];
+  const getStatusBadge = (clientId: number | string) => {
+    const numericId = typeof clientId === 'string' ? parseInt(clientId) : clientId;
+    const clientData = clientsExtendedData[numericId];
     const isActive = clientData?.isActive !== false; // Default to active if not specified
     
     if (isActive) {
@@ -525,6 +526,37 @@ export const AllClients = () => {
               <Card className="bg-gray-800 shadow-xl border border-gray-700">
                 <CardContent className="p-0">
                   <ul className="divide-y divide-gray-700">
+                    {/* Calculate inactive clients count */}
+                    {(() => {
+                      // Calculate inactive clients only when needed
+                      if (!showInactive) {
+                        const inactiveClients = displayClients.filter(client => {
+                          const clientData = clientsExtendedData[client.id];
+                          return clientData?.isActive === false;
+                        });
+                        
+                        if (inactiveClients.length > 0) {
+                          return (
+                            <li className="px-4 py-2 bg-blue-900/20 border border-blue-800 rounded-md mx-4 mt-2 mb-2">
+                              <div className="flex items-center text-sm text-blue-200">
+                                <Eye className="h-4 w-4 mr-2 text-blue-300" />
+                                <span>
+                                  {inactiveClients.length} inactive {inactiveClients.length === 1 ? 'client is' : 'clients are'} hidden. 
+                                  <button 
+                                    className="text-blue-400 hover:text-blue-300 underline ml-1"
+                                    onClick={() => setShowInactive(true)}
+                                  >
+                                    Show all
+                                  </button>
+                                </span>
+                              </div>
+                            </li>
+                          );
+                        }
+                      }
+                      return null;
+                    })()}
+                    
                     {isLoading ? (
                       renderSkeleton()
                     ) : filteredClients.length > 0 ? (
@@ -561,7 +593,7 @@ export const AllClients = () => {
                                   </Badge>
                                 )}
                                 <div className="flex items-center">
-                                  {getStatusBadge(client.status || 'active')}
+                                  {getStatusBadge(client.id)}
                                   <Link href={`/dashboard/clients/${client.id}`} onClick={(e) => e.stopPropagation()}>
                                     <Button 
                                       variant="ghost" 
@@ -728,15 +760,24 @@ export const AllClients = () => {
                                         />
                                       </div>
                                     ) : (
-                                      <div className="text-sm text-white">
-                                        {clientsExtendedData[client.id]?.contractStart 
-                                          ? formatDate(clientsExtendedData[client.id]?.contractStart)
-                                          : 'N/A'
-                                        } to {
-                                          clientsExtendedData[client.id]?.contractEnd 
-                                            ? formatDate(clientsExtendedData[client.id]?.contractEnd)
+                                      <div className="text-sm text-white flex items-center">
+                                        <span>
+                                          {clientsExtendedData[client.id]?.contractStart 
+                                            ? formatDate(clientsExtendedData[client.id]?.contractStart)
                                             : 'N/A'
-                                        }
+                                          } to {
+                                            clientsExtendedData[client.id]?.contractEnd 
+                                              ? formatDate(clientsExtendedData[client.id]?.contractEnd)
+                                              : 'N/A'
+                                          }
+                                        </span>
+                                        {clientsExtendedData[client.id]?.contractEnd && 
+                                          clientsExtendedData[client.id]?.isActive === false && (
+                                            <span className="ml-2 text-red-400 text-xs flex items-center">
+                                              <span className="inline-block h-2 w-2 rounded-full bg-red-500 mr-1"></span>
+                                              Expired
+                                            </span>
+                                        )}
                                       </div>
                                     )}
                                   </div>
