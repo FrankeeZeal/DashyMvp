@@ -31,27 +31,39 @@ interface ClientRevenueGraphProps {
 
 // Custom dot with glow effect
 const CustomizedDot = (props: any) => {
-  const { cx, cy, stroke, dataKey } = props;
+  const { 
+    cx, 
+    cy, 
+    stroke, 
+    dataKey, 
+    size = 4, 
+    strokeWidth = 1,
+    isHighlighted = false
+  } = props;
+  
+  const innerRadius = size;
+  const middleRadius = innerRadius * 2;
+  const outerRadius = innerRadius * 3;
   
   return (
     <g>
-      <circle cx={cx} cy={cy} r={4} fill={stroke} />
+      <circle cx={cx} cy={cy} r={innerRadius} fill={stroke} />
       <circle 
         cx={cx} 
         cy={cy} 
-        r={8} 
+        r={middleRadius} 
         fill="none" 
         stroke={stroke} 
-        strokeWidth={1}
+        strokeWidth={strokeWidth}
         strokeOpacity={0.4} 
       />
       <circle 
         cx={cx} 
         cy={cy} 
-        r={12} 
+        r={outerRadius} 
         fill="none" 
         stroke={stroke} 
-        strokeWidth={1} 
+        strokeWidth={strokeWidth} 
         strokeOpacity={0.2} 
       />
     </g>
@@ -144,8 +156,14 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
     { id: 4, name: "FitLife Supplements", revenue: 6.7, emailRevenue: 3.2, smsRevenue: 3.5, flowsRevenue: 4.5 },
   ];
   
-  // Use provided clients or mock data
-  const clientData = clients.length > 0 ? clients : mockClients;
+  // Use provided clients or mock data, sorted by revenue in descending order
+  const clientData = useMemo(() => {
+    const sourceData = clients.length > 0 ? clients : mockClients;
+    return [...sourceData].sort((a, b) => b.revenue - a.revenue);
+  }, [clients]);
+  
+  // State to track which client is being hovered over in the legend
+  const [hoveredClient, setHoveredClient] = useState<number | null>(null);
   
   // Process data based on filters - now with dates on x-axis
   const getFilteredData = useMemo(() => {
@@ -384,40 +402,84 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                   }}
                 />
                 <Legend 
-                  formatter={(value, entry) => {
+                  formatter={(value, entry: any) => {
                     // Extract client name from the value
-                    const clientId = value.replace('client', '');
-                    const clientName = clientData.find(c => c.id.toString() === clientId)?.name;
-                    return <span style={{ color: '#9ca3af' }}>{clientName || value}</span>;
+                    if (typeof value === 'string' && value.startsWith('client')) {
+                      const clientId = value.replace('client', '');
+                      const client = clientData.find(c => c.id.toString() === clientId);
+                      
+                      if (client) {
+                        return (
+                          <span 
+                            style={{ 
+                              color: hoveredClient === client.id ? '#ffffff' : '#9ca3af',
+                              fontWeight: hoveredClient === client.id ? 'bold' : 'normal',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={() => setHoveredClient(client.id)}
+                            onMouseLeave={() => setHoveredClient(null)}
+                          >
+                            {client.name}
+                          </span>
+                        );
+                      }
+                    }
+                    return <span style={{ color: '#9ca3af' }}>{value}</span>;
                   }}
+                  onMouseEnter={props => {
+                    if (props && props.dataKey && typeof props.dataKey === 'string') {
+                      const clientId = props.dataKey.replace('client', '');
+                      const id = parseInt(clientId, 10);
+                      if (!isNaN(id)) {
+                        setHoveredClient(id);
+                      }
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredClient(null)}
                 />
                 
                 {/* Generate a line for each client */}
-                {clientData.map((client, index) => (
-                  <Line
-                    key={client.id}
-                    type="monotone"
-                    dataKey={`client${client.id}`}
-                    name={`client${client.id}`}
-                    stroke={clientColors[index % clientColors.length]}
-                    strokeWidth={3}
-                    dot={<CustomizedDot />}
-                    activeDot={{ 
-                      r: 8, 
-                      fill: clientColors[index % clientColors.length],
-                      filter: `url(#glow-${client.id})`,
-                      strokeWidth: 2,
-                      stroke: "#fff"
-                    }}
-                    isAnimationActive={true}
-                    animationDuration={1000}
-                    connectNulls
-                    // Enhanced hover effect
-                    onMouseOver={(data) => {
-                      // We could add animation effects here if needed
-                    }}
-                  />
-                ))}
+                {clientData.map((client, index) => {
+                  const isHighlighted = hoveredClient === client.id;
+                  const color = clientColors[index % clientColors.length];
+                  
+                  return (
+                    <Line
+                      key={client.id}
+                      type="monotone"
+                      dataKey={`client${client.id}`}
+                      name={`client${client.id}`}
+                      stroke={color}
+                      strokeWidth={isHighlighted ? 4 : 3}
+                      strokeOpacity={isHighlighted ? 1 : hoveredClient ? 0.4 : 1}
+                      dot={
+                        <CustomizedDot 
+                          size={isHighlighted ? 6 : 4}
+                          strokeWidth={isHighlighted ? 3 : 1}
+                        />
+                      }
+                      activeDot={{ 
+                        r: isHighlighted ? 10 : 8, 
+                        fill: color,
+                        filter: `url(#glow-${client.id})`,
+                        strokeWidth: 2,
+                        stroke: "#fff"
+                      }}
+                      isAnimationActive={true}
+                      animationDuration={1000}
+                      connectNulls
+                      // Add z-index effect on hover
+                      style={{ 
+                        zIndex: isHighlighted ? 10 : 1,
+                        filter: isHighlighted ? `drop-shadow(0 0 6px ${color})` : 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={() => setHoveredClient(client.id)}
+                      onMouseLeave={() => setHoveredClient(null)}
+                    />
+                  );
+                })}
               </LineChart>
             </ResponsiveContainer>
           </div>
