@@ -361,16 +361,19 @@ export const AgencyOnboarding = () => {
                       <RiArrowLeftLine className="mr-1" /> Back
                     </Button>
                   )}
-                  <div className="ml-0">
-                    <Button
-                      type="button"
-                      onClick={nextStep}
-                      className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/60 transition-all duration-300"
-                      disabled={createAgencyMutation.isPending}
-                    >
-                      {step === totalSteps ? "Finish Setup" : "Continue"}
-                    </Button>
-                  </div>
+                  {/* Only show Continue button on steps with text input */}
+                  {step === 1 && (
+                    <div className="ml-0">
+                      <Button
+                        type="button"
+                        onClick={nextStep}
+                        className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/60 transition-all duration-300"
+                        disabled={createAgencyMutation.isPending}
+                      >
+                        Continue
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </form>
             </Form>
