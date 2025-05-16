@@ -239,17 +239,20 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
                                 </div>
                               </Link>
                             ))}
-                            <Link href={`${basePath}/clients/all`}>
-                              <div className={cn(
-                                "flex items-center px-2 py-1.5 text-sm font-medium rounded-md cursor-pointer my-0.5",
-                                location === `${basePath}/clients/all`
-                                  ? "bg-blue-900/30 text-blue-300"
-                                  : "text-gray-400 hover:bg-gray-800/50 hover:text-gray-200"
-                              )}>
-                                <div className="w-2 h-2 rounded-full bg-blue-500 mr-2 ml-6"></div>
-                                <span className="truncate max-w-[140px]">View All</span>
-                              </div>
-                            </Link>
+                            {/* Only show View All for Clients dropdown */}
+                            {item.path.includes('/clients') && (
+                              <Link href={`${basePath}/clients/all`}>
+                                <div className={cn(
+                                  "flex items-center px-2 py-1.5 text-sm font-medium rounded-md cursor-pointer my-0.5",
+                                  location === `${basePath}/clients/all`
+                                    ? "bg-blue-900/30 text-blue-300"
+                                    : "text-gray-400 hover:bg-gray-800/50 hover:text-gray-200"
+                                )}>
+                                  <div className="w-2 h-2 rounded-full bg-blue-500 mr-2 ml-6"></div>
+                                  <span className="truncate max-w-[140px]">View All</span>
+                                </div>
+                              </Link>
+                            )}
                           </div>
                         </CollapsibleContent>
                       </Collapsible>
