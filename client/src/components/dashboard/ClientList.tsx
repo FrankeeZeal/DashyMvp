@@ -108,7 +108,7 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
             ? renderSkeleton()
             : displayClients.map((client) => (
                 <li key={client.id}>
-                  <Link href={`/dashboard/agency/clients/${client.id}`} className="block hover:bg-gray-700">
+                  <Link href={`/dashboard/clients/${client.id}`} className="block hover:bg-gray-700">
                     <div className="px-4 py-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">

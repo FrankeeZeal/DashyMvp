@@ -64,28 +64,51 @@ export const ClientDetail = () => {
     window.location.href = '/api/logout';
   };
   
-  // For demo/beta test purposes - Enhanced demo data with real client names
-  let clientData: ClientData = client || {
-    id: parseInt(id as string, 10),
+  // Define client data based on data from backend or demo data
+  const demoClients = [
+    { 
+      id: 1, 
+      organizationId: 1, 
+      name: "Earthly Goods", 
+      status: "active", 
+      hasEmailData: true, 
+      hasSmsData: false,
+      addedAt: new Date(2023, 0, 12)
+    },
+    { 
+      id: 2, 
+      organizationId: 1, 
+      name: "Sista Teas", 
+      status: "active", 
+      hasEmailData: true, 
+      hasSmsData: true,
+      addedAt: new Date(2023, 0, 8)
+    },
+    { 
+      id: 3, 
+      organizationId: 1, 
+      name: "Mountain Wellness", 
+      status: "active",
+      hasEmailData: false, 
+      hasSmsData: true,
+      addedAt: new Date(2023, 0, 3)
+    }
+  ];
+  
+  // Try to get client by ID from demo data
+  const clientIdNum = parseInt(id as string, 10);
+  const demoClient = demoClients.find(c => c.id === clientIdNum);
+  
+  // Use API data if available, otherwise fallback to demo data
+  const clientData: ClientData = client || demoClient || {
+    id: clientIdNum,
     organizationId: 1,
-    name: 'Loading...',
+    name: `Client ${id}`,
     status: 'active',
-    hasEmailData: false,
-    hasSmsData: false,
+    hasEmailData: true,
+    hasSmsData: true,
     addedAt: new Date()
   };
-  
-  if (clientLoading) {
-    clientData = {
-      id: parseInt(id as string, 10),
-      organizationId: 1,
-      name: 'Loading...',
-      status: 'active',
-      hasEmailData: false,
-      hasSmsData: false,
-      addedAt: new Date()
-    };
-  }
   
   const hasData = clientData ? (clientData.hasEmailData || clientData.hasSmsData) : false;
   
@@ -97,6 +120,29 @@ export const ClientDetail = () => {
       }) 
     : [];
   
+  // Display loading state while fetching client data
+  if (clientLoading) {
+    return (
+      <div className="flex h-screen bg-gray-900">
+        <Sidebar 
+          type="agency"
+          onLogout={handleLogout}
+          isCollapsed={sidebarCollapsed}
+          setIsCollapsed={setSidebarCollapsed}
+        />
+        
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Navbar type="agency" onToggleSidebar={toggleSidebar} />
+          
+          <div className="flex-1 flex items-center justify-center">
+            <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+            <span className="ml-2 text-gray-300">Loading client data...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-gray-900">
       <Sidebar 
@@ -117,6 +163,7 @@ export const ClientDetail = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4">
                   <div>
                     <h1 className="text-2xl font-bold text-white">{clientData.name}</h1>
+                    <p className="text-sm text-gray-400">Client ID: {clientData.id}</p>
                   </div>
                 </div>
               </div>
