@@ -309,37 +309,37 @@ export const AgencyDashboard = () => {
                 />
                 
                 {/* Additional Card */}
-                <Card className="dark:bg-gray-800 shadow-xl">
-                  <CardHeader className="pb-3 border-b dark:border-gray-700">
-                    <CardTitle className="text-gray-900 dark:text-white">ROI Breakdown</CardTitle>
+                <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
+                  <CardHeader className="pb-3 border-b border-gray-700">
+                    <CardTitle className="text-white">ROI Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       <div>
                         <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Campaigns</span>
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$28,400</span>
+                          <span className="text-sm font-medium text-gray-300">Email Campaigns</span>
+                          <span className="text-sm font-medium text-gray-300">$28,400</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '58%' }}></div>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SMS Campaigns</span>
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$15,250</span>
-                        </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '31%' }}></div>
+                        <div className="w-full bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-blue-500 h-2.5 rounded-full shadow-sm shadow-blue-500/50" style={{ width: '58%' }}></div>
                         </div>
                       </div>
                       <div>
                         <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Loyalty Programs</span>
-                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$5,274</span>
+                          <span className="text-sm font-medium text-gray-300">SMS Campaigns</span>
+                          <span className="text-sm font-medium text-gray-300">$15,250</span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-green-600 h-2.5 rounded-full" style={{ width: '11%' }}></div>
+                        <div className="w-full bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-blue-400 h-2.5 rounded-full shadow-sm shadow-blue-400/50" style={{ width: '31%' }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-300">Loyalty Programs</span>
+                          <span className="text-sm font-medium text-gray-300">$5,274</span>
+                        </div>
+                        <div className="w-full bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-blue-300 h-2.5 rounded-full shadow-sm shadow-blue-300/50" style={{ width: '11%' }}></div>
                         </div>
                       </div>
                     </div>

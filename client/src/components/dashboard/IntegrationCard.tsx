@@ -27,28 +27,30 @@ export const IntegrationCard = ({ integrations, isLoading }: IntegrationCardProp
   };
 
   const getIntegrationStatus = (status: string) => {
+    if (!status) return null;
+    
     switch (status) {
       case "connected":
         return (
-          <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
+          <Badge variant="outline" className="bg-green-900 text-green-300 border-green-700 shadow-sm shadow-green-500/30">
             Connected
           </Badge>
         );
       case "pending":
         return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+          <Badge variant="outline" className="bg-yellow-900 text-yellow-300 border-yellow-700 shadow-sm shadow-yellow-500/30">
             Pending
           </Badge>
         );
       case "failed":
         return (
-          <Badge variant="outline" className="bg-red-100 text-red-800 hover:bg-red-100">
+          <Badge variant="outline" className="bg-red-900 text-red-300 border-red-700 shadow-sm shadow-red-500/30">
             Failed
           </Badge>
         );
       default:
         return (
-          <Button size="sm" variant="secondary">
+          <Button size="sm" variant="outline" className="border-blue-700 text-blue-300 hover:bg-blue-900 shadow-sm shadow-blue-500/20">
             Connect
           </Button>
         );
@@ -116,12 +118,12 @@ export const IntegrationCard = ({ integrations, isLoading }: IntegrationCardProp
             : displayIntegrations.map((integration) => (
                 <div key={integration.id} className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-blue-900 shadow-inner shadow-blue-500/30 flex items-center justify-center">
                       {getIntegrationIcon(integration.type)}
                     </div>
                     <div className="ml-4">
-                      <h4 className="text-base font-medium text-gray-900">{integration.name}</h4>
-                      <p className="text-sm text-gray-500">{integration.description}</p>
+                      <h4 className="text-base font-medium text-white">{integration.name}</h4>
+                      <p className="text-sm text-gray-400">{(integration as any).description || 'Integration service'}</p>
                     </div>
                   </div>
                   {getIntegrationStatus(integration.status)}
@@ -130,7 +132,7 @@ export const IntegrationCard = ({ integrations, isLoading }: IntegrationCardProp
         </div>
 
         <div className="mt-6">
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full border-blue-700 text-blue-300 hover:bg-blue-900 shadow-md shadow-blue-500/20">
             <RiAddLine className="mr-2" />
             Add New Integration
           </Button>
