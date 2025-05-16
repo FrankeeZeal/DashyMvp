@@ -47,6 +47,7 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
   const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [clientsOpen, setClientsOpen] = useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
   
   // Mock clients data - in production would come from API
   const mockClients = [
@@ -100,6 +101,23 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
       isSubItem: true
     }));
   };
+  
+  const getAnalyticsItems = () => {
+    return [
+      {
+        path: `${basePath}/analytics/predictive`,
+        label: "Predictive Analytics",
+        icon: <div className="w-2 h-2 rounded-full bg-purple-500 mr-2 ml-6"></div>,
+        isSubItem: true
+      },
+      {
+        path: `${basePath}/analytics/roi`,
+        label: "ROI Calculator",
+        icon: <div className="w-2 h-2 rounded-full bg-purple-500 mr-2 ml-6"></div>,
+        isSubItem: true
+      }
+    ];
+  };
 
   const navItems = isAgency
     ? [
@@ -116,7 +134,15 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
           viewAllPath: `${basePath}/clients`,
           addNewPath: `${basePath}/clients/new`,
         },
-        { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        { 
+          path: `${basePath}/analytics`, 
+          label: "Analytics", 
+          icon: <RiPieChartLine className={collapsed ? "text-lg" : "mr-3 text-lg"} />,
+          isDropdown: true,
+          isOpen: analyticsOpen,
+          onToggle: () => setAnalyticsOpen(!analyticsOpen),
+          subItems: getAnalyticsItems(),
+        },
         { path: `${basePath}/agents`, label: "Agents", icon: <RiMenuLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
