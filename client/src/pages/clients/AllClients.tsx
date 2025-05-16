@@ -9,7 +9,9 @@ import {
   BarChart3,
   Mail,
   MessageSquare,
-  ArrowDownUp
+  ArrowDownUp,
+  UserPlus,
+  User
 } from "lucide-react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
@@ -22,6 +24,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -38,6 +49,28 @@ import { Badge } from "@/components/ui/badge";
 export const AllClients = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
+  
+  // Mock team members for assignment dropdown
+  const teamMembers = [
+    { id: 1, name: "Alex Johnson", role: "Email Specialist" },
+    { id: 2, name: "Sarah Williams", role: "Designer" },
+    { id: 3, name: "Marcus Lee", role: "Account Manager" },
+    { id: 4, name: "Taylor Swift", role: "Analyst" },
+    { id: 5, name: "Jordan Peterson", role: "Designer" },
+  ];
+  
+  const handleAssignUserClick = (clientId: number) => {
+    setSelectedClientId(clientId);
+    setAssignDialogOpen(true);
+  };
+  
+  const handleAssignUser = (userId: number) => {
+    // In a real app, this would make an API call to assign the user to the client
+    console.log(`Assigning user ${userId} to client ${selectedClientId}`);
+    setAssignDialogOpen(false);
+  };
   
   // Get all clients
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -252,6 +285,18 @@ export const AllClients = () => {
                                       <MessageSquare className="h-3 w-3 mr-1" /> SMS
                                     </Badge>
                                   )}
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="bg-gray-700 hover:bg-gray-600 border-gray-600 ml-1"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleAssignUserClick(client.id);
+                                    }}
+                                  >
+                                    <UserPlus className="h-3 w-3 mr-1" /> Assign
+                                  </Button>
                                   {getStatusBadge(client.status || 'active')}
                                   <RiArrowRightSLine className="ml-2 text-gray-400" />
                                 </div>
@@ -273,6 +318,57 @@ export const AllClients = () => {
           </main>
         </div>
       </div>
+      
+      {/* User Assignment Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent className="bg-gray-800 border border-gray-700 text-white">
+          <DialogHeader>
+            <DialogTitle>Assign Team Member</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Select team members to assign to this client.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 my-4">
+            <div className="grid gap-4">
+              {teamMembers.map(member => (
+                <div 
+                  key={member.id}
+                  className="flex items-center justify-between p-3 rounded-md bg-gray-700 hover:bg-gray-600 cursor-pointer"
+                  onClick={() => handleAssignUser(member.id)}
+                >
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center">
+                      <User className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <div className="ml-3">
+                      <div className="font-medium">{member.name}</div>
+                      <div className="text-sm text-gray-400">{member.role}</div>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="hover:bg-blue-900/30 hover:text-blue-300"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setAssignDialogOpen(false)}
+              className="bg-gray-700 hover:bg-gray-600 border-gray-600"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

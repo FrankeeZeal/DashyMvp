@@ -42,6 +42,8 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
       organizationId: 1,
       name: "Earthly Goods",
       status: "active",
+      hasEmailData: true,
+      hasSmsData: false,
       addedAt: new Date(2023, 0, 12),
     },
     {
@@ -49,6 +51,8 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
       organizationId: 1,
       name: "Sista Teas",
       status: "active",
+      hasEmailData: true,
+      hasSmsData: true,
       addedAt: new Date(2023, 0, 8),
     },
     {
@@ -56,6 +60,8 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
       organizationId: 1,
       name: "Mountain Wellness",
       status: "active",
+      hasEmailData: false,
+      hasSmsData: true,
       addedAt: new Date(2023, 0, 3),
     },
     {
@@ -63,6 +69,8 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
       organizationId: 1,
       name: "Fitlife Supplements",
       status: "active",
+      hasEmailData: true,
+      hasSmsData: true,
       addedAt: new Date(2023, 1, 15),
     },
   ] as Client[];
@@ -130,6 +138,16 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
                           </div>
                         </div>
                         <div className="flex items-center">
+                          {(client as any).hasEmailData && (
+                            <Badge className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border-blue-800 mr-2">
+                              E
+                            </Badge>
+                          )}
+                          {(client as any).hasSmsData && (
+                            <Badge className="bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border-purple-800 mr-2">
+                              S
+                            </Badge>
+                          )}
                           {getStatusBadge(client.status)}
                           <RiArrowRightSLine className="ml-2 text-gray-400" />
                         </div>
