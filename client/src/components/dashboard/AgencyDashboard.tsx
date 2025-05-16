@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Navbar } from "@/components/dashboard/Navbar";
@@ -10,7 +10,9 @@ import { ROICalculator } from "@/components/dashboard/ROICalculator";
 import { CampaignReport } from "@/components/dashboard/CampaignReport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine } from "react-icons/ri";
+import { Button } from "@/components/ui/button";
+import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine } from "react-icons/ri";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // Mock data for beta testing
 const mockClients = [
@@ -153,9 +155,44 @@ const mockIntegrations = [
   },
 ];
 
+// Define the dashboard widget types
+type WidgetType = 'stats' | 'campaigns' | 'clients' | 'roi-analytics';
+
+interface DashboardWidget {
+  id: string;
+  type: WidgetType;
+  title: string;
+}
+
+interface DashboardBucket {
+  id: string;
+  title: string;
+  widgets: DashboardWidget[];
+}
+
 export const AgencyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Initial dashboard layout with buckets
+  const [dashboardBuckets, setDashboardBuckets] = useState<DashboardBucket[]>([
+    {
+      id: 'main-bucket',
+      title: 'Main Dashboard',
+      widgets: [
+        { id: 'stats-widget', type: 'stats', title: 'Key Stats' },
+        { id: 'campaigns-widget', type: 'campaigns', title: 'Campaigns' },
+        { id: 'clients-widget', type: 'clients', title: 'Clients' }
+      ]
+    },
+    {
+      id: 'analytics-bucket',
+      title: 'Analytics',
+      widgets: [
+        { id: 'roi-widget', type: 'roi-analytics', title: 'ROI & Analytics' }
+      ]
+    }
+  ]);
   
   // Map client id to name for ease of display
   const campaignsWithClientNames = mockCampaigns.map(campaign => ({
@@ -176,6 +213,57 @@ export const AgencyDashboard = () => {
   const handleLogout = () => {
     window.location.href = "/api/logout";
   };
+  
+  // Handle drag end event for rearranging widgets
+  const handleDragEnd = (result: any) => {
+    const { source, destination } = result;
+    
+    // Dropped outside the list
+    if (!destination) {
+      return;
+    }
+    
+    // Moving within the same bucket
+    if (source.droppableId === destination.droppableId) {
+      const bucketIndex = dashboardBuckets.findIndex(bucket => bucket.id === source.droppableId);
+      if (bucketIndex === -1) return;
+      
+      const newBucket = {...dashboardBuckets[bucketIndex]};
+      const widgets = Array.from(newBucket.widgets);
+      const [removed] = widgets.splice(source.index, 1);
+      widgets.splice(destination.index, 0, removed);
+      
+      const newBuckets = [...dashboardBuckets];
+      newBuckets[bucketIndex] = {...newBucket, widgets};
+      
+      setDashboardBuckets(newBuckets);
+    } else {
+      // Moving from one bucket to another
+      const sourceBucketIndex = dashboardBuckets.findIndex(bucket => bucket.id === source.droppableId);
+      const destBucketIndex = dashboardBuckets.findIndex(bucket => bucket.id === destination.droppableId);
+      
+      if (sourceBucketIndex === -1 || destBucketIndex === -1) return;
+      
+      const newBuckets = [...dashboardBuckets];
+      const sourceWidgets = Array.from(newBuckets[sourceBucketIndex].widgets);
+      const destWidgets = Array.from(newBuckets[destBucketIndex].widgets);
+      
+      const [removed] = sourceWidgets.splice(source.index, 1);
+      destWidgets.splice(destination.index, 0, removed);
+      
+      newBuckets[sourceBucketIndex] = {
+        ...newBuckets[sourceBucketIndex],
+        widgets: sourceWidgets
+      };
+      
+      newBuckets[destBucketIndex] = {
+        ...newBuckets[destBucketIndex],
+        widgets: destWidgets
+      };
+      
+      setDashboardBuckets(newBuckets);
+    }
+  };
 
   // Client Performance Data
   const clientPerformance = [
@@ -185,35 +273,14 @@ export const AgencyDashboard = () => {
     { name: "FitLife Supplements", emailsSent: 1550, opened: 680, clicked: 310, revenue: 7100 }
   ];
 
-  return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="flex h-screen overflow-hidden">
-        <Sidebar 
-          type="agency" 
-          onLogout={handleLogout} 
-          isCollapsed={sidebarCollapsed}
-          setIsCollapsed={setSidebarCollapsed}
-        />
-        
-        <div className="flex flex-col flex-1 w-full">
-          <Navbar type="agency" onToggleSidebar={toggleSidebar} />
-          
-          <main className="flex-1 relative overflow-y-auto bg-gray-900">
-            <div className="px-6 py-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
-                  <p className="mt-1 text-gray-400">Welcome back, here's what's happening today.</p>
-                </div>
-                <div className="mt-4 md:mt-0">
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow-lg shadow-blue-500/30">
-                    + New Campaign
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="px-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
+  // Render widget based on type
+  const renderWidget = (widget: DashboardWidget) => {
+    switch (widget.type) {
+      case 'stats':
+        return (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatsCard
                 title="Total Clients"
                 value="4"
@@ -247,63 +314,162 @@ export const AgencyDashboard = () => {
                 iconColor="text-amber-500"
               />
             </div>
-            
-            <div className="px-6 grid grid-cols-1 gap-6 xl:grid-cols-3 mb-6">
-              <div className="col-span-2">
-                <CampaignTable
-                  campaigns={campaigns}
-                  isLoading={campaignsLoading}
+          </div>
+        );
+      case 'campaigns':
+        return (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
+            <CampaignTable
+              campaigns={campaigns}
+              isLoading={campaignsLoading}
+            />
+          </div>
+        );
+      case 'clients':
+        return (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
+            <ClientList
+              clients={mockClients as any}
+              isLoading={clientsLoading}
+              title="Recent Clients"
+            />
+          </div>
+        );
+      case 'roi-analytics':
+        return (
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
+            <Tabs defaultValue="roi" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+                <TabsTrigger 
+                  value="roi" 
+                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                >
+                  ROI Calculator
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="report" 
+                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                >
+                  Campaign Reports
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="integrations" 
+                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                >
+                  Integrations
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="roi">
+                <ROICalculator campaigns={campaigns as any} />
+              </TabsContent>
+              
+              <TabsContent value="report">
+                <CampaignReport campaigns={campaigns as any} />
+              </TabsContent>
+              
+              <TabsContent value="integrations">
+                <IntegrationCard
+                  integrations={integrations || []}
+                  isLoading={integrationsLoading}
                 />
-              </div>
-              <div>
-                <ClientList
-                  clients={mockClients as any}
-                  isLoading={clientsLoading}
-                  title="Recent Clients"
-                />
+              </TabsContent>
+            </Tabs>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Custom drag handle component
+  const DragHandle = () => (
+    <div className="drag-handle cursor-move flex items-center justify-center rounded-md bg-gray-800 h-6 w-6 border border-gray-700 mr-2">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 4H5V6H7V4Z" fill="#9CA3AF" />
+        <path d="M7 8H5V10H7V8Z" fill="#9CA3AF" />
+        <path d="M7 12H5V14H7V12Z" fill="#9CA3AF" />
+        <path d="M13 4H11V6H13V4Z" fill="#9CA3AF" />
+        <path d="M13 8H11V10H13V8Z" fill="#9CA3AF" />
+        <path d="M13 12H11V14H13V12Z" fill="#9CA3AF" />
+      </svg>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-900">
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar 
+          type="agency" 
+          onLogout={handleLogout} 
+          isCollapsed={sidebarCollapsed}
+          setIsCollapsed={setSidebarCollapsed}
+        />
+        
+        <div className="flex flex-col flex-1 w-full">
+          <Navbar type="agency" onToggleSidebar={toggleSidebar} />
+          
+          <main className="flex-1 relative overflow-y-auto bg-gray-900">
+            <div className="px-6 py-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
+                  <p className="mt-1 text-gray-400">Welcome back, here's what's happening today.</p>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center p-0"
+                    aria-label="Add new campaign"
+                  >
+                    <RiAddLine className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             </div>
             
-            <div className="px-6 mt-4 border-t border-gray-700 pt-6">
-              <h2 className="text-xl font-semibold text-white mb-4">ROI & Campaign Analytics</h2>
-              <Tabs defaultValue="roi" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
-                  <TabsTrigger 
-                    value="roi" 
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                  >
-                    ROI Calculator
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="report" 
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                  >
-                    Campaign Reports
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="integrations" 
-                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                  >
-                    Integrations
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="roi">
-                  <ROICalculator campaigns={campaigns as any} />
-                </TabsContent>
-                
-                <TabsContent value="report">
-                  <CampaignReport campaigns={campaigns as any} />
-                </TabsContent>
-                
-                <TabsContent value="integrations">
-                  <IntegrationCard
-                    integrations={integrations || []}
-                    isLoading={integrationsLoading}
-                  />
-                </TabsContent>
-              </Tabs>
-            </div>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              {dashboardBuckets.map((bucket) => (
+                <div key={bucket.id} className="px-6 mb-8">
+                  <div className="bg-gray-800/50 rounded-md p-4 shadow-sm border border-gray-700">
+                    <h2 className="text-lg font-medium text-white mb-4">{bucket.title}</h2>
+                    
+                    <Droppable droppableId={bucket.id}>
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className="space-y-6"
+                        >
+                          {bucket.widgets.map((widget, index) => (
+                            <Draggable key={widget.id} draggableId={widget.id} index={index}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className="bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-md"
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div {...provided.dragHandleProps}>
+                                      <DragHandle />
+                                    </div>
+                                    <h3 className="text-lg font-medium text-white">{widget.title}</h3>
+                                  </div>
+                                  {renderWidget(widget)}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
+                </div>
+              ))}
+            </DragDropContext>
           </main>
         </div>
       </div>
