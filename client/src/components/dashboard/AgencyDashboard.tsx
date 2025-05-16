@@ -177,9 +177,14 @@ export const AgencyDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="flex h-screen overflow-hidden">
-        <Sidebar type="agency" onLogout={handleLogout} />
+        <Sidebar 
+          type="agency" 
+          onLogout={handleLogout} 
+          isCollapsed={sidebarCollapsed}
+          setIsCollapsed={setSidebarCollapsed}
+        />
         
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'md:ml-16' : 'md:ml-0'}`}>
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
           <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6">
