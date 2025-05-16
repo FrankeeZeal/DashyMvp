@@ -10,22 +10,98 @@ import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine } from 
 
 // Mock data for beta testing
 const mockClients = [
-  { id: 1, name: "Earthly Goods", industry: "Health & Wellness", logo: null, createdAt: new Date(), status: "active" },
-  { id: 2, name: "Sista Teas", industry: "Food & Beverage", logo: null, createdAt: new Date(), status: "active" },
-  { id: 3, name: "Green Valley", industry: "Home & Garden", logo: null, createdAt: new Date(), status: "active" },
-  { id: 4, name: "FitLife Supplements", industry: "Health & Wellness", logo: null, createdAt: new Date(), status: "active" },
+  { 
+    id: 1, 
+    organizationId: 1, 
+    name: "Earthly Goods", 
+    status: "active", 
+    addedAt: new Date(), 
+    updatedAt: new Date() 
+  },
+  { 
+    id: 2, 
+    organizationId: 1, 
+    name: "Sista Teas", 
+    status: "active", 
+    addedAt: new Date(), 
+    updatedAt: new Date() 
+  },
+  { 
+    id: 3, 
+    organizationId: 1, 
+    name: "Green Valley", 
+    status: "active", 
+    addedAt: new Date(), 
+    updatedAt: new Date() 
+  },
+  { 
+    id: 4, 
+    organizationId: 1, 
+    name: "FitLife Supplements", 
+    status: "active", 
+    addedAt: new Date(), 
+    updatedAt: new Date() 
+  },
 ];
 
 const mockCampaigns = [
-  { id: 1, name: "Summer Sale", status: "active", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 1 },
-  { id: 2, name: "Fall Collection", status: "draft", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 2 },
-  { id: 3, name: "Holiday Special", status: "active", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 1 },
+  { 
+    id: 1, 
+    name: "Summer Sale", 
+    status: "active", 
+    startDate: new Date(), 
+    endDate: new Date(), 
+    organizationId: 1, 
+    clientId: 1 
+  },
+  { 
+    id: 2, 
+    name: "Fall Collection", 
+    status: "draft", 
+    startDate: new Date(), 
+    endDate: new Date(), 
+    organizationId: 1, 
+    clientId: 2 
+  },
+  { 
+    id: 3, 
+    name: "Holiday Special", 
+    status: "active", 
+    startDate: new Date(), 
+    endDate: new Date(), 
+    organizationId: 1, 
+    clientId: 1 
+  },
 ];
 
 const mockIntegrations = [
-  { id: 1, name: "Klaviyo", status: "connected", apiKey: "******", organizationId: 1, type: "email" },
-  { id: 2, name: "Twilio", status: "pending", apiKey: null, organizationId: 1, type: "sms" },
-  { id: 3, name: "Omnisend", status: "connected", apiKey: "******", organizationId: 1, type: "email" },
+  { 
+    id: 1, 
+    name: "Klaviyo", 
+    status: "connected", 
+    type: "email", 
+    organizationId: 1, 
+    updatedAt: new Date(), 
+    createdAt: new Date() 
+  },
+  { 
+    id: 2, 
+    name: "Twilio", 
+    status: "pending", 
+    type: "sms", 
+    organizationId: 1, 
+    updatedAt: new Date(), 
+    createdAt: new Date() 
+  },
+  { 
+    id: 3, 
+    name: "Omnisend", 
+    status: "connected", 
+    type: "email", 
+    organizationId: 1, 
+    updatedAt: new Date(), 
+    createdAt: new Date() 
+  },
 ];
 
 export const AgencyDashboard = () => {
