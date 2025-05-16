@@ -198,7 +198,7 @@ export const AgencyOnboarding = () => {
         <Card className="bg-gray-800 border-0 shadow-xl">
           <CardContent className="pt-6 text-white">
             <Form {...form}>
-              <form>
+              <form onSubmit={(e) => e.preventDefault()}>
                 {/* Step 1: Agency Name */}
                 <div 
                   className={`transition-all duration-300 ${
