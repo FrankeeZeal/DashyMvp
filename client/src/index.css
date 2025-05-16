@@ -51,6 +51,20 @@
   animation: pulse 2s infinite;
 }
 
+/* Prevent client revenue graph from moving during edit mode */
+.revenue-graph-container {
+  contain: layout style paint;
+  isolation: isolate;
+  pointer-events: auto;
+}
+
+.revenue-graph-container > div {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  contain: paint;
+}
+
 /* Animated gradient background for coming soon card */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
