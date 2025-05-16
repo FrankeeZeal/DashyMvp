@@ -49,25 +49,25 @@ export const StatsCard = ({
   };
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="flex items-center">
-          <div className={cn("flex-shrink-0 rounded-md p-3", iconBgColor)}>
+    <Card className="h-full">
+      <CardContent className="p-4 md:p-5">
+        <div className="flex items-center h-full">
+          <div className={cn("flex-shrink-0 rounded-md p-2.5", iconBgColor)}>
             <Icon className={cn("text-xl", iconColor)} />
           </div>
-          <div className="ml-5 w-0 flex-1">
+          <div className="ml-3 w-full flex-1 min-w-0">
             <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">
+              <dt className="text-xs md:text-sm font-medium text-gray-500 truncate">
                 {title}
               </dt>
-              <dd className="flex items-baseline">
-                <div className="text-2xl font-semibold text-gray-900">
+              <dd className="flex flex-wrap items-baseline mt-1">
+                <div className="text-xl md:text-2xl font-semibold text-gray-900 mr-2 truncate">
                   {value}
                 </div>
                 {change && (
                   <div
                     className={cn(
-                      "ml-2 flex items-baseline text-sm font-semibold",
+                      "flex items-baseline text-xs md:text-sm font-semibold",
                       getChangeColor()
                     )}
                   >
