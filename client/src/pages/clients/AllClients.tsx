@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { format, formatDistanceToNow, isAfter, isBefore, parseISO } from "date-fns";
+import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz';
 import {
   Search,
   Filter,
@@ -125,7 +126,12 @@ export const AllClients = () => {
   });
   
   // Initial extended client data
-  const [clientsExtendedData, setClientsExtendedData] = useState<ClientsExtendedDataMap>({
+  // Load client data from localStorage if it exists
+  const loadSavedClientData = (): ClientsExtendedDataMap => {
+    try {
+      const savedData = localStorage.getItem('clientsExtendedData');
+      return savedData ? JSON.parse(savedData) : {
+  
     1: {
       docsUrl: 'https://docs.google.com/document/d/1e8XcfZSD-EarthlyGoods',
       documents: [
