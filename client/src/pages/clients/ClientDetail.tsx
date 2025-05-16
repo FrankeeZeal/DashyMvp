@@ -38,18 +38,27 @@ export const ClientDetail = () => {
     window.location.href = '/api/logout';
   };
   
-  // For demo/beta test purposes - Using mock data if API returns null
-  const clientData = client || {
-    id: parseInt(id as string),
-    name: "Client " + id,
-    email: "client" + id + "@example.com",
-    phone: "+1 555-123-4567",
-    status: "active",
-    addedAt: new Date(),
-    logoUrl: "",
-    hasEmailData: true,
-    hasSmsData: true
-  };
+  // For demo/beta test purposes - Enhanced demo data with real client names
+  let clientData = client;
+  
+  // If API returns null, try to find the client in demo data
+  if (!clientData) {
+    const demoClients = [
+      { id: 1, name: "Earthly Goods", hasEmailData: true, hasSmsData: false },
+      { id: 2, name: "Sista Teas", hasEmailData: true, hasSmsData: true },
+      { id: 3, name: "Mountain Wellness", hasEmailData: false, hasSmsData: true }
+    ];
+    
+    // Try to match by ID from the URL
+    const demoClient = demoClients.find(c => c.id === parseInt(id as string));
+    
+    clientData = demoClient || {
+      id: parseInt(id as string),
+      name: `Client ${id}`,
+      hasEmailData: true,
+      hasSmsData: true
+    };
+  }
   
   const hasData = (clientData.hasEmailData || clientData.hasSmsData);
   
@@ -79,7 +88,6 @@ export const ClientDetail = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4">
                   <div>
                     <h1 className="text-2xl font-bold text-white">{clientData.name}</h1>
-                    <p className="mt-1 text-gray-400">Client Dashboard</p>
                   </div>
                 </div>
               </div>
