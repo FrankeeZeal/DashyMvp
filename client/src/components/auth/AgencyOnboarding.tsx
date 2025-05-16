@@ -350,9 +350,13 @@ export const AgencyOnboarding = () => {
                               variant={form.watch("addTeamNow") === option ? "default" : "outline"}
                               className={`
                                 transition-all duration-200
-                                ${form.watch("addTeamNow") === option
-                                  ? "bg-blue-800 text-white border-blue-400 shadow-md shadow-blue-500/30"
-                                  : "text-gray-200 border-gray-600 hover:border-blue-400 hover:bg-gray-700/50"
+                                ${option === "Yes, add team now"
+                                  ? form.watch("addTeamNow") === option
+                                    ? "bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-500/60 animate-pulse"
+                                    : "bg-blue-700/80 text-white border-blue-400 shadow-md hover:shadow-blue-500/60 hover:bg-blue-600/90"
+                                  : form.watch("addTeamNow") === option 
+                                    ? "bg-blue-800 text-white border-blue-400 shadow-md shadow-blue-500/30"
+                                    : "text-gray-200 border-gray-600 hover:border-blue-400 hover:bg-gray-700/50"
                                 }
                               `}
                               onClick={() => {
