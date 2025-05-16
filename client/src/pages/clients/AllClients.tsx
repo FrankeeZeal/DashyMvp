@@ -161,13 +161,8 @@ export const AllClients = () => {
     });
   };
   
-  // Mock assignments for demonstration
-  const clientAssignments = {
-    1: [teamMembers[0], teamMembers[1]],
-    2: [teamMembers[2]],
-    3: [teamMembers[3], teamMembers[4]],
-    4: []
-  };
+  // We'll use the state-based clientAssignmentsState instead of this static data
+  // This line is kept for reference but won't be used
   
   // Get all clients
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -428,9 +423,9 @@ export const AllClients = () => {
                                 </Button>
                               </div>
                               
-                              {(clientAssignments as any)[client.id]?.length > 0 ? (
+                              {clientAssignmentsState[client.id]?.length > 0 ? (
                                 <div className="space-y-2 mt-2">
-                                  {(clientAssignments as any)[client.id].map((member: any) => (
+                                  {clientAssignmentsState[client.id].map((member: TeamMember) => (
                                     <div 
                                       key={member.id}
                                       className="flex items-center justify-between p-2 rounded-md bg-gray-700 hover:bg-gray-600"
@@ -493,7 +488,7 @@ export const AllClients = () => {
               {teamMembers.map(member => {
                 // Check if this member is already assigned to the selected client
                 const isAssigned = selectedClientId 
-                  ? ((clientAssignments as any)[selectedClientId] || []).some((m: any) => m.id === member.id)
+                  ? (clientAssignmentsState[selectedClientId] || []).some((m) => m.id === member.id)
                   : false;
                   
                 return (
