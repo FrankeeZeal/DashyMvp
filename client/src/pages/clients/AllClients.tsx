@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { format, formatDistanceToNow } from "date-fns";
@@ -44,6 +44,7 @@ interface ClientExtendedData {
   retainerRate?: number;
   performancePercent?: number;
   performanceType?: 'rev' | 'profit';
+  isActive?: boolean;
 }
 
 interface ClientsExtendedDataMap {
@@ -148,6 +149,28 @@ export const AllClients = () => {
   // Is user admin/owner - in a real app, this would come from user context/auth
   const [isAdmin, setIsAdmin] = useState(true);
   
+  // Initialize client active status based on contract end dates
+  useEffect(() => {
+    setClientsExtendedData(prev => {
+      const updated = { ...prev };
+      
+      // Iterate through each client and update isActive status
+      Object.keys(updated).forEach(clientIdStr => {
+        const clientId = parseInt(clientIdStr);
+        const client = updated[clientId];
+        
+        if (client && client.contractEnd) {
+          updated[clientId] = {
+            ...client,
+            isActive: isClientActive(client.contractEnd)
+          };
+        }
+      });
+      
+      return updated;
+    });
+  }, []);
+  
   // Mock team members for assignment dropdown
   const teamMembers: TeamMember[] = [
     { id: 1, name: "Alex Johnson", role: "Email Specialist" },
@@ -234,12 +257,20 @@ export const AllClients = () => {
       // Create client data object if it doesn't exist
       const clientData = prev[clientId] || {};
       
+      // Prepare updated data
+      const updatedData = {
+        ...clientData,
+        [field]: value
+      };
+      
+      // If updating contract end date, also update the active status
+      if (field === 'contractEnd' && typeof value === 'string') {
+        updatedData.isActive = isClientActive(value);
+      }
+      
       return {
         ...prev,
-        [clientId]: {
-          ...clientData,
-          [field]: value
-        }
+        [clientId]: updatedData
       };
     });
   };
@@ -263,6 +294,23 @@ export const AllClients = () => {
       });
     } catch (e) {
       return 'Invalid date';
+    }
+  };
+  
+  // Check if client is active based on contract end date
+  const isClientActive = (endDate?: string): boolean => {
+    if (!endDate) return true; // If no end date is set, consider the client active
+    
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to beginning of day for accurate comparison
+      
+      const contractEnd = new Date(endDate);
+      contractEnd.setHours(0, 0, 0, 0);
+      
+      return contractEnd >= today;
+    } catch (e) {
+      return true; // Default to active if there's a parsing error
     }
   };
   
