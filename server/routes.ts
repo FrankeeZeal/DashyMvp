@@ -97,7 +97,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Complete onboarding routes
   app.post('/api/onboarding/agency', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // For MVP, use a fixed userId since we're not using full auth
+      const userId = "123456"; // Fixed userId for testing
       const data = agencyOnboardingSchema.parse(req.body);
       
       // Create organization
@@ -131,7 +132,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post('/api/onboarding/ecom', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // For MVP, use a fixed userId since we're not using full auth
+      const userId = "123456"; // Fixed userId for testing
       const data = ecomOnboardingSchema.parse(req.body);
       
       // Create organization

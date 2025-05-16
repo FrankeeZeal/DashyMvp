@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Progress } from "@/components/ui/progress";
-import { RiArrowLeftLine } from "react-icons/ri";
+import { RiArrowLeftLine, RiCheckLine, RiCloseLine, RiUserAddLine, RiMailLine } from "react-icons/ri";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type AgencyOnboardingData = z.infer<typeof agencyOnboardingSchema>;
 
@@ -22,7 +23,11 @@ export const AgencyOnboarding = () => {
   const [step, setStep] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationDirection, setAnimationDirection] = useState<'next' | 'prev'>('next');
-  const totalSteps = 6;
+  const [teamMembers, setTeamMembers] = useState<{email: string; role: string; invited: boolean}[]>([]);
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [newMemberRole, setNewMemberRole] = useState('');
+  const [showSuccessInvite, setShowSuccessInvite] = useState<number | null>(null);
+  const totalSteps = 7; // Added one more step for team management
 
   const form = useForm<AgencyOnboardingData>({
     resolver: zodResolver(agencyOnboardingSchema),
@@ -33,6 +38,7 @@ export const AgencyOnboarding = () => {
       trackingMethod: "",
       teamSize: "",
       addTeamNow: "",
+      teamMembers: [],
     },
   });
 
@@ -73,6 +79,21 @@ export const AgencyOnboarding = () => {
 
     if (isValid) {
       if (step < totalSteps) {
+        // Check if we're on the addTeamNow step (6)
+        if (step === 6) {
+          // If user selected "No, I'll do it later", skip the team members step
+          if (form.getValues().addTeamNow === "No, I'll do it later") {
+            // Submit the form instead of going to the next step
+            if (form.formState.isValid) {
+              const data = form.getValues();
+              createAgencyMutation.mutate(data);
+            } else {
+              await form.trigger();
+            }
+            return;
+          }
+        }
+        
         // Start animation
         setAnimationDirection('next');
         setIsAnimating(true);
@@ -349,6 +370,139 @@ export const AgencyOnboarding = () => {
                   />
                 </div>
 
+                {/* Step 7: Add Team Members (only shown if user selected "Yes, add team now") */}
+                {step === 7 && form.watch("addTeamNow") === "Yes, add team now" && (
+                  <div className="transition-all duration-300">
+                    <h2 className="text-xl font-semibold mb-4 text-white">Add team members to your agency</h2>
+                    <p className="text-gray-400 mb-6">Enter your team members' email addresses and select their roles.</p>
+                    
+                    <div className="grid grid-cols-1 gap-4 mb-6">
+                      <div className="flex items-end gap-3">
+                        <div className="flex-1">
+                          <FormLabel className="text-gray-300 mb-2 block">Email address</FormLabel>
+                          <div className="relative">
+                            <RiMailLine className="absolute left-3 top-3 text-gray-400" />
+                            <Input
+                              placeholder="team@example.com"
+                              className="pl-9 bg-gray-700 border-gray-600 text-white"
+                              value={newMemberEmail}
+                              onChange={(e) => setNewMemberEmail(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="w-44">
+                          <FormLabel className="text-gray-300 mb-2 block">Role</FormLabel>
+                          <Select value={newMemberRole} onValueChange={setNewMemberRole}>
+                            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                              <SelectValue placeholder="Select role" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gray-800 border-gray-600 text-white">
+                              <SelectItem value="Account Manager">Account Manager</SelectItem>
+                              <SelectItem value="Designer">Designer</SelectItem>
+                              <SelectItem value="Analyst">Analyst</SelectItem>
+                              <SelectItem value="Co-Founder">Co-Founder</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          className="bg-blue-600 hover:bg-blue-500 text-white h-10 px-4"
+                          onClick={() => {
+                            if (newMemberEmail && newMemberRole) {
+                              setTeamMembers([...teamMembers, {
+                                email: newMemberEmail,
+                                role: newMemberRole,
+                                invited: false
+                              }]);
+                              setNewMemberEmail('');
+                              setNewMemberRole('');
+                            }
+                          }}
+                        >
+                          <RiUserAddLine className="mr-1" /> Add
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {teamMembers.length > 0 && (
+                      <div className="bg-gray-700/50 rounded-lg p-4 mb-6">
+                        <h3 className="text-white font-medium mb-3">Team members</h3>
+                        <div className="space-y-3">
+                          {teamMembers.map((member, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 rounded-md bg-gray-800 border border-gray-700 relative">
+                              <div className="flex items-center">
+                                <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                                <div>
+                                  <p className="text-white">{member.email}</p>
+                                  <p className="text-sm text-gray-400">{member.role}</p>
+                                </div>
+                              </div>
+                              {member.invited ? (
+                                <div className="flex items-center text-green-500">
+                                  <RiCheckLine className="mr-1" /> Invited
+                                </div>
+                              ) : (
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20 p-1 h-auto"
+                                    onClick={() => {
+                                      setTeamMembers(teamMembers.filter((_, i) => i !== index));
+                                    }}
+                                  >
+                                    <RiCloseLine size={18} />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="bg-blue-600 hover:bg-blue-500 text-white text-xs px-3"
+                                    onClick={() => {
+                                      // Simulate sending invite
+                                      const updatedMembers = [...teamMembers];
+                                      updatedMembers[index].invited = true;
+                                      setTeamMembers(updatedMembers);
+                                      setShowSuccessInvite(index);
+                                      
+                                      // Add to form data
+                                      const currentTeamMembers = form.getValues().teamMembers || [];
+                                      form.setValue('teamMembers', [
+                                        ...currentTeamMembers, 
+                                        { email: member.email, role: member.role }
+                                      ]);
+                                      
+                                      // Hide success message after 1.5 seconds
+                                      setTimeout(() => {
+                                        setShowSuccessInvite(null);
+                                      }, 1500);
+                                    }}
+                                  >
+                                    Send Invite
+                                  </Button>
+                                  
+                                  {/* Success overlay */}
+                                  {showSuccessInvite === index && (
+                                    <div className="absolute inset-0 bg-black/80 rounded-md flex items-center justify-center z-10">
+                                      <div className="bg-green-600 rounded-full p-2">
+                                        <RiCheckLine className="text-white text-lg" />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {teamMembers.length === 0 && (
+                      <div className="bg-gray-700/30 border border-gray-700 rounded-lg p-6 mb-6 text-center">
+                        <p className="text-gray-400">No team members added yet</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex justify-between">
                   {step > 1 && (
                     <Button
@@ -361,16 +515,16 @@ export const AgencyOnboarding = () => {
                       <RiArrowLeftLine className="mr-1" /> Back
                     </Button>
                   )}
-                  {/* Only show Continue button on steps with text input */}
-                  {step === 1 && (
+                  {/* Only show Continue button on steps with text input or last screen */}
+                  {(step === 1 || step === 7) && (
                     <div className="ml-0">
                       <Button
                         type="button"
-                        onClick={nextStep}
+                        onClick={step === 7 ? () => createAgencyMutation.mutate(form.getValues()) : nextStep}
                         className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/60 transition-all duration-300"
                         disabled={createAgencyMutation.isPending}
                       >
-                        Continue
+                        {step === 7 ? "Complete Setup" : "Continue"}
                       </Button>
                     </div>
                   )}
