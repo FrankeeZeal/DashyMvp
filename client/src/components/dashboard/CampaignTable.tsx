@@ -62,9 +62,9 @@ export const CampaignTable = ({ campaigns, isLoading }: CampaignTableProps) => {
               campaigns.map((campaign) => (
                 <TableRow key={campaign.id} className="hover:bg-gray-50 cursor-pointer">
                   <TableCell className="font-medium">{campaign.name}</TableCell>
-                  <TableCell>{campaign.clientId}</TableCell>
-                  <TableCell>{format(new Date(campaign.startDate), 'MMM d, yyyy')}</TableCell>
-                  <TableCell>{format(new Date(campaign.endDate), 'MMM d, yyyy')}</TableCell>
+                  <TableCell>{(campaign as any).clientName || `Client ${(campaign as any).clientId}`}</TableCell>
+                  <TableCell>{format(new Date((campaign as any).startDate || campaign.sentDate || new Date()), 'MMM d, yyyy')}</TableCell>
+                  <TableCell>{format(new Date((campaign as any).endDate || campaign.updatedAt || new Date()), 'MMM d, yyyy')}</TableCell>
                   <TableCell>{renderStatus(campaign.status)}</TableCell>
                 </TableRow>
               ))

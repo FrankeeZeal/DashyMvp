@@ -5,6 +5,7 @@ import { Navbar } from "@/components/dashboard/Navbar";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ClientList } from "@/components/dashboard/ClientList";
 import { IntegrationCard } from "@/components/dashboard/IntegrationCard";
+import { CampaignTable } from "@/components/dashboard/CampaignTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine } from "react-icons/ri";
 
@@ -44,33 +45,65 @@ const mockClients = [
   },
 ];
 
+// Client name mapping to use in campaign table
+const clientNameMap: Record<number, string> = {
+  1: "Earthly Goods",
+  2: "Sista Teas",
+  3: "Green Valley",
+  4: "FitLife Supplements"
+};
+
+// Enhanced mock campaign data based on campaign calendar
 const mockCampaigns = [
   { 
     id: 1, 
-    name: "Summer Sale", 
+    name: "Summer Sale - 15% Off", 
     status: "active", 
-    startDate: new Date(), 
-    endDate: new Date(), 
+    startDate: new Date(2025, 5, 1), // June 1, 2025
+    endDate: new Date(2025, 5, 15),  // June 15, 2025
     organizationId: 1, 
-    clientId: 1 
+    clientId: 2,      // Sista Teas
+    type: "email"
   },
   { 
     id: 2, 
-    name: "Fall Collection", 
-    status: "draft", 
-    startDate: new Date(), 
-    endDate: new Date(), 
+    name: "New Product Launch - Tea Collection", 
+    status: "scheduled", 
+    startDate: new Date(2025, 5, 20), // June 20, 2025
+    endDate: new Date(2025, 5, 30),   // June 30, 2025
     organizationId: 1, 
-    clientId: 2 
+    clientId: 2,      // Sista Teas
+    type: "email"
   },
   { 
     id: 3, 
-    name: "Holiday Special", 
-    status: "active", 
-    startDate: new Date(), 
-    endDate: new Date(), 
+    name: "Fourth of July Special", 
+    status: "draft", 
+    startDate: new Date(2025, 6, 1),  // July 1, 2025
+    endDate: new Date(2025, 6, 7),    // July 7, 2025
     organizationId: 1, 
-    clientId: 1 
+    clientId: 2,      // Sista Teas
+    type: "sms"
+  },
+  { 
+    id: 4, 
+    name: "Summer Wellness Bundle", 
+    status: "active", 
+    startDate: new Date(2025, 5, 10),  // June 10, 2025
+    endDate: new Date(2025, 5, 25),    // June 25, 2025
+    organizationId: 1, 
+    clientId: 1,      // Earthly Goods
+    type: "email"
+  },
+  { 
+    id: 5, 
+    name: "Back to School Promo", 
+    status: "scheduled", 
+    startDate: new Date(2025, 7, 1),   // August 1, 2025
+    endDate: new Date(2025, 7, 15),    // August 15, 2025
+    organizationId: 1, 
+    clientId: 4,      // FitLife Supplements
+    type: "email"
   },
 ];
 
@@ -108,9 +141,14 @@ export const AgencyDashboard = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Using mock data for beta testing
+  // Using data for development
   const clients = mockClients;
-  const campaigns = mockCampaigns;
+  // Add client names to campaign data
+  const campaignsWithClientNames = mockCampaigns.map(campaign => ({
+    ...campaign,
+    clientName: clientNameMap[(campaign as any).clientId] || 'Unknown Client'
+  }));
+  const campaigns = campaignsWithClientNames;
   const integrations = mockIntegrations;
   
   const clientsLoading = false;
@@ -125,8 +163,16 @@ export const AgencyDashboard = () => {
     window.location.href = "/api/logout";
   };
 
+  // Client Performance Data
+  const clientPerformance = [
+    { name: "Sista Teas", emailsSent: 2500, opened: 1275, clicked: 625, revenue: 12450 },
+    { name: "Earthly Goods", emailsSent: 1800, opened: 900, clicked: 450, revenue: 8900 },
+    { name: "Green Valley", emailsSent: 1200, opened: 540, clicked: 300, revenue: 6200 },
+    { name: "FitLife Supplements", emailsSent: 1550, opened: 680, clicked: 310, revenue: 7100 }
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex h-screen overflow-hidden">
         <Sidebar type="agency" onLogout={handleLogout} />
         
@@ -135,8 +181,19 @@ export const AgencyDashboard = () => {
           
           <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6">
             <div className="pb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">Agency Dashboard</h1>
-              <p className="mt-1 text-sm text-gray-600">Welcome back! Here's an overview of your agency's performance.</p>
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Agency Dashboard</h1>
+                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Welcome back! Here's an overview of your agency's performance.</p>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  <div className="inline-flex rounded-md shadow">
+                    <button className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                      Export Reports
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Stats Cards */}
@@ -179,43 +236,116 @@ export const AgencyDashboard = () => {
             </div>
             
             {/* Main Content Grid */}
-            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {/* Client Performance Chart */}
-              <Card>
-                <CardHeader className="pb-3 border-b">
-                  <CardTitle>Client Performance</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="h-64 rounded-lg bg-gray-200 flex items-center justify-center">
-                    <p className="text-gray-500">Chart visualization goes here</p>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="mt-6 grid grid-cols-1 gap-6">
+              {/* Campaign Table */}
+              <div className="overflow-hidden shadow rounded-lg">
+                <CampaignTable
+                  campaigns={campaigns}
+                  isLoading={campaignsLoading}
+                />
+              </div>
+            
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {/* Client Performance Chart */}
+                <Card className="dark:bg-gray-800 shadow-xl">
+                  <CardHeader className="pb-3 border-b dark:border-gray-700">
+                    <CardTitle className="text-gray-900 dark:text-white">Client Performance</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-700">
+                          <tr>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Client</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Emails Sent</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Open Rate</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Click Rate</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                          {clientPerformance.map((client, index) => (
+                            <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{client.name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{client.emailsSent.toLocaleString()}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                <div className="flex items-center">
+                                  <span className="mr-2">{Math.round((client.opened / client.emailsSent) * 100)}%</span>
+                                  <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(client.opened / client.emailsSent) * 100}%` }}></div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                <div className="flex items-center">
+                                  <span className="mr-2">{Math.round((client.clicked / client.emailsSent) * 100)}%</span>
+                                  <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                    <div className="bg-green-500 h-2 rounded-full" style={{ width: `${(client.clicked / client.emailsSent) * 100}%` }}></div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${client.revenue.toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Recent Clients */}
+                <ClientList
+                  clients={clients || []}
+                  isLoading={clientsLoading}
+                  title="Recent Clients"
+                />
+              </div>
               
-              {/* Campaign Performance */}
-              <Card>
-                <CardHeader className="pb-3 border-b">
-                  <CardTitle>Campaign Performance</CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="h-64 rounded-lg bg-gray-200 flex items-center justify-center">
-                    <p className="text-gray-500">Chart visualization goes here</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Recent Clients */}
-              <ClientList
-                clients={clients || []}
-                isLoading={clientsLoading}
-                title="Recent Clients"
-              />
-              
-              {/* Integration Status */}
-              <IntegrationCard
-                integrations={integrations || []}
-                isLoading={integrationsLoading}
-              />
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {/* Integration Status */}
+                <IntegrationCard
+                  integrations={integrations || []}
+                  isLoading={integrationsLoading}
+                />
+                
+                {/* Additional Card */}
+                <Card className="dark:bg-gray-800 shadow-xl">
+                  <CardHeader className="pb-3 border-b dark:border-gray-700">
+                    <CardTitle className="text-gray-900 dark:text-white">ROI Breakdown</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Email Campaigns</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$28,400</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: '58%' }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SMS Campaigns</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$15,250</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '31%' }}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Loyalty Programs</span>
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">$5,274</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                          <div className="bg-green-600 h-2.5 rounded-full" style={{ width: '11%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </main>
         </div>

@@ -93,8 +93,11 @@ export const Sidebar = ({ type, onLogout }: SidebarProps) => {
             <div className="flex items-center">
               <div>
                 <Avatar>
-                  <AvatarImage src={user?.profileImageUrl} alt={getName()} />
-                  <AvatarFallback>{getInitials()}</AvatarFallback>
+                  {user?.profileImageUrl ? (
+                    <AvatarImage src={user.profileImageUrl} alt={getName()} />
+                  ) : (
+                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                  )}
                 </Avatar>
               </div>
               <div className="ml-3 flex-1">
