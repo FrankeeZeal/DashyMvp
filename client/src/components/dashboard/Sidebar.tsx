@@ -103,14 +103,16 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             
             {/* Buttons container for search and collapse */}
             <div className="flex items-center gap-1 ml-auto">
-              {/* Search button */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-gray-400 hover:text-white hover:bg-gray-800"
-              >
-                <RiSearchLine className="h-5 w-5" />
-              </Button>
+              {/* Search button - only show when not collapsed */}
+              {!collapsed && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="text-gray-400 hover:text-white hover:bg-gray-800"
+                >
+                  <RiSearchLine className="h-5 w-5" />
+                </Button>
+              )}
               
               {/* Collapse button */}
               <Button
