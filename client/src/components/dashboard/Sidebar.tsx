@@ -15,7 +15,9 @@ import {
   RiBookOpenLine,
   RiArrowLeftSLine,
   RiArrowRightSLine,
-  RiSearchLine
+  RiSearchLine,
+  RiMenuLine,
+  RiMenuFoldLine
 } from "react-icons/ri";
 
 interface SidebarProps {
@@ -91,17 +93,6 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
         )}
       >
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto relative">
-          {/* Circular collapse button positioned on the right border of sidebar */}
-          <div 
-            className={cn(
-              "absolute -right-3 top-24 w-6 h-6 rounded-full bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-center cursor-pointer z-50",
-              collapsed ? "rotate-180" : ""
-            )}
-            onClick={toggleCollapse}
-          >
-            <RiArrowLeftSLine className="h-4 w-4 text-blue-400" />
-          </div>
-          
           <div className={cn(
             "flex items-center flex-shrink-0",
             collapsed ? "justify-center px-2" : "px-4"
@@ -109,13 +100,28 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             {!collapsed && (
               <h1 className="text-xl font-bold text-white bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Dashy</h1>
             )}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-gray-400 hover:text-white hover:bg-gray-800 ml-auto"
-            >
-              <RiSearchLine className="h-5 w-5" />
-            </Button>
+            
+            {/* Buttons container for search and collapse */}
+            <div className="flex items-center gap-1 ml-auto">
+              {/* Search button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-400 hover:text-white hover:bg-gray-800"
+              >
+                <RiSearchLine className="h-5 w-5" />
+              </Button>
+              
+              {/* Collapse button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleCollapse}
+                className="text-gray-400 hover:text-white hover:bg-gray-800"
+              >
+                {collapsed ? <RiMenuLine className="h-5 w-5" /> : <RiMenuFoldLine className="h-5 w-5" />}
+              </Button>
+            </div>
           </div>
           <div className="mt-5 flex-1 flex flex-col">
             <nav className={cn(
