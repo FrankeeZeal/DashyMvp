@@ -250,9 +250,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/organizations/:id/users', isAuthenticated, async (req: any, res) => {
     try {
       const { id } = req.params;
+      
+      // For MVP, use fixed userId
+      const userId = "123456"; 
+      
       const userData = insertOrganizationUserSchema.parse({
         ...req.body,
-        organizationId: parseInt(id)
+        organizationId: parseInt(id),
+        userId: req.body.userId || userId
       });
       
       const result = await storage.addUserToOrganization(userData);
@@ -269,11 +274,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/organizations/:id/users', isAuthenticated, async (req: any, res) => {
     try {
       const { id } = req.params;
+      // For MVP testing
       const users = await storage.getOrganizationUsers(parseInt(id));
       res.json(users);
     } catch (error) {
       console.error("Error fetching organization users:", error);
       res.status(500).json({ message: "Failed to fetch organization users" });
+    }
+  });
+  
+  // Add team members route (for onboarding)
+  app.post('/api/team-members', isAuthenticated, async (req: any, res) => {
+    try {
+      const { organizationId, members } = req.body;
+      
+      // Fixed userId for MVP
+      const userId = "123456";
+      
+      // Validate organization exists
+      const organization = await storage.getOrganization(organizationId);
+      if (!organization) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+      
+      const results = [];
+      
+      // Add each team member
+      for (const member of members) {
+        // Create team membership
+        const result = await storage.addUserToOrganization({
+          organizationId,
+          userId: member.userId || `member-${Date.now()}-${Math.floor(Math.random() * 1000)}`, // Generate a temp userId
+          role: member.role
+        });
+        
+        results.push(result);
+      }
+      
+      res.status(201).json({ success: true, results });
+    } catch (error) {
+      console.error("Error adding team members:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to add team members" });
     }
   });
 
