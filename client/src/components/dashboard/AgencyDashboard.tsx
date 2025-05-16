@@ -174,22 +174,61 @@ export const AgencyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
-  // Initial dashboard layout with buckets
-  const [dashboardBuckets, setDashboardBuckets] = useState<DashboardBucket[]>([
+  // Define widget sizes
+  interface WidgetSize {
+    width: 'full' | 'half';
+    height: 'auto';
+  }
+  
+  // Extend DashboardWidget with size
+  interface EnhancedWidget extends DashboardWidget {
+    size: WidgetSize;
+  }
+  
+  // Enhance bucket definition
+  interface EnhancedBucket extends Omit<DashboardBucket, 'widgets'> {
+    widgets: EnhancedWidget[];
+    columns: 1 | 2;
+  }
+
+  // Initial dashboard layout with buckets and sizing
+  const [dashboardBuckets, setDashboardBuckets] = useState<EnhancedBucket[]>([
     {
       id: 'main-bucket',
       title: 'Main Dashboard',
+      columns: 2,
       widgets: [
-        { id: 'stats-widget', type: 'stats', title: 'Key Stats' },
-        { id: 'campaigns-widget', type: 'campaigns', title: 'Campaigns' },
-        { id: 'clients-widget', type: 'clients', title: 'Clients' }
+        { 
+          id: 'stats-widget', 
+          type: 'stats', 
+          title: 'Key Stats',
+          size: { width: 'full', height: 'auto' } 
+        },
+        { 
+          id: 'campaigns-widget', 
+          type: 'campaigns', 
+          title: 'Campaigns',
+          size: { width: 'half', height: 'auto' } 
+        },
+        { 
+          id: 'clients-widget', 
+          type: 'clients', 
+          title: 'Clients',
+          size: { width: 'half', height: 'auto' } 
+        }
       ]
     },
     {
       id: 'analytics-bucket',
       title: 'Analytics',
+      columns: 1,
       widgets: [
-        { id: 'roi-widget', type: 'roi-analytics', title: 'ROI & Analytics' }
+        { 
+          id: 'roi-widget', 
+          type: 'roi-analytics', 
+          title: 'ROI & Analytics',
+          size: { width: 'full', height: 'auto' } 
+        }
       ]
     }
   ]);
@@ -231,6 +270,20 @@ export const AgencyDashboard = () => {
       const newBucket = {...dashboardBuckets[bucketIndex]};
       const widgets = Array.from(newBucket.widgets);
       const [removed] = widgets.splice(source.index, 1);
+      
+      // If moving to beginning of row and it's a 2-column layout, 
+      // make the widget full-width if it's at position 0
+      if (destination.index === 0 && newBucket.columns === 2) {
+        // Widget at position 0 could be full-width
+        if (removed.size.width === 'half') {
+          // Check if there's a need to adjust other widgets
+          if (widgets.length > 0 && widgets[0].size.width === 'half') {
+            // If the next widget is half-width, make it full-width to avoid layout issues
+            widgets[0].size.width = 'full';
+          }
+        }
+      }
+      
       widgets.splice(destination.index, 0, removed);
       
       const newBuckets = [...dashboardBuckets];
@@ -249,6 +302,21 @@ export const AgencyDashboard = () => {
       const destWidgets = Array.from(newBuckets[destBucketIndex].widgets);
       
       const [removed] = sourceWidgets.splice(source.index, 1);
+      
+      // When moving between buckets, adjust the widget width based on destination bucket column layout
+      const destBucket = newBuckets[destBucketIndex];
+      
+      // If moving to a single-column bucket, automatically make it full-width
+      if (destBucket.columns === 1) {
+        removed.size.width = 'full';
+      }
+      
+      // If moving to beginning of a 2-column layout, consider making it full-width
+      if (destination.index === 0 && destBucket.columns === 2) {
+        // Optional: could make first item full-width by default
+        // removed.size.width = 'full';
+      }
+      
       destWidgets.splice(destination.index, 0, removed);
       
       newBuckets[sourceBucketIndex] = {
@@ -278,8 +346,7 @@ export const AgencyDashboard = () => {
     switch (widget.type) {
       case 'stats':
         return (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
+          <div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatsCard
                 title="Total Clients"
@@ -318,67 +385,58 @@ export const AgencyDashboard = () => {
         );
       case 'campaigns':
         return (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
-            <CampaignTable
-              campaigns={campaigns}
-              isLoading={campaignsLoading}
-            />
-          </div>
+          <CampaignTable
+            campaigns={campaigns}
+            isLoading={campaignsLoading}
+          />
         );
       case 'clients':
         return (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
-            <ClientList
-              clients={mockClients as any}
-              isLoading={clientsLoading}
-              title="Recent Clients"
-            />
-          </div>
+          <ClientList
+            clients={mockClients as any}
+            isLoading={clientsLoading}
+            title="Recent Clients"
+          />
         );
       case 'roi-analytics':
         return (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white mb-4">{widget.title}</h2>
-            <Tabs defaultValue="roi" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
-                <TabsTrigger 
-                  value="roi" 
-                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                >
-                  ROI Calculator
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="report" 
-                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                >
-                  Campaign Reports
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="integrations" 
-                  className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                >
-                  Integrations
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="roi">
-                <ROICalculator campaigns={campaigns as any} />
-              </TabsContent>
-              
-              <TabsContent value="report">
-                <CampaignReport campaigns={campaigns as any} />
-              </TabsContent>
-              
-              <TabsContent value="integrations">
-                <IntegrationCard
-                  integrations={integrations || []}
-                  isLoading={integrationsLoading}
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
+          <Tabs defaultValue="roi" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+              <TabsTrigger 
+                value="roi" 
+                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+              >
+                ROI Calculator
+              </TabsTrigger>
+              <TabsTrigger 
+                value="report" 
+                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+              >
+                Campaign Reports
+              </TabsTrigger>
+              <TabsTrigger 
+                value="integrations" 
+                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+              >
+                Integrations
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="roi">
+              <ROICalculator campaigns={campaigns as any} />
+            </TabsContent>
+            
+            <TabsContent value="report">
+              <CampaignReport campaigns={campaigns as any} />
+            </TabsContent>
+            
+            <TabsContent value="integrations">
+              <IntegrationCard
+                integrations={integrations || []}
+                isLoading={integrationsLoading}
+              />
+            </TabsContent>
+          </Tabs>
         );
       default:
         return null;
@@ -433,40 +491,63 @@ export const AgencyDashboard = () => {
             <DragDropContext onDragEnd={handleDragEnd}>
               {dashboardBuckets.map((bucket) => (
                 <div key={bucket.id} className="px-6 mb-8">
-                  <div className="bg-gray-800/50 rounded-md p-4 shadow-sm border border-gray-700">
-                    <h2 className="text-lg font-medium text-white mb-4">{bucket.title}</h2>
-                    
-                    <Droppable droppableId={bucket.id}>
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="space-y-6"
-                        >
-                          {bucket.widgets.map((widget, index) => (
-                            <Draggable key={widget.id} draggableId={widget.id} index={index}>
-                              {(provided) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  className="bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-md"
-                                >
-                                  <div className="flex items-center mb-2">
-                                    <div {...provided.dragHandleProps}>
-                                      <DragHandle />
-                                    </div>
-                                    <h3 className="text-lg font-medium text-white">{widget.title}</h3>
+                  <h2 className="text-xl font-semibold text-white mb-4">{bucket.title}</h2>
+                  
+                  <Droppable droppableId={bucket.id} direction="horizontal">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className={`grid gap-6 ${bucket.columns === 2 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'}`}
+                      >
+                        {bucket.widgets.map((widget, index) => (
+                          <Draggable key={widget.id} draggableId={widget.id} index={index}>
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                className={`bg-gray-800 rounded-lg shadow-xl shadow-blue-900/10 border border-gray-700 overflow-hidden
+                                  ${widget.size.width === 'full' ? 'col-span-full' : ''}`}
+                              >
+                                <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800">
+                                  <div {...provided.dragHandleProps} className="mr-3">
+                                    <DragHandle />
                                   </div>
+                                  <h3 className="text-lg font-medium text-white flex-1">{widget.title}</h3>
+                                  <div className="flex space-x-2">
+                                    <button 
+                                      className="p-1 rounded-md hover:bg-gray-700 text-gray-400 hover:text-white"
+                                      title="Toggle size"
+                                      onClick={() => {
+                                        const newBuckets = [...dashboardBuckets];
+                                        const bucketIndex = newBuckets.findIndex(b => b.id === bucket.id);
+                                        const widgetIndex = newBuckets[bucketIndex].widgets.findIndex(w => w.id === widget.id);
+                                        
+                                        if (widgetIndex !== -1) {
+                                          const newWidth = newBuckets[bucketIndex].widgets[widgetIndex].size.width === 'full' ? 'half' : 'full';
+                                          newBuckets[bucketIndex].widgets[widgetIndex].size.width = newWidth;
+                                          setDashboardBuckets(newBuckets);
+                                        }
+                                      }}
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                                        <rect x="9" y="9" width="6" height="6" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div className="p-6">
                                   {renderWidget(widget)}
                                 </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
                 </div>
               ))}
             </DragDropContext>
