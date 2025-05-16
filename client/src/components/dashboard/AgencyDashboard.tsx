@@ -6,7 +6,10 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ClientList } from "@/components/dashboard/ClientList";
 import { IntegrationCard } from "@/components/dashboard/IntegrationCard";
 import { CampaignTable } from "@/components/dashboard/CampaignTable";
+import { ROICalculator } from "@/components/dashboard/ROICalculator";
+import { CampaignReport } from "@/components/dashboard/CampaignReport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine } from "react-icons/ri";
 
 // Mock data for beta testing
@@ -301,50 +304,45 @@ export const AgencyDashboard = () => {
                 />
               </div>
               
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Integration Status */}
-                <IntegrationCard
-                  integrations={integrations || []}
-                  isLoading={integrationsLoading}
-                />
-                
-                {/* Additional Card */}
-                <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
-                  <CardHeader className="pb-3 border-b border-gray-700">
-                    <CardTitle className="text-white">ROI Breakdown</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-300">Email Campaigns</span>
-                          <span className="text-sm font-medium text-gray-300">$28,400</span>
-                        </div>
-                        <div className="w-full bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-blue-500 h-2.5 rounded-full shadow-sm shadow-blue-500/50" style={{ width: '58%' }}></div>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-300">SMS Campaigns</span>
-                          <span className="text-sm font-medium text-gray-300">$15,250</span>
-                        </div>
-                        <div className="w-full bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-blue-400 h-2.5 rounded-full shadow-sm shadow-blue-400/50" style={{ width: '31%' }}></div>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-300">Loyalty Programs</span>
-                          <span className="text-sm font-medium text-gray-300">$5,274</span>
-                        </div>
-                        <div className="w-full bg-gray-600 rounded-full h-2.5">
-                          <div className="bg-blue-300 h-2.5 rounded-full shadow-sm shadow-blue-300/50" style={{ width: '11%' }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+              <div className="mt-4 border-t border-gray-700 pt-6">
+                <h2 className="text-xl font-semibold text-white mb-4">ROI & Campaign Analytics</h2>
+                <Tabs defaultValue="roi" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+                    <TabsTrigger 
+                      value="roi" 
+                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                    >
+                      ROI Calculator
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="report" 
+                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                    >
+                      Campaign Reports
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="integrations" 
+                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                    >
+                      Integrations
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="roi">
+                    <ROICalculator campaigns={campaigns as any} />
+                  </TabsContent>
+                  
+                  <TabsContent value="report">
+                    <CampaignReport campaigns={campaigns as any} />
+                  </TabsContent>
+                  
+                  <TabsContent value="integrations">
+                    <IntegrationCard
+                      integrations={integrations || []}
+                      isLoading={integrationsLoading}
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
           </main>
