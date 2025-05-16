@@ -50,18 +50,100 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
     ? [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className="mr-3 text-lg" /> },
         { path: `${basePath}/clients`, label: "Clients", icon: <RiUserLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/settings`, label: "Settings", icon: <RiSettingsLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/training`, label: "Knowledge Base", icon: <RiBookOpenLine className="mr-3 text-lg" /> },
+        { 
+          path: `${basePath}/integrations`, 
+          label: "Integrations", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="14" x2="23" y2="14"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="14" x2="4" y2="14"></line>
+          </svg> 
+        },
+        { 
+          path: `${basePath}/billing`, 
+          label: "Billing", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg> 
+        },
+        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
+        { 
+          path: `${basePath}/community`, 
+          label: "Community", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg> 
+        },
+        { 
+          path: `${basePath}/help`, 
+          label: "Help", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg> 
+        },
         { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
       ]
     : [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/settings`, label: "Settings", icon: <RiSettingsLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/training`, label: "Knowledge Base", icon: <RiBookOpenLine className="mr-3 text-lg" /> },
+        { 
+          path: `${basePath}/integrations`, 
+          label: "Integrations", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="14" x2="23" y2="14"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="14" x2="4" y2="14"></line>
+          </svg> 
+        },
+        { 
+          path: `${basePath}/billing`, 
+          label: "Billing", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg> 
+        },
+        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
+        { 
+          path: `${basePath}/community`, 
+          label: "Community", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg> 
+        },
+        { 
+          path: `${basePath}/help`, 
+          label: "Help", 
+          icon: <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg> 
+        },
         { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
       ];
 
@@ -167,17 +249,71 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
                         </p>
                       </div>
                     </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-xs font-medium bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">Free</span>
+                      <Button variant="outline" size="sm" className="h-7 px-3 text-xs bg-gradient-to-b from-blue-600/10 to-blue-800/20 border border-blue-500/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200">
+                        Upgrade
+                      </Button>
+                    </div>
                   </div>
                   <div className="px-1 py-1">
                     <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
                       <RiSettingsLine className="mr-2 h-4 w-4 text-gray-400" />
                       <span>Settings</span>
                     </DropdownMenuItem>
+                    
+                    <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                        <rect x="9" y="9" width="6" height="6"></rect>
+                        <line x1="9" y1="1" x2="9" y2="4"></line>
+                        <line x1="15" y1="1" x2="15" y2="4"></line>
+                        <line x1="9" y1="20" x2="9" y2="23"></line>
+                        <line x1="15" y1="20" x2="15" y2="23"></line>
+                        <line x1="20" y1="9" x2="23" y2="9"></line>
+                        <line x1="20" y1="14" x2="23" y2="14"></line>
+                        <line x1="1" y1="9" x2="4" y2="9"></line>
+                        <line x1="1" y1="14" x2="4" y2="14"></line>
+                      </svg>
+                      <span>Integrations</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                      </svg>
+                      <span>Billing</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator className="my-1 h-px bg-blue-500/10" />
+                    
+                    <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                      <span>Community</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      </svg>
+                      <span>Help</span>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator className="my-1 h-px bg-blue-500/10" />
+                    
                     <DropdownMenuItem 
-                      className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150" 
+                      className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-red-900/20 hover:text-red-300 focus:bg-red-900/20 transition-colors duration-150" 
                       onClick={() => (window.location.href = "/api/logout")}
                     >
-                      <RiLogoutBoxRLine className="mr-2 h-4 w-4 text-gray-400" />
+                      <RiLogoutBoxRLine className="mr-2 h-4 w-4 text-red-400/70" />
                       <span>Logout</span>
                     </DropdownMenuItem>
                   </div>
