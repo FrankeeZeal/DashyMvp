@@ -51,7 +51,7 @@ export const ClientDetail = () => {
   });
   
   // Fetch campaigns for this client
-  const { data: campaigns, isLoading: campaignsLoading } = useQuery({
+  const { data: campaigns, isLoading: campaignsLoading } = useQuery<CampaignData[]>({
     queryKey: [`/api/clients/${id}/campaigns`],
     retry: false,
   });
@@ -90,10 +90,12 @@ export const ClientDetail = () => {
   const hasData = clientData ? (clientData.hasEmailData || clientData.hasSmsData) : false;
   
   // Filter campaigns based on data source type
-  const filteredCampaigns = campaigns ? campaigns.filter((campaign: any) => {
-    if (dataSourceType === "both") return true;
-    return campaign.type?.toLowerCase() === dataSourceType.toLowerCase();
-  }) : [];
+  const filteredCampaigns = campaigns && Array.isArray(campaigns) 
+    ? campaigns.filter(campaign => {
+        if (dataSourceType === "both") return true;
+        return campaign.type?.toLowerCase() === dataSourceType.toLowerCase();
+      }) 
+    : [];
   
   return (
     <div className="flex h-screen bg-gray-900">

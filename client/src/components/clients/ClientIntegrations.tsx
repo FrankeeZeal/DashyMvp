@@ -38,7 +38,7 @@ interface Integration {
 
 export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId }) => {
   // Fetch integrations for this client from the API
-  const { data: apiIntegrations, isLoading } = useQuery({
+  const { data: apiIntegrations, isLoading } = useQuery<Integration[]>({
     queryKey: [`/api/clients/${clientId}/integrations`],
     retry: false,
   });
@@ -57,8 +57,10 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
     { id: 10, name: 'Make', type: 'automation', icon: <FaCogs className="w-6 h-6 text-[#4353FF]" />, isConnected: false }
   ];
   
-  // Combine API data with available integrations for demo UI
-  const integrations = apiIntegrations || availableIntegrations;
+  // Use the available integrations since we don't have any connected integrations yet
+  const integrations = Array.isArray(apiIntegrations) && apiIntegrations.length > 0 
+    ? apiIntegrations 
+    : availableIntegrations;
   
   return (
     <div>
@@ -101,7 +103,7 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {integrations.map((integration: Integration) => (
+          {Array.isArray(integrations) && integrations.map((integration: Integration) => (
             <Card key={integration.id} className={`bg-gray-800 border-gray-700 ${integration.isConnected ? 'border-l-4 border-l-green-500' : ''}`}>
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">

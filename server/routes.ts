@@ -362,7 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Demo integrations data - initially empty for the MVP
       // This allows the frontend to manage and display integration states
-      const clientIntegrations = [];
+      const clientIntegrations: any[] = [];
       
       res.json(clientIntegrations);
     } catch (error) {
