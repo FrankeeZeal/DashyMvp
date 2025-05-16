@@ -171,7 +171,7 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
           {/* Placeholder for any future elements */}
         </div>
 
-        <div className="flex items-center ml-auto">
+        <div className="flex items-center ml-auto pr-4">
           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
             <RiNotification3Line className="h-6 w-6" />
           </Button>
