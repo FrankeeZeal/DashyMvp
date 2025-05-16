@@ -16,7 +16,8 @@ import {
   ChevronDown,
   X,
   Eye,
-  Check
+  Check,
+  FileText
 } from "lucide-react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
@@ -32,6 +33,20 @@ interface TeamMember {
 
 interface ClientAssignments {
   [clientId: number]: TeamMember[];
+}
+
+// Extended client data
+interface ClientExtendedData {
+  docsUrl?: string;
+  contractStart?: string;
+  contractEnd?: string;
+  retainerRate?: number;
+  performancePercent?: number;
+  performanceType?: 'rev' | 'profit';
+}
+
+interface ClientsExtendedDataMap {
+  [clientId: number]: ClientExtendedData;
 }
 import {
   Card,
@@ -59,6 +74,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
@@ -84,6 +106,45 @@ export const AllClients = () => {
     ],
     4: []
   });
+  
+  // Initial extended client data
+  const [clientsExtendedData, setClientsExtendedData] = useState<ClientsExtendedDataMap>({
+    1: {
+      docsUrl: 'https://docs.google.com/document/d/1e8XcfZSD-EarthlyGoods',
+      contractStart: '2023-01-01',
+      contractEnd: '2023-12-31',
+      retainerRate: 2500,
+      performancePercent: 15,
+      performanceType: 'rev'
+    },
+    2: {
+      docsUrl: 'https://docs.google.com/document/d/1e5wSistaTeas',
+      contractStart: '2023-02-15',
+      contractEnd: '2024-02-14',
+      retainerRate: 3200,
+      performancePercent: 10,
+      performanceType: 'profit'
+    },
+    3: {
+      docsUrl: 'https://drive.google.com/MountainWellnessFiles',
+      contractStart: '2023-03-01',
+      contractEnd: '2024-03-01',
+      retainerRate: 1800,
+      performancePercent: 8,
+      performanceType: 'rev'
+    },
+    4: {
+      docsUrl: 'https://notion.so/FitlifeSupplementsDocs',
+      contractStart: '2023-04-15',
+      contractEnd: '2023-10-15',
+      retainerRate: 4000,
+      performancePercent: 12,
+      performanceType: 'profit'
+    }
+  });
+  
+  // Is user admin/owner - in a real app, this would come from user context/auth
+  const [isAdmin, setIsAdmin] = useState(true);
   
   // Mock team members for assignment dropdown
   const teamMembers: TeamMember[] = [
@@ -159,6 +220,48 @@ export const AllClients = () => {
         [clientId]: prev[clientId].filter(member => member.id !== userId)
       };
     });
+  };
+  
+  // Functions for client extended data
+  const handleUpdateClientData = (
+    clientId: number, 
+    field: keyof ClientExtendedData, 
+    value: string | number | 'rev' | 'profit'
+  ) => {
+    setClientsExtendedData(prev => {
+      // Create client data object if it doesn't exist
+      const clientData = prev[clientId] || {};
+      
+      return {
+        ...prev,
+        [clientId]: {
+          ...clientData,
+          [field]: value
+        }
+      };
+    });
+  };
+  
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+  
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return 'Invalid date';
+    }
   };
   
   // We'll use the state-based clientAssignmentsState instead of this static data
@@ -403,58 +506,198 @@ export const AllClients = () => {
                             </div>
                           </div>
                           
-                          {/* Expanded content - team assignments */}
+                          {/* Expanded content - team assignments and client details */}
                           {expandedClientId === client.id && (
                             <div className="px-6 py-3 pb-4 border-t border-gray-700 bg-gray-800/50">
-                              <div className="flex justify-between items-center mb-3">
-                                <h4 className="text-sm font-medium text-white">Team Assignments</h4>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="bg-gray-700 hover:bg-gray-600 border-gray-600"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    handleAssignUserClick(client.id);
-                                  }}
-                                >
-                                  <UserPlus className="h-4 w-4 mr-1" />
-                                  Assign
-                                </Button>
+                              {/* Team Assignments Section */}
+                              <div className="mb-6">
+                                <div className="flex justify-between items-center mb-3">
+                                  <h4 className="text-sm font-medium text-white">Team Assignments</h4>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="bg-gray-700 hover:bg-gray-600 border-gray-600"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                      handleAssignUserClick(client.id);
+                                    }}
+                                  >
+                                    <UserPlus className="h-4 w-4 mr-1" />
+                                    Assign
+                                  </Button>
+                                </div>
+                                
+                                {clientAssignmentsState[client.id]?.length > 0 ? (
+                                  <div className="space-y-2 mt-2">
+                                    {clientAssignmentsState[client.id].map((member: TeamMember) => (
+                                      <div 
+                                        key={member.id}
+                                        className="flex items-center justify-between p-2 rounded-md bg-gray-700 hover:bg-gray-600"
+                                      >
+                                        <div className="flex items-center">
+                                          <div className="h-8 w-8 rounded-full bg-blue-900 flex items-center justify-center">
+                                            <User className="h-4 w-4 text-blue-300" />
+                                          </div>
+                                          <div className="ml-2">
+                                            <div className="text-sm font-medium text-white">{member.name}</div>
+                                            <div className="text-xs text-gray-400">{member.role}</div>
+                                          </div>
+                                        </div>
+                                        <Button 
+                                          variant="ghost" 
+                                          size="sm" 
+                                          className="hover:bg-red-900/30 hover:text-red-300"
+                                          onClick={(e) => handleRemoveAssignment(client.id, member.id, e)}
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-gray-400 py-2">
+                                    No team members assigned to this client yet.
+                                  </div>
+                                )}
                               </div>
                               
-                              {clientAssignmentsState[client.id]?.length > 0 ? (
-                                <div className="space-y-2 mt-2">
-                                  {clientAssignmentsState[client.id].map((member: TeamMember) => (
-                                    <div 
-                                      key={member.id}
-                                      className="flex items-center justify-between p-2 rounded-md bg-gray-700 hover:bg-gray-600"
-                                    >
-                                      <div className="flex items-center">
-                                        <div className="h-8 w-8 rounded-full bg-blue-900 flex items-center justify-center">
-                                          <User className="h-4 w-4 text-blue-300" />
-                                        </div>
-                                        <div className="ml-2">
-                                          <div className="text-sm font-medium text-white">{member.name}</div>
-                                          <div className="text-xs text-gray-400">{member.role}</div>
-                                        </div>
-                                      </div>
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        className="hover:bg-red-900/30 hover:text-red-300"
-                                        onClick={(e) => handleRemoveAssignment(client.id, member.id, e)}
+                              {/* Client Information Section */}
+                              <div className="border-t border-gray-700 pt-4">
+                                <h4 className="text-sm font-medium text-white mb-3">Client Information</h4>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {/* Docs Link */}
+                                  <div>
+                                    <label className="block text-xs text-gray-400 mb-1">Client Documents</label>
+                                    <div className="flex items-center">
+                                      <a 
+                                        href={clientsExtendedData[client.id]?.docsUrl || '#'} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="flex items-center bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2 text-sm text-white"
+                                        onClick={(e) => e.stopPropagation()}
                                       >
-                                        <X className="h-4 w-4" />
-                                      </Button>
+                                        <FileText className="h-4 w-4 mr-2 text-blue-400" />
+                                        View Docs
+                                      </a>
+                                      {isAdmin && (
+                                        <div className="relative ml-2">
+                                          <Input
+                                            type="text"
+                                            placeholder="Update docs URL"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-9 w-48"
+                                            value={clientsExtendedData[client.id]?.docsUrl || ''}
+                                            onChange={(e) => {
+                                              e.stopPropagation();
+                                              handleUpdateClientData(client.id, 'docsUrl', e.target.value);
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                          />
+                                        </div>
+                                      )}
                                     </div>
-                                  ))}
+                                  </div>
+                                  
+                                  {/* Contract Dates - Admin only */}
+                                  <div>
+                                    <label className="block text-xs text-gray-400 mb-1">Contract Period</label>
+                                    {isAdmin ? (
+                                      <div className="flex space-x-2">
+                                        <Input
+                                          type="date"
+                                          className="bg-gray-700 border-gray-600 text-white text-xs h-9"
+                                          value={clientsExtendedData[client.id]?.contractStart || ''}
+                                          onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleUpdateClientData(client.id, 'contractStart', e.target.value);
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+                                        <span className="text-gray-400 self-center">to</span>
+                                        <Input
+                                          type="date"
+                                          className="bg-gray-700 border-gray-600 text-white text-xs h-9"
+                                          value={clientsExtendedData[client.id]?.contractEnd || ''}
+                                          onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleUpdateClientData(client.id, 'contractEnd', e.target.value);
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="text-sm text-white">
+                                        {clientsExtendedData[client.id]?.contractStart 
+                                          ? formatDate(clientsExtendedData[client.id]?.contractStart)
+                                          : 'N/A'
+                                        } to {
+                                          clientsExtendedData[client.id]?.contractEnd 
+                                            ? formatDate(clientsExtendedData[client.id]?.contractEnd)
+                                            : 'N/A'
+                                        }
+                                      </div>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Retainer Rate */}
+                                  <div>
+                                    <label className="block text-xs text-gray-400 mb-1">Retainer Rate</label>
+                                    <div className="flex items-center">
+                                      <div className="relative">
+                                        <span className="absolute left-3 top-2 text-gray-400">$</span>
+                                        <Input
+                                          type="number"
+                                          className="bg-gray-700 border-gray-600 text-white pl-7 h-9"
+                                          value={clientsExtendedData[client.id]?.retainerRate || ''}
+                                          onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleUpdateClientData(client.id, 'retainerRate', Number(e.target.value));
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+                                      </div>
+                                      <span className="text-gray-400 ml-2">/month</span>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Performance % */}
+                                  <div>
+                                    <label className="block text-xs text-gray-400 mb-1">Performance %</label>
+                                    <div className="flex items-center space-x-2">
+                                      <div className="relative w-24">
+                                        <Input
+                                          type="number"
+                                          className="bg-gray-700 border-gray-600 text-white pr-6 h-9"
+                                          value={clientsExtendedData[client.id]?.performancePercent || ''}
+                                          onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleUpdateClientData(client.id, 'performancePercent', Number(e.target.value));
+                                          }}
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+                                        <span className="absolute right-3 top-2 text-gray-400">%</span>
+                                      </div>
+                                      <div onClick={(e) => e.stopPropagation()}>
+                                        <Select 
+                                          defaultValue={clientsExtendedData[client.id]?.performanceType || 'rev'}
+                                          onValueChange={(value: string) => {
+                                            handleUpdateClientData(client.id, 'performanceType', value as 'rev' | 'profit');
+                                          }}
+                                        >
+                                          <SelectTrigger className="bg-gray-700 border-gray-600 text-white h-9 w-32">
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                            <SelectItem value="rev">Revenue</SelectItem>
+                                            <SelectItem value="profit">Profit</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
-                              ) : (
-                                <div className="text-sm text-gray-400 py-2">
-                                  No team members assigned to this client yet.
-                                </div>
-                              )}
+                              </div>
                             </div>
                           )}
                         </li>
