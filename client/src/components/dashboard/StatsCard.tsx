@@ -61,9 +61,10 @@ export const StatsCard = ({
                 {title}
               </dt>
               <dd className="flex flex-wrap items-baseline mt-1">
-                <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent mr-2 truncate relative">
-                  <span className="relative z-10">{value}</span>
-                  <div className="absolute inset-0 blur-sm opacity-30 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 -z-10"></div>
+                <div className="text-xl md:text-2xl font-bold mr-2 truncate">
+                  <span className="bg-gradient-to-br from-blue-400 via-cyan-500 to-indigo-400 bg-clip-text text-transparent">
+                    {value}
+                  </span>
                 </div>
                 {change && (
                   <div
