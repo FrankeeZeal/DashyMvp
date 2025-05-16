@@ -27,6 +27,14 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
+  // Temporary mock client data - in production this would come from an API request
+  const mockClients = [
+    { id: 1, name: "Earthly Goods", status: "Active" },
+    { id: 2, name: "Sista Teas", status: "Active" },
+    { id: 3, name: "Green Valley", status: "Active" },
+    { id: 4, name: "FitLife Supplements", status: "Active" }
+  ];
+  
   const getInitials = () => {
     if (!user) return "U";
     if (user.firstName && user.lastName) {
@@ -250,9 +258,14 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
                       </div>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-xs font-medium bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">Free</span>
+                      <span className="text-xs font-medium bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">
+                        {isAgency ? (mockClients.length > 0 ? 
+                          `${mockClients.length} ${mockClients.length === 1 ? 'Client' : 'Clients'}${mockClients.length <= 1 ? ' - Free' : ''}` 
+                          : 'Free') 
+                        : 'Free'}
+                      </span>
                       <Button variant="outline" size="sm" className="h-7 px-3 text-xs bg-gradient-to-b from-blue-600/10 to-blue-800/20 border border-blue-500/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200">
-                        Upgrade
+                        Add Client
                       </Button>
                     </div>
                   </div>
