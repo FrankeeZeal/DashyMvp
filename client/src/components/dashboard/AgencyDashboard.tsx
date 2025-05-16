@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine, RiCheckLine } from "react-icons/ri";
+import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine, RiCheckLine, RiFileTextLine, RiLineChartLine, RiDashboardLine, RiPieChartLine, RiMenuLine } from "react-icons/ri";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // Function to make widget draggable only in edit mode
@@ -132,7 +132,7 @@ const mockIntegrations = [
 ];
 
 // Widget type definition
-type WidgetType = 'stats' | 'campaigns' | 'clients' | 'roi-analytics';
+type WidgetType = 'stats' | 'campaigns' | 'clients' | 'roi-analytics' | 'reports';
 
 // Dashboard widget interface
 interface DashboardWidget {
@@ -332,21 +332,33 @@ export const AgencyDashboard = () => {
             title="Recent Clients"
           />
         );
+      case 'reports':
+        return (
+          <div className="grid grid-cols-1 gap-8">
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+              <h3 className="text-lg font-medium text-white mb-4">ROI Reports</h3>
+              <ROIReport 
+                campaigns={campaigns as any}
+              />
+            </div>
+            
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+              <h3 className="text-lg font-medium text-white mb-4">Campaign Reports</h3>
+              <CampaignReport 
+                campaigns={campaigns as any}
+              />
+            </div>
+          </div>
+        );
       case 'roi-analytics':
         return (
           <Tabs defaultValue="roi" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+            <TabsList className="grid w-full grid-cols-2 bg-gray-700 mb-6">
               <TabsTrigger 
                 value="roi" 
                 className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
               >
                 ROI Calculator
-              </TabsTrigger>
-              <TabsTrigger 
-                value="reports" 
-                className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-              >
-                Reports
               </TabsTrigger>
               <TabsTrigger 
                 value="integrations" 
@@ -360,24 +372,6 @@ export const AgencyDashboard = () => {
               <ROICalculator 
                 campaigns={campaigns as any}
               />
-            </TabsContent>
-            
-            <TabsContent value="reports" className="mt-0">
-              <div className="grid grid-cols-1 gap-8">
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-white mb-4">ROI Reports</h3>
-                  <ROIReport 
-                    campaigns={campaigns as any}
-                  />
-                </div>
-                
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-                  <h3 className="text-lg font-medium text-white mb-4">Campaign Reports</h3>
-                  <CampaignReport 
-                    campaigns={campaigns as any}
-                  />
-                </div>
-              </div>
             </TabsContent>
             
             <TabsContent value="integrations" className="mt-0">
@@ -492,6 +486,17 @@ export const AgencyDashboard = () => {
                             <div className="flex-1">
                               <h3 className="text-md font-medium text-white">Campaign Management</h3>
                               <p className="text-sm text-gray-400 mt-1">Plan and track detailed campaign performance</p>
+                            </div>
+                          </div>
+                          
+                          {/* Reports */}
+                          <div className="border border-gray-700 rounded-lg bg-gray-800 p-6 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 shadow-lg shadow-blue-900/10 template-card flex">
+                            <div className="mr-4 bg-indigo-600/20 rounded-md w-12 h-12 flex items-center justify-center">
+                              <RiFileTextLine className="h-6 w-6 text-indigo-500" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-md font-medium text-white">Reports Dashboard</h3>
+                              <p className="text-sm text-gray-400 mt-1">Analyze ROI and campaign performance metrics</p>
                             </div>
                           </div>
                           
