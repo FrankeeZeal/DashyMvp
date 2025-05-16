@@ -15,33 +15,25 @@ export const OrganizationTypeSelection = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="w-full max-w-3xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-3">What type of organization do you have?</h1>
-          <p className="text-gray-300 max-w-lg mx-auto">We'll customize your experience based on your organization type</p>
+      <div className="w-full max-w-xl mx-auto">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-white mb-3">Who are you?</h1>
+          <p className="text-gray-300 max-w-md mx-auto">We'll customize your experience based on your selection</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 max-w-md mx-auto">
           {/* Agency Card */}
           <div className="cursor-pointer group" onClick={handleAgencySelection}>
-            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full shadow-xl">
-              <div className="p-6 flex flex-col h-full">
-                <div className="mb-4 rounded-lg overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
-                    alt="Marketing agency team workspace"
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <h2 className="text-xl font-semibold mb-2 text-white">I own an Agency</h2>
-                <p className="text-gray-300 mb-6 flex-grow">
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20">
+              <div className="p-8 flex flex-col text-center">
+                <h2 className="text-2xl font-semibold mb-3 text-white">Agency</h2>
+                <p className="text-gray-300 mb-6">
                   For email, SMS, and loyalty program agencies managing multiple clients and tracking ROI
                 </p>
-                <div className="mt-auto">
-                  <span className="inline-flex items-center text-primary-400 font-medium">
-                    Select this option
-                    <RiArrowRightLine className="ml-1 transition-transform duration-200 group-hover:translate-x-1" />
-                  </span>
+                <div className="mt-auto mx-auto">
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium transition-all shadow-lg hover:shadow-blue-500/50 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-800">
+                    Next
+                  </button>
                 </div>
               </div>
             </Card>
@@ -49,24 +41,16 @@ export const OrganizationTypeSelection = () => {
 
           {/* Ecom Store Card */}
           <div className="cursor-pointer group" onClick={handleEcomSelection}>
-            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full shadow-xl">
-              <div className="p-6 flex flex-col h-full">
-                <div className="mb-4 rounded-lg overflow-hidden">
-                  <img
-                    src="https://images.unsplash.com/photo-1556740758-90de374c12ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
-                    alt="E-commerce business workspace with products"
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-                <h2 className="text-xl font-semibold mb-2 text-white">I own an Ecom Store</h2>
-                <p className="text-gray-300 mb-6 flex-grow">
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20">
+              <div className="p-8 flex flex-col text-center">
+                <h2 className="text-2xl font-semibold mb-3 text-white">Ecom Store</h2>
+                <p className="text-gray-300 mb-6">
                   For individual e-commerce stores tracking campaign performance and accessing training resources
                 </p>
-                <div className="mt-auto">
-                  <span className="inline-flex items-center text-primary-400 font-medium">
-                    Select this option
-                    <RiArrowRightLine className="ml-1 transition-transform duration-200 group-hover:translate-x-1" />
-                  </span>
+                <div className="mt-auto mx-auto">
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium transition-all shadow-lg hover:shadow-blue-500/50 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-800">
+                    Next
+                  </button>
                 </div>
               </div>
             </Card>
