@@ -26,10 +26,7 @@ export const OrganizationTypeSelection = () => {
           <div className="cursor-pointer group flex-1" onClick={handleAgencySelection}>
             <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20 h-full">
               <div className="p-8 flex flex-col text-center h-full">
-                <h2 className="text-2xl font-semibold mb-3 text-white">Agency</h2>
-                <p className="text-gray-300 mb-6 flex-grow">
-                  For email, SMS, and loyalty program agencies managing multiple clients and tracking ROI
-                </p>
+                <h2 className="text-2xl font-semibold mb-6 text-white">Agency</h2>
                 <div className="mt-auto mx-auto">
                   <button className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium transition-all shadow-lg hover:shadow-blue-500/50 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-800">
                     Next
@@ -43,10 +40,7 @@ export const OrganizationTypeSelection = () => {
           <div className="cursor-pointer group flex-1" onClick={handleEcomSelection}>
             <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20 h-full">
               <div className="p-8 flex flex-col text-center h-full">
-                <h2 className="text-2xl font-semibold mb-3 text-white">Ecom Store</h2>
-                <p className="text-gray-300 mb-6 flex-grow">
-                  For individual e-commerce stores tracking campaign performance and accessing training resources
-                </p>
+                <h2 className="text-2xl font-semibold mb-6 text-white">Ecom Store</h2>
                 <div className="mt-auto mx-auto">
                   <button className="px-6 py-2 bg-blue-600 text-white rounded-md font-medium transition-all shadow-lg hover:shadow-blue-500/50 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-gray-800">
                     Next
