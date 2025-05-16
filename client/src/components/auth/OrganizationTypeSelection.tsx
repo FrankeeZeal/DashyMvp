@@ -14,17 +14,17 @@ export const OrganizationTypeSelection = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       <div className="w-full max-w-3xl">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">What type of organization do you have?</h1>
-          <p className="text-gray-600 max-w-lg mx-auto">We'll customize your experience based on your organization type</p>
+          <h1 className="text-3xl font-bold text-white mb-3">What type of organization do you have?</h1>
+          <p className="text-gray-300 max-w-lg mx-auto">We'll customize your experience based on your organization type</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Agency Card */}
           <div className="cursor-pointer group" onClick={handleAgencySelection}>
-            <Card className="border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full">
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full shadow-xl">
               <div className="p-6 flex flex-col h-full">
                 <div className="mb-4 rounded-lg overflow-hidden">
                   <img
@@ -33,12 +33,12 @@ export const OrganizationTypeSelection = () => {
                     className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <h2 className="text-xl font-semibold mb-2 text-gray-900">I own an Agency</h2>
-                <p className="text-gray-600 mb-6 flex-grow">
+                <h2 className="text-xl font-semibold mb-2 text-white">I own an Agency</h2>
+                <p className="text-gray-300 mb-6 flex-grow">
                   For email, SMS, and loyalty program agencies managing multiple clients and tracking ROI
                 </p>
                 <div className="mt-auto">
-                  <span className="inline-flex items-center text-primary-600 font-medium">
+                  <span className="inline-flex items-center text-primary-400 font-medium">
                     Select this option
                     <RiArrowRightLine className="ml-1 transition-transform duration-200 group-hover:translate-x-1" />
                   </span>
@@ -49,7 +49,7 @@ export const OrganizationTypeSelection = () => {
 
           {/* Ecom Store Card */}
           <div className="cursor-pointer group" onClick={handleEcomSelection}>
-            <Card className="border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full">
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 h-full shadow-xl">
               <div className="p-6 flex flex-col h-full">
                 <div className="mb-4 rounded-lg overflow-hidden">
                   <img
@@ -58,12 +58,12 @@ export const OrganizationTypeSelection = () => {
                     className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <h2 className="text-xl font-semibold mb-2 text-gray-900">I own an Ecom Store</h2>
-                <p className="text-gray-600 mb-6 flex-grow">
+                <h2 className="text-xl font-semibold mb-2 text-white">I own an Ecom Store</h2>
+                <p className="text-gray-300 mb-6 flex-grow">
                   For individual e-commerce stores tracking campaign performance and accessing training resources
                 </p>
                 <div className="mt-auto">
-                  <span className="inline-flex items-center text-primary-600 font-medium">
+                  <span className="inline-flex items-center text-primary-400 font-medium">
                     Select this option
                     <RiArrowRightLine className="ml-1 transition-transform duration-200 group-hover:translate-x-1" />
                   </span>
