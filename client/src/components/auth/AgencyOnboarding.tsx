@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ export const AgencyOnboarding = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [animationDirection, setAnimationDirection] = useState<'next' | 'prev'>('next');
   const totalSteps = 6;
 
   const form = useForm<AgencyOnboardingData>({
@@ -71,7 +73,15 @@ export const AgencyOnboarding = () => {
 
     if (isValid) {
       if (step < totalSteps) {
-        setStep(step + 1);
+        // Start animation
+        setAnimationDirection('next');
+        setIsAnimating(true);
+        
+        // After animation completes, change step
+        setTimeout(() => {
+          setStep(step + 1);
+          setIsAnimating(false);
+        }, 300);
       } else {
         // Last step submission
         if (form.formState.isValid) {
@@ -87,7 +97,15 @@ export const AgencyOnboarding = () => {
 
   const prevStep = () => {
     if (step > 1) {
-      setStep(step - 1);
+      // Start animation
+      setAnimationDirection('prev');
+      setIsAnimating(true);
+      
+      // After animation completes, change step
+      setTimeout(() => {
+        setStep(step - 1);
+        setIsAnimating(false);
+      }, 300);
     }
   };
 
@@ -149,147 +167,165 @@ export const AgencyOnboarding = () => {
             <Form {...form}>
               <form>
                 {/* Step 1: Agency Name */}
-                {step === 1 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">What's the name of your agency?</h2>
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem className="mb-8">
-                          <FormControl>
-                            <Input
-                              placeholder="Enter your agency name"
-                              className="text-lg p-3"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">What's the name of your agency?</h2>
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="mb-8">
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your agency name"
+                            className="text-lg p-3 bg-gray-700 border-gray-600 text-white"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Step 2: Company Age */}
-                {step === 2 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">How long has your agency been in business?</h2>
-                    <FormField
-                      control={form.control}
-                      name="age"
-                      render={() => (
-                        <FormItem>
-                          {renderOptions(ageOptions, "age")}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">How long has your agency been in business?</h2>
+                  <FormField
+                    control={form.control}
+                    name="age"
+                    render={() => (
+                      <FormItem>
+                        {renderOptions(ageOptions, "age")}
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Step 3: Number of Clients */}
-                {step === 3 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">How many clients does your agency currently have?</h2>
-                    <FormField
-                      control={form.control}
-                      name="clientCount"
-                      render={() => (
-                        <FormItem>
-                          {renderOptions(clientCountOptions, "clientCount")}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 3 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">How many clients does your agency currently have?</h2>
+                  <FormField
+                    control={form.control}
+                    name="clientCount"
+                    render={() => (
+                      <FormItem>
+                        {renderOptions(clientCountOptions, "clientCount")}
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Step 4: Tracking Tools */}
-                {step === 4 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">
-                      How are you tracking your clients' email & SMS data outside of the platforms that provide them?
-                    </h2>
-                    <FormField
-                      control={form.control}
-                      name="trackingMethod"
-                      render={() => (
-                        <FormItem>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-                            {trackingOptions.map((option) => (
-                              <Button
-                                key={option}
-                                type="button"
-                                variant={form.watch("trackingMethod") === option ? "default" : "outline"}
-                                className={
-                                  form.watch("trackingMethod") === option
-                                    ? "bg-blue-800 text-white border-blue-400"
-                                    : "text-gray-200 border-gray-600"
-                                }
-                                onClick={() => form.setValue("trackingMethod", option, { shouldValidate: true })}
-                              >
-                                {option}
-                              </Button>
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 4 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">
+                    How are you tracking your clients' email & SMS data outside of the platforms that provide them?
+                  </h2>
+                  <FormField
+                    control={form.control}
+                    name="trackingMethod"
+                    render={() => (
+                      <FormItem>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+                          {trackingOptions.map((option) => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={form.watch("trackingMethod") === option ? "default" : "outline"}
+                              className={
+                                form.watch("trackingMethod") === option
+                                  ? "bg-blue-800 text-white border-blue-400"
+                                  : "text-gray-200 border-gray-600"
+                              }
+                              onClick={() => form.setValue("trackingMethod", option, { shouldValidate: true })}
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Step 5: Team Size */}
-                {step === 5 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">How many team members do you have?</h2>
-                    <FormField
-                      control={form.control}
-                      name="teamSize"
-                      render={() => (
-                        <FormItem>
-                          {renderOptions(teamSizeOptions, "teamSize")}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 5 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">How many team members do you have?</h2>
+                  <FormField
+                    control={form.control}
+                    name="teamSize"
+                    render={() => (
+                      <FormItem>
+                        {renderOptions(teamSizeOptions, "teamSize")}
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 {/* Step 6: Add Team Now */}
-                {step === 6 && (
-                  <div>
-                    <h2 className="text-xl font-semibold mb-6 text-white">Would you like to add your team members now?</h2>
-                    <p className="text-gray-400 mb-6">You can always add them later from your dashboard.</p>
-                    <FormField
-                      control={form.control}
-                      name="addTeamNow"
-                      render={() => (
-                        <FormItem>
-                          <div className="grid grid-cols-2 gap-3 mb-8">
-                            {addTeamOptions.map((option) => (
-                              <Button
-                                key={option}
-                                type="button"
-                                variant={form.watch("addTeamNow") === option ? "default" : "outline"}
-                                className={
-                                  form.watch("addTeamNow") === option
-                                    ? "bg-primary-50 text-primary-700 border-primary-500"
-                                    : ""
-                                }
-                                onClick={() => form.setValue("addTeamNow", option, { shouldValidate: true })}
-                              >
-                                {option}
-                              </Button>
-                            ))}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
+                <div 
+                  className={`transition-all duration-300 ${
+                    step === 6 ? 'opacity-100 translate-x-0' : 'opacity-0 absolute pointer-events-none'
+                  } ${animationDirection === 'next' && isAnimating ? 'translate-x-20' : ''}
+                    ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
+                >
+                  <h2 className="text-xl font-semibold mb-6 text-white">Would you like to add your team members now?</h2>
+                  <p className="text-gray-400 mb-6">You can always add them later from your dashboard.</p>
+                  <FormField
+                    control={form.control}
+                    name="addTeamNow"
+                    render={() => (
+                      <FormItem>
+                        <div className="grid grid-cols-2 gap-3 mb-8">
+                          {addTeamOptions.map((option) => (
+                            <Button
+                              key={option}
+                              type="button"
+                              variant={form.watch("addTeamNow") === option ? "default" : "outline"}
+                              className={
+                                form.watch("addTeamNow") === option
+                                  ? "bg-blue-800 text-white border-blue-400"
+                                  : "text-gray-200 border-gray-600"
+                              }
+                              onClick={() => form.setValue("addTeamNow", option, { shouldValidate: true })}
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
+                        <FormMessage className="text-red-400" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <div className="flex justify-between">
                   {step > 1 && (
@@ -303,11 +339,11 @@ export const AgencyOnboarding = () => {
                       <RiArrowLeftLine className="mr-1" /> Back
                     </Button>
                   )}
-                  <div className={step === 1 ? "ml-auto" : ""}>
+                  <div className="ml-0">
                     <Button
                       type="button"
                       onClick={nextStep}
-                      className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg hover:shadow-blue-500/50"
+                      className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/60 transition-all duration-300"
                       disabled={createAgencyMutation.isPending}
                     >
                       {step === totalSteps ? "Finish Setup" : "Continue"}
