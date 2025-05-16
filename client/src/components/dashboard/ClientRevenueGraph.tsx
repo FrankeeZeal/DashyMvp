@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -10,9 +10,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
+import { format, addDays, subDays, subMonths, startOfQuarter, endOfQuarter } from "date-fns";
 
 // Types
 interface Client {
@@ -29,7 +29,7 @@ interface ClientRevenueGraphProps {
   isLoading?: boolean;
 }
 
-// Custom curve that adds a slight curve to the lines
+// Custom dot with glow effect
 const CustomizedDot = (props: any) => {
   const { cx, cy, stroke, dataKey } = props;
   
@@ -58,69 +58,139 @@ const CustomizedDot = (props: any) => {
   );
 };
 
+// Custom formatter for Y-axis ticks to show currency
+const formatYAxis = (value: number) => {
+  return `$${value}k`;
+};
+
+// Custom formatter for tooltip values
+const formatTooltipValue = (value: number) => {
+  return [`$${value.toFixed(1)}k`, 'Revenue'];
+};
+
 export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRevenueGraphProps) => {
   // State for filters
   const [channelFilter, setChannelFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [timeFilter, setTimeFilter] = useState<string>("30days");
+  
+  // Generate dates for the x-axis based on selected time period
+  const dates = useMemo(() => {
+    const today = new Date();
+    let dateRange: Date[] = [];
+    
+    switch (timeFilter) {
+      case "yesterday":
+        // Just show yesterday and today
+        dateRange = [subDays(today, 1), today];
+        break;
+        
+      case "30days":
+        // Show 5 points over 30 days
+        dateRange = [
+          subDays(today, 30),
+          subDays(today, 22),
+          subDays(today, 15),
+          subDays(today, 7),
+          today
+        ];
+        break;
+        
+      case "60days":
+        // Show 6 points over 60 days
+        dateRange = [
+          subDays(today, 60),
+          subDays(today, 48),
+          subDays(today, 36),
+          subDays(today, 24),
+          subDays(today, 12),
+          today
+        ];
+        break;
+        
+      case "quarter":
+        // Show the current quarter with monthly points
+        const quarterStart = startOfQuarter(today);
+        const quarterEnd = endOfQuarter(today);
+        
+        // Calculate number of months in the quarter
+        const monthsInQuarter = Math.round((quarterEnd.getTime() - quarterStart.getTime()) / (30 * 24 * 60 * 60 * 1000));
+        
+        dateRange = Array.from({ length: monthsInQuarter + 1 }, (_, i) => {
+          return addDays(quarterStart, i * 30);
+        });
+        break;
+        
+      case "custom":
+        // Custom range (last 45 days with weekly points)
+        dateRange = [
+          subDays(today, 45),
+          subDays(today, 36),
+          subDays(today, 27),
+          subDays(today, 18),
+          subDays(today, 9),
+          today
+        ];
+        break;
+    }
+    
+    return dateRange;
+  }, [timeFilter]);
   
   // Mock data if no clients provided
   const mockClients: Client[] = [
     { id: 1, name: "Sista Teas", revenue: 12.5, emailRevenue: 7.2, smsRevenue: 5.3, flowsRevenue: 8.1 },
-    { id: 2, name: "Bark Box", revenue: 8.9, emailRevenue: 5.1, smsRevenue: 3.8, flowsRevenue: 6.2 },
-    { id: 3, name: "Fuzzy Kittens", revenue: 15.3, emailRevenue: 9.8, smsRevenue: 5.5, flowsRevenue: 11.2 },
-    { id: 4, name: "Cozy Home", revenue: 6.7, emailRevenue: 3.2, smsRevenue: 3.5, flowsRevenue: 4.5 },
-    { id: 5, name: "Planet Fitness", revenue: 18.1, emailRevenue: 10.3, smsRevenue: 7.8, flowsRevenue: 12.6 },
-    { id: 6, name: "Sweet Treats", revenue: 9.4, emailRevenue: 5.6, smsRevenue: 3.8, flowsRevenue: 7.2 },
+    { id: 2, name: "Earthly Goods", revenue: 8.9, emailRevenue: 5.1, smsRevenue: 3.8, flowsRevenue: 6.2 },
+    { id: 3, name: "Green Valley", revenue: 15.3, emailRevenue: 9.8, smsRevenue: 5.5, flowsRevenue: 11.2 },
+    { id: 4, name: "FitLife Supplements", revenue: 6.7, emailRevenue: 3.2, smsRevenue: 3.5, flowsRevenue: 4.5 },
   ];
   
   // Use provided clients or mock data
-  const data = clients.length > 0 ? clients : mockClients;
+  const clientData = clients.length > 0 ? clients : mockClients;
   
-  // Process data based on filters
-  const getFilteredData = () => {
-    return data.map(client => {
-      let filteredRevenue = 0;
+  // Process data based on filters - now with dates on x-axis
+  const getFilteredData = useMemo(() => {
+    // Create a data point for each date in our range
+    return dates.map(date => {
+      const formattedDate = format(date, "MMM d");
       
-      // Filter by channel (email, sms, all)
-      if (channelFilter === "email") {
-        filteredRevenue = client.emailRevenue;
-      } else if (channelFilter === "sms") {
-        filteredRevenue = client.smsRevenue;
-      } else if (channelFilter === "flows") {
-        filteredRevenue = client.flowsRevenue;
-      } else {
-        filteredRevenue = client.revenue;
-      }
+      // Calculate progress factor (0 to 1) to simulate growth over time
+      // Earlier dates will have lower values
+      const totalDaysInRange = (dates[dates.length - 1].getTime() - dates[0].getTime()) / (24 * 60 * 60 * 1000);
+      const daysFromStart = (date.getTime() - dates[0].getTime()) / (24 * 60 * 60 * 1000);
+      const progressFactor = totalDaysInRange > 0 ? daysFromStart / totalDaysInRange : 0;
       
-      // Apply time filter (this would use real date filtering in a real app)
-      // For this example, we'll just adjust the revenue based on the time filter to simulate difference
-      let timeMultiplier = 1;
-      switch (timeFilter) {
-        case "yesterday":
-          timeMultiplier = 0.03;
-          break;
-        case "30days":
-          timeMultiplier = 1;
-          break;
-        case "60days":
-          timeMultiplier = 1.8;
-          break;
-        case "quarter":
-          timeMultiplier = 3;
-          break;
-        case "custom":
-          timeMultiplier = 2;
-          break;
-      }
+      // Create revenue data for each client at this date point
+      const dataPoint: Record<string, any> = { date: formattedDate };
       
-      return {
-        name: client.name,
-        revenue: filteredRevenue * timeMultiplier,
-        id: client.id
-      };
+      clientData.forEach(client => {
+        let baseRevenue = 0;
+        
+        // Apply channel filter
+        if (channelFilter === "email") {
+          baseRevenue = client.emailRevenue;
+        } else if (channelFilter === "sms") {
+          baseRevenue = client.smsRevenue;
+        } else if (channelFilter === "flows") {
+          baseRevenue = client.flowsRevenue;
+        } else {
+          baseRevenue = client.revenue;
+        }
+        
+        // Apply time-based growth factor (more recent dates have higher revenue)
+        // Also add some randomness for more realistic data
+        const randomFactor = 0.8 + Math.random() * 0.4; // Random value between 0.8 and 1.2
+        const timeBasedRevenue = baseRevenue * (0.7 + (progressFactor * 0.6)) * randomFactor;
+        
+        // Store client's revenue for this date point
+        dataPoint[`client${client.id}`] = parseFloat(timeBasedRevenue.toFixed(1));
+        
+        // Store client name for reference
+        dataPoint[`clientName${client.id}`] = client.name;
+      });
+      
+      return dataPoint;
     });
-  };
+  }, [dates, clientData, channelFilter, timeFilter]);
   
   // Color scheme for client data points
   const clientColors = [
@@ -135,8 +205,8 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
   return (
     <Card className="w-full overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between px-6 pb-0">
-        <CardTitle className="text-lg font-semibold text-white">Client Revenue</CardTitle>
-        <div className="flex space-x-2">
+        <CardTitle className="text-lg font-semibold text-white">Client Revenue Analytics</CardTitle>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
           {/* Channel Filter */}
           <ToggleGroup 
             type="single" 
@@ -243,21 +313,21 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
             <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
           </div>
         ) : (
-          <div className="h-[350px] w-full">
+          <div className="h-[400px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={getFilteredData()}
+                data={getFilteredData}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <defs>
-                  {data.map((client, index) => (
+                  {clientData.map((client, index) => (
                     <filter key={`glow-${client.id}`} id={`glow-${client.id}`} x="-50%" y="-50%" width="200%" height="200%">
                       <feGaussianBlur stdDeviation="3" result="blur" />
                       <feComposite in="SourceGraphic" in2="blur" operator="over" />
                     </filter>
                   ))}
                   
-                  {data.map((client, index) => (
+                  {clientData.map((client, index) => (
                     <linearGradient key={`gradient-${client.id}`} id={`gradient-${client.id}`} x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={clientColors[index % clientColors.length]} stopOpacity={0.8} />
                       <stop offset="100%" stopColor={clientColors[index % clientColors.length]} stopOpacity={0.2} />
@@ -267,13 +337,14 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                 
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                 <XAxis 
-                  dataKey="name" 
+                  dataKey="date" 
                   tick={{ fill: '#9ca3af' }} 
                   axisLine={{ stroke: 'rgba(255,255,255,0.2)' }}
                 />
                 <YAxis 
                   tick={{ fill: '#9ca3af' }} 
                   axisLine={{ stroke: 'rgba(255,255,255,0.2)' }}
+                  tickFormatter={formatYAxis}
                   label={{ 
                     value: 'Revenue (in $1,000s)', 
                     angle: -90, 
@@ -292,19 +363,24 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                   }}
                   labelStyle={{ color: '#e5e7eb', fontWeight: 'bold', marginBottom: '0.5rem' }}
                   itemStyle={{ color: '#e5e7eb' }}
-                  formatter={(value: any) => [`$${value}k`, 'Revenue']}
+                  formatter={formatTooltipValue}
                 />
                 <Legend 
-                  formatter={(value, entry) => <span style={{ color: '#9ca3af' }}>{value}</span>}
+                  formatter={(value, entry) => {
+                    // Extract client name from the value
+                    const clientId = value.replace('client', '');
+                    const clientName = clientData.find(c => c.id.toString() === clientId)?.name;
+                    return <span style={{ color: '#9ca3af' }}>{clientName || value}</span>;
+                  }}
                 />
                 
                 {/* Generate a line for each client */}
-                {data.map((client, index) => (
+                {clientData.map((client, index) => (
                   <Line
                     key={client.id}
                     type="monotone"
-                    dataKey="revenue"
-                    name={client.name}
+                    dataKey={`client${client.id}`}
+                    name={`client${client.id}`}
                     stroke={clientColors[index % clientColors.length]}
                     strokeWidth={2}
                     dot={<CustomizedDot />}
