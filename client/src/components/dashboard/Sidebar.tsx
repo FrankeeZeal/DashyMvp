@@ -78,14 +78,16 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/clients`, label: "Clients", icon: <RiUserLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
-        { path: `${basePath}/agents`, label: "Agents", icon: <RiTeamLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        { path: `${basePath}/agents`, label: "Agents", icon: <RiMenuLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
       ]
     : [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
-        { path: `${basePath}/agents`, label: "Agents", icon: <RiTeamLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        { path: `${basePath}/agents`, label: "Agents", icon: <RiMenuLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
       ];
 
   return (
