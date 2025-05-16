@@ -65,6 +65,7 @@ export const ClientDetail = () => {
   };
   
   // Define client data based on data from backend or demo data
+  // We track client IDs internally for API calls, but these are not displayed to users
   const demoClients = [
     { 
       id: 1, 
@@ -163,7 +164,6 @@ export const ClientDetail = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4">
                   <div>
                     <h1 className="text-2xl font-bold text-white">{clientData.name}</h1>
-                    <p className="text-sm text-gray-400">Client ID: {clientData.id}</p>
                   </div>
                 </div>
               </div>
