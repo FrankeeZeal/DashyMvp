@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
-import { RiMenuLine, RiNotification3Line, RiDashboardLine, RiUserLine, RiMailLine, RiTeamLine, RiPieChartLine, RiSettingsLine, RiBookOpenLine, RiSearchLine } from "react-icons/ri";
+import { RiMenuLine, RiNotification3Line, RiDashboardLine, RiUserLine, RiFileTextLine, RiTeamLine, RiPieChartLine, RiSettingsLine, RiBookOpenLine, RiSearchLine } from "react-icons/ri";
 
 interface NavbarProps {
   type: "agency" | "ecom";
@@ -40,18 +42,19 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
     ? [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className="mr-3 text-lg" /> },
         { path: `${basePath}/clients`, label: "Clients", icon: <RiUserLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/campaigns`, label: "Campaigns", icon: <RiMailLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className="mr-3 text-lg" /> },
         { path: `${basePath}/settings`, label: "Settings", icon: <RiSettingsLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/training`, label: "Knowledge Base", icon: <RiBookOpenLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
       ]
     : [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/campaigns`, label: "Campaigns", icon: <RiMailLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className="mr-3 text-lg" /> },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
-        { path: `${basePath}/training`, label: "Training", icon: <RiBookOpenLine className="mr-3 text-lg" /> },
         { path: `${basePath}/settings`, label: "Settings", icon: <RiSettingsLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/training`, label: "Knowledge Base", icon: <RiBookOpenLine className="mr-3 text-lg" /> },
+        { path: `${basePath}/team`, label: "Team", icon: <RiTeamLine className="mr-3 text-lg" /> },
       ];
 
   return (
@@ -66,24 +69,34 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
       </Button>
 
       <div className="flex-1 flex justify-between px-4 md:px-0">
-        <div className="flex-1 flex items-center md:ml-6">
-          <div className="w-full md:max-w-md">
-            <div className="relative text-gray-400 focus-within:text-blue-400">
-              <div className="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                <RiSearchLine />
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold text-white bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mr-2">Dashy</h1>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-400 hover:text-white hover:bg-gray-800 ml-2"
+              >
+                <RiSearchLine className="h-5 w-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0 bg-gray-800 border-gray-700">
+              <div className="p-4">
+                <div className="relative">
+                  <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Input
+                    placeholder="Search..."
+                    className="pl-9 bg-gray-700 border-gray-600 text-white focus:border-blue-500"
+                  />
+                </div>
               </div>
-              <Input
-                id="search"
-                className="block w-full bg-gray-800 py-2 pl-10 pr-3 border border-gray-700 rounded-md leading-5 text-white placeholder-gray-500 focus:outline-none focus:bg-gray-800 focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Search"
-                type="search"
-                name="search"
-              />
-            </div>
-          </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
-        <div className="ml-4 flex items-center md:ml-6">
+        <div className="flex items-center md:ml-6">
           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
             <RiNotification3Line className="h-6 w-6" />
           </Button>
