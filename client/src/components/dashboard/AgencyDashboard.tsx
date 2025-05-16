@@ -568,7 +568,9 @@ export const AgencyDashboard = () => {
                                     </div>
                                   )}
                                   
-                                  <h3 className="text-lg font-medium text-white flex-1">{widget.title}</h3>
+                                  <h3 className="text-lg font-medium text-white flex-1">
+                                    {widget.title}
+                                  </h3>
                                   <div className="flex space-x-2">
                                     <button 
                                       className="p-1 rounded-md hover:bg-gray-700 text-gray-400 hover:text-white"
