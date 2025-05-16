@@ -5,9 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
-import { RiMenuLine, RiNotification3Line, RiDashboardLine, RiUserLine, RiFileTextLine, RiTeamLine, RiPieChartLine, RiSettingsLine, RiBookOpenLine, RiSearchLine } from "react-icons/ri";
+import { RiMenuLine, RiNotification3Line, RiDashboardLine, RiUserLine, RiFileTextLine, RiTeamLine, RiPieChartLine, RiSettingsLine, RiBookOpenLine, RiSearchLine, RiLogoutBoxRLine } from "react-icons/ri";
 
 interface NavbarProps {
   type: "agency" | "ecom";
@@ -79,9 +87,10 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
           </Button>
 
           <div className="ml-3 relative">
+            {/* Mobile menu */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="bg-gray-800 hover:bg-gray-700">
+                <Button variant="ghost" size="icon" className="md:hidden bg-gray-800 hover:bg-gray-700">
                   <Avatar className="border-2 border-blue-500/30">
                     <AvatarImage src={user?.profileImageUrl} alt={getName()} />
                     <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
@@ -132,6 +141,49 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
                 </div>
               </SheetContent>
             </Sheet>
+            
+            {/* Desktop dropdown */}
+            <div className="hidden md:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="bg-gray-800 hover:bg-gray-700">
+                    <Avatar className="border-2 border-blue-500/30">
+                      <AvatarImage src={user?.profileImageUrl} alt={getName()} />
+                      <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-gray-900 border-gray-700 text-gray-200">
+                  <div className="p-2 border-b border-gray-700">
+                    <div className="flex items-center">
+                      <Avatar className="border-2 border-blue-500/30 h-8 w-8">
+                        <AvatarImage src={user?.profileImageUrl} alt={getName()} />
+                        <AvatarFallback className="bg-blue-900 text-blue-100 text-xs">{getInitials()}</AvatarFallback>
+                      </Avatar>
+                      <div className="ml-2">
+                        <p className="text-sm font-medium text-white">{getName()}</p>
+                        <p className="text-xs font-medium text-gray-400">
+                          {isAgency ? "Agency Owner" : "Store Owner"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-800">
+                    <RiSettingsLine className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-gray-700" />
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-gray-800" 
+                    onClick={() => (window.location.href = "/api/logout")}
+                  >
+                    <RiLogoutBoxRLine className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>

@@ -180,50 +180,7 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             </nav>
           </div>
         </div>
-        <div className="flex-shrink-0 flex border-t border-gray-700 p-4">
-          <div className="flex-shrink-0 group block w-full">
-            <div className={cn(
-              "flex items-center",
-              collapsed && "justify-center"
-            )}>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <div className="cursor-pointer">
-                    <Avatar className="border-2 border-blue-500/30">
-                      {user?.profileImageUrl ? (
-                        <AvatarImage src={user.profileImageUrl} alt={getName()} />
-                      ) : (
-                        <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
-                      )}
-                    </Avatar>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-gray-900 border-gray-700 text-gray-200">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-800">
-                    <RiSettingsLine className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-800" onClick={onLogout}>
-                    <span>Logout</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              {!collapsed && (
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-white group-hover:text-blue-300">
-                    {getName()}
-                  </p>
-                  <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
-                    {isAgency ? "Agency Owner" : "Store Owner"}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Footer section here if needed */}
       </div>
     </aside>
   );
