@@ -36,9 +36,17 @@ interface ClientAssignments {
   [clientId: number]: TeamMember[];
 }
 
+// Client document type
+interface ClientDocument {
+  id: string;
+  name: string;
+  url: string;
+}
+
 // Extended client data
 interface ClientExtendedData {
-  docsUrl?: string;
+  docsUrl?: string;  // Maintaining for backward compatibility
+  documents?: ClientDocument[];
   contractStart?: string;
   contractEnd?: string;
   retainerRate?: number;
@@ -92,6 +100,10 @@ export const AllClients = () => {
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const [editingDocUrl, setEditingDocUrl] = useState<number | null>(null);
+  const [addingDocument, setAddingDocument] = useState<number | null>(null);
+  const [editingDocumentId, setEditingDocumentId] = useState<string | null>(null);
+  const [documentFormData, setDocumentFormData] = useState<{name: string, url: string}>({name: '', url: ''});
+  const [clientDataBackup, setClientDataBackup] = useState<{[clientId: number]: ClientExtendedData}>({});
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   
   // Initial client assignments state
@@ -114,6 +126,10 @@ export const AllClients = () => {
   const [clientsExtendedData, setClientsExtendedData] = useState<ClientsExtendedDataMap>({
     1: {
       docsUrl: 'https://docs.google.com/document/d/1e8XcfZSD-EarthlyGoods',
+      documents: [
+        { id: '1-1', name: 'Contract', url: 'https://docs.google.com/document/d/1e8XcfZSD-EarthlyGoods' },
+        { id: '1-2', name: 'Onboarding', url: 'https://docs.google.com/document/d/EarthlyGoodsOnboarding' }
+      ],
       contractStart: '2023-01-01',
       contractEnd: '2023-12-31',
       retainerRate: 2500,
@@ -122,6 +138,9 @@ export const AllClients = () => {
     },
     2: {
       docsUrl: 'https://docs.google.com/document/d/1e5wSistaTeas',
+      documents: [
+        { id: '2-1', name: 'Contract', url: 'https://docs.google.com/document/d/1e5wSistaTeas' }
+      ],
       contractStart: '2023-02-15',
       contractEnd: '2024-02-14',
       retainerRate: 3200,
@@ -130,6 +149,10 @@ export const AllClients = () => {
     },
     3: {
       docsUrl: 'https://drive.google.com/MountainWellnessFiles',
+      documents: [
+        { id: '3-1', name: 'Contract', url: 'https://drive.google.com/MountainWellnessFiles' },
+        { id: '3-2', name: 'Strategy', url: 'https://drive.google.com/MountainWellnessStrategy' }
+      ],
       contractStart: '2023-03-01',
       contractEnd: '2024-03-01',
       retainerRate: 1800,
@@ -138,6 +161,9 @@ export const AllClients = () => {
     },
     4: {
       docsUrl: 'https://notion.so/FitlifeSupplementsDocs',
+      documents: [
+        { id: '4-1', name: 'Contract', url: 'https://notion.so/FitlifeSupplementsDocs' }
+      ],
       contractStart: '2023-04-15',
       contractEnd: '2023-10-15',
       retainerRate: 4000,
@@ -674,60 +700,293 @@ export const AllClients = () => {
                                 <h4 className="text-sm font-medium text-white mb-3">Client Information</h4>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  {/* Docs Link */}
-                                  <div>
-                                    <label className="block text-xs text-gray-400 mb-1">Client Documents</label>
-                                    <div className="flex items-center">
-                                      {editingDocUrl === client.id ? (
+                                  {/* Client Documents Section */}
+                                  <div className="col-span-1 md:col-span-2">
+                                    <div className="flex justify-between items-center mb-2">
+                                      <label className="block text-xs text-gray-400">Client Documents</label>
+                                      {isAdmin && (
                                         <div className="flex items-center">
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-7 px-2 text-xs hover:bg-blue-900/30 text-blue-400"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              // Save backup of client data before editing
+                                              if (!clientDataBackup[client.id]) {
+                                                setClientDataBackup(prev => ({
+                                                  ...prev,
+                                                  [client.id]: {...clientsExtendedData[client.id]}
+                                                }));
+                                              }
+                                              setAddingDocument(client.id);
+                                              setDocumentFormData({name: '', url: ''});
+                                            }}
+                                            disabled={
+                                              (clientsExtendedData[client.id]?.documents?.length || 0) >= 5 ||
+                                              addingDocument === client.id
+                                            }
+                                          >
+                                            <Plus className="h-3 w-3 mr-1" />
+                                            Add Document
+                                          </Button>
+                                          {(editingDocUrl === client.id || 
+                                             editingDocumentId || 
+                                             addingDocument === client.id) && (
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-7 px-2 text-xs hover:bg-red-900/30 text-red-400 ml-1"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                // Restore from backup
+                                                if (clientDataBackup[client.id]) {
+                                                  setClientsExtendedData(prev => ({
+                                                    ...prev,
+                                                    [client.id]: clientDataBackup[client.id]
+                                                  }));
+                                                  // Clear backup after using it
+                                                  setClientDataBackup(prev => {
+                                                    const newBackup = {...prev};
+                                                    delete newBackup[client.id];
+                                                    return newBackup;
+                                                  });
+                                                }
+                                                setEditingDocUrl(null);
+                                                setEditingDocumentId(null);
+                                                setAddingDocument(null);
+                                              }}
+                                            >
+                                              <X className="h-3 w-3 mr-1" />
+                                              Cancel
+                                            </Button>
+                                          )}
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Add New Document Form */}
+                                    {addingDocument === client.id && (
+                                      <div className="mb-3 p-3 bg-gray-800 border border-gray-700 rounded-md">
+                                        <h5 className="text-sm font-medium text-white mb-2">Add New Document</h5>
+                                        <div className="grid grid-cols-1 gap-2">
                                           <Input
                                             type="text"
-                                            placeholder="Enter document URL"
-                                            className="bg-gray-700 border-gray-600 text-white text-xs h-9 w-48 mr-2"
-                                            value={clientsExtendedData[client.id]?.docsUrl || ''}
+                                            placeholder="Document Name"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-8"
+                                            value={documentFormData.name}
                                             onChange={(e) => {
                                               e.stopPropagation();
-                                              handleUpdateClientData(client.id, 'docsUrl', e.target.value);
+                                              setDocumentFormData(prev => ({...prev, name: e.target.value}));
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                          />
+                                          <Input
+                                            type="text"
+                                            placeholder="Document URL"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-8"
+                                            value={documentFormData.url}
+                                            onChange={(e) => {
+                                              e.stopPropagation();
+                                              setDocumentFormData(prev => ({...prev, url: e.target.value}));
                                             }}
                                             onClick={(e) => e.stopPropagation()}
                                           />
                                           <Button
                                             size="sm"
-                                            className="bg-green-600 hover:bg-green-700 h-9 px-2"
+                                            className="bg-green-600 hover:bg-green-700 h-8 mt-1"
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              setEditingDocUrl(null);
+                                              if (documentFormData.name && documentFormData.url) {
+                                                const newDoc: ClientDocument = {
+                                                  id: `${client.id}-${Date.now()}`,
+                                                  name: documentFormData.name,
+                                                  url: documentFormData.url
+                                                };
+                                                
+                                                setClientsExtendedData(prev => {
+                                                  const currentData = prev[client.id] || {};
+                                                  const currentDocs = currentData.documents || [];
+                                                  
+                                                  return {
+                                                    ...prev,
+                                                    [client.id]: {
+                                                      ...currentData,
+                                                      documents: [...currentDocs, newDoc]
+                                                    }
+                                                  };
+                                                });
+                                                
+                                                setAddingDocument(null);
+                                                setDocumentFormData({name: '', url: ''});
+                                              }
                                             }}
+                                            disabled={!documentFormData.name || !documentFormData.url}
                                           >
-                                            <Check className="h-4 w-4" />
+                                            <Check className="h-4 w-4 mr-1" />
+                                            Save Document
                                           </Button>
                                         </div>
-                                      ) : (
-                                        <>
-                                          <a 
-                                            href={clientsExtendedData[client.id]?.docsUrl || '#'} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="flex items-center bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2 text-sm text-white"
+                                      </div>
+                                    )}
+
+                                    {/* Edit Document Form */}
+                                    {editingDocumentId && (
+                                      <div className="mb-3 p-3 bg-gray-800 border border-gray-700 rounded-md">
+                                        <h5 className="text-sm font-medium text-white mb-2">Edit Document</h5>
+                                        <div className="grid grid-cols-1 gap-2">
+                                          <Input
+                                            type="text"
+                                            placeholder="Document Name"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-8"
+                                            value={documentFormData.name}
+                                            onChange={(e) => {
+                                              e.stopPropagation();
+                                              setDocumentFormData(prev => ({...prev, name: e.target.value}));
+                                            }}
                                             onClick={(e) => e.stopPropagation()}
+                                          />
+                                          <Input
+                                            type="text"
+                                            placeholder="Document URL"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-8"
+                                            value={documentFormData.url}
+                                            onChange={(e) => {
+                                              e.stopPropagation();
+                                              setDocumentFormData(prev => ({...prev, url: e.target.value}));
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                          />
+                                          <Button
+                                            size="sm"
+                                            className="bg-green-600 hover:bg-green-700 h-8 mt-1"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (documentFormData.name && documentFormData.url) {
+                                                setClientsExtendedData(prev => {
+                                                  const currentData = prev[client.id] || {};
+                                                  const currentDocs = currentData.documents || [];
+                                                  
+                                                  return {
+                                                    ...prev,
+                                                    [client.id]: {
+                                                      ...currentData,
+                                                      documents: currentDocs.map(doc => 
+                                                        doc.id === editingDocumentId 
+                                                          ? { ...doc, name: documentFormData.name, url: documentFormData.url }
+                                                          : doc
+                                                      )
+                                                    }
+                                                  };
+                                                });
+                                                
+                                                setEditingDocumentId(null);
+                                                setDocumentFormData({name: '', url: ''});
+                                              }
+                                            }}
+                                            disabled={!documentFormData.name || !documentFormData.url}
                                           >
-                                            <FileText className="h-4 w-4 mr-2 text-blue-400" />
-                                            View Docs
-                                          </a>
-                                          {isAdmin && (
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="ml-2 h-9 px-2 hover:bg-gray-700"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                setEditingDocUrl(client.id);
-                                              }}
-                                            >
-                                              <Pencil className="h-4 w-4 text-gray-400" />
-                                            </Button>
-                                          )}
-                                        </>
+                                            <Check className="h-4 w-4 mr-1" />
+                                            Update Document
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Documents List */}
+                                    <div className="space-y-2 mt-1">
+                                      {clientsExtendedData[client.id]?.documents && 
+                                       clientsExtendedData[client.id]?.documents?.length > 0 ? (
+                                        clientsExtendedData[client.id]?.documents?.map((doc) => (
+                                          <div 
+                                            key={doc.id}
+                                            className="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2"
+                                          >
+                                            <div className="flex items-center">
+                                              <FileText className="h-4 w-4 mr-2 text-blue-400" />
+                                              <div>
+                                                <div className="text-sm text-white">{doc.name}</div>
+                                                <div className="text-xs text-gray-400 truncate max-w-[200px]">
+                                                  {doc.url}
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div className="flex items-center space-x-1">
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-7 px-2 hover:bg-blue-900/30"
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  window.open(doc.url, '_blank');
+                                                }}
+                                              >
+                                                <Eye className="h-3.5 w-3.5 text-blue-400" />
+                                              </Button>
+                                              
+                                              {isAdmin && (
+                                                <>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-7 px-2 hover:bg-gray-600"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      // Save backup of client data before editing
+                                                      if (!clientDataBackup[client.id]) {
+                                                        setClientDataBackup(prev => ({
+                                                          ...prev,
+                                                          [client.id]: {...clientsExtendedData[client.id]}
+                                                        }));
+                                                      }
+                                                      setEditingDocumentId(doc.id);
+                                                      setDocumentFormData({
+                                                        name: doc.name,
+                                                        url: doc.url
+                                                      });
+                                                    }}
+                                                  >
+                                                    <Pencil className="h-3.5 w-3.5 text-gray-400" />
+                                                  </Button>
+                                                  
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-7 px-2 hover:bg-red-900/30"
+                                                    onClick={(e) => {
+                                                      e.stopPropagation();
+                                                      // Save backup of client data before deleting
+                                                      if (!clientDataBackup[client.id]) {
+                                                        setClientDataBackup(prev => ({
+                                                          ...prev,
+                                                          [client.id]: {...clientsExtendedData[client.id]}
+                                                        }));
+                                                      }
+                                                      setClientsExtendedData(prev => {
+                                                        const currentData = prev[client.id] || {};
+                                                        const currentDocs = currentData.documents || [];
+                                                        
+                                                        return {
+                                                          ...prev,
+                                                          [client.id]: {
+                                                            ...currentData,
+                                                            documents: currentDocs.filter(d => d.id !== doc.id)
+                                                          }
+                                                        };
+                                                      });
+                                                    }}
+                                                  >
+                                                    <X className="h-3.5 w-3.5 text-red-400" />
+                                                  </Button>
+                                                </>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))
+                                      ) : (
+                                        <div className="text-sm text-gray-400 py-2">
+                                          No documents added for this client.
+                                        </div>
                                       )}
                                     </div>
                                   </div>
