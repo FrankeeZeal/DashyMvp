@@ -14,6 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   RiDashboardLine,
   RiUserLine,
   RiFileTextLine,
@@ -22,10 +27,12 @@ import {
   RiSettingsLine,
   RiBookOpenLine,
   RiArrowLeftSLine,
-  RiArrowRightSLine,
   RiSearchLine,
   RiMenuLine,
-  RiMenuFoldLine
+  RiMenuFoldLine,
+  RiArrowDownSLine,
+  RiAddLine,
+  RiMore2Fill
 } from "react-icons/ri";
 
 interface SidebarProps {
@@ -39,6 +46,16 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
   const [location] = useLocation();
   const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(isCollapsed);
+  const [clientsOpen, setClientsOpen] = useState(false);
+  
+  // Mock clients data - in production would come from API
+  const mockClients = [
+    { id: 1, name: "Earthly Goods", status: "Active" },
+    { id: 2, name: "Sista Teas", status: "Active" },
+    { id: 3, name: "Green Valley", status: "Active" },
+    { id: 4, name: "FitLife Supplements", status: "Active" },
+    { id: 5, name: "Blue Mountain Coffee", status: "Active" }
+  ];
   
   // Sync with parent state if provided
   useEffect(() => {
@@ -73,10 +90,32 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
   const basePath = isAgency ? "/dashboard/agency" : "/dashboard/ecom";
 
   // Updated navigation items based on new structure
+  const getClientItems = () => {
+    // Return only 4 clients and then show View All button
+    const displayClients = mockClients.slice(0, 4);
+    return displayClients.map(client => ({
+      path: `${basePath}/clients/${client.id}`,
+      label: client.name,
+      icon: <div className="w-2 h-2 rounded-full bg-green-500 mr-2 ml-6"></div>,
+      isSubItem: true
+    }));
+  };
+
   const navItems = isAgency
     ? [
         { path: basePath, label: "Dashboard", icon: <RiDashboardLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
-        { path: `${basePath}/clients`, label: "Clients", icon: <RiUserLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
+        // Special clients menu with dropdown
+        { 
+          path: `${basePath}/clients`, 
+          label: "Clients", 
+          icon: <RiUserLine className={collapsed ? "text-lg" : "mr-3 text-lg"} />,
+          isDropdown: true,
+          isOpen: clientsOpen,
+          onToggle: () => setClientsOpen(!clientsOpen),
+          subItems: getClientItems(),
+          viewAllPath: `${basePath}/clients`,
+          addNewPath: `${basePath}/clients/new`,
+        },
         { path: `${basePath}/analytics`, label: "Analytics", icon: <RiPieChartLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/agents`, label: "Agents", icon: <RiMenuLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
         { path: `${basePath}/docs`, label: "Docs", icon: <RiFileTextLine className={collapsed ? "text-lg" : "mr-3 text-lg"} /> },
@@ -139,14 +178,66 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
               <TooltipProvider>
                 {navItems.map((item) => (
                   <div key={item.path} className="w-full">
-                    {collapsed ? (
+                    {item.isDropdown && !collapsed ? (
+                      <Collapsible open={item.isOpen} onOpenChange={item.onToggle} className="w-full">
+                        <CollapsibleTrigger asChild>
+                          <div
+                            className={cn(
+                              "group flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md cursor-pointer",
+                              location.startsWith(item.path)
+                                ? "bg-blue-900/50 text-blue-300 shadow-sm shadow-blue-500/20"
+                                : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                            )}
+                          >
+                            <div className="flex items-center">
+                              {item.icon}
+                              {item.label}
+                            </div>
+                            <div className="transition-transform duration-200" style={{ transform: item.isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                              <RiArrowDownSLine className="h-4 w-4" />
+                            </div>
+                          </div>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
+                          <div className="pt-1 pb-2">
+                            {item.subItems.map((subItem) => (
+                              <Link href={subItem.path} key={subItem.path}>
+                                <div className={cn(
+                                  "flex items-center px-2 py-1.5 text-sm font-medium rounded-md cursor-pointer my-0.5",
+                                  location === subItem.path
+                                    ? "bg-blue-900/30 text-blue-300"
+                                    : "text-gray-400 hover:bg-gray-800/50 hover:text-gray-200"
+                                )}>
+                                  {subItem.icon}
+                                  <span className="truncate max-w-[140px]">{subItem.label}</span>
+                                </div>
+                              </Link>
+                            ))}
+                            <div className="flex items-center justify-between mt-1 px-2">
+                              <Link href={item.viewAllPath}>
+                                <div className="flex items-center text-xs text-blue-400 font-medium hover:text-blue-300 py-1.5">
+                                  <RiMore2Fill className="mr-1.5 h-3 w-3" />
+                                  View all
+                                </div>
+                              </Link>
+                              <Link href={item.addNewPath}>
+                                <div className="flex items-center text-xs text-blue-400 font-medium hover:text-blue-300 py-1.5">
+                                  <RiAddLine className="mr-1.5 h-3 w-3" />
+                                  Add New
+                                </div>
+                              </Link>
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ) : collapsed ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Link href={item.path}>
                             <div
                               className={cn(
                                 "group flex items-center justify-center p-2 text-sm font-medium rounded-md cursor-pointer",
-                                location === item.path
+                                location === item.path || (item.isDropdown && location.startsWith(item.path))
                                   ? "bg-blue-900/50 text-blue-300 shadow-sm shadow-blue-500/20"
                                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
                               )}
@@ -159,7 +250,7 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
                           {item.label}
                         </TooltipContent>
                       </Tooltip>
-                    ) : (
+                    ) : !item.isDropdown && (
                       <Link href={item.path}>
                         <div
                           className={cn(
