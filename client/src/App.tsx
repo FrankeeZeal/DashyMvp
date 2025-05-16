@@ -7,6 +7,7 @@ import Login from "@/pages/auth/Login";
 import Onboarding from "@/pages/auth/Onboarding";
 import AgencyDashboard from "@/pages/dashboard/AgencyDashboard";
 import EcomDashboard from "@/pages/dashboard/EcomDashboard";
+import ReportsPage from "@/pages/analytics/Reports";
 import { useEffect } from "react";
 
 // Create a new query client for beta testing
@@ -30,6 +31,8 @@ function App() {
               <Route path="/onboarding" component={Onboarding} />
               <Route path="/dashboard/agency" component={AgencyDashboard} />
               <Route path="/dashboard/ecom" component={EcomDashboard} />
+              <Route path="/dashboard/agency/analytics/reports" component={ReportsPage} />
+              <Route path="/dashboard/ecom/analytics/reports" component={ReportsPage} />
               
               {/* Fallback to 404 */}
               <Route component={NotFound} />
