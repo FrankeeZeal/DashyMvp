@@ -198,24 +198,22 @@ export const AgencyDashboard = () => {
         <div className="flex flex-col flex-1 w-full overflow-hidden transition-all duration-300">
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
-          <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6">
-            <div className="pb-6">
+          <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6 lg:p-8 max-w-full">
+            <div className="pb-6 container mx-auto">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
                   <p className="mt-1 text-gray-400">Welcome back, here's what's happening today.</p>
                 </div>
                 <div className="mt-4 md:mt-0">
-                  <div className="inline-flex gap-2">
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow-lg shadow-blue-500/30">
-                      + New Campaign
-                    </button>
-                  </div>
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow-lg shadow-blue-500/30">
+                    + New Campaign
+                  </button>
                 </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6 container mx-auto">
               <StatsCard
                 title="Total Clients"
                 value="4"
