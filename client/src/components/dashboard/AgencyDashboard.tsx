@@ -481,7 +481,7 @@ export const AgencyDashboard = () => {
         <div className="flex flex-col flex-1 w-full">
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
-          <main className="flex-1 relative overflow-y-auto bg-gray-900">
+          <main className="flex-1 relative overflow-y-auto overflow-x-hidden bg-gray-900">
             <div className="px-6 py-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
@@ -594,7 +594,10 @@ export const AgencyDashboard = () => {
                                     </button>
                                   </div>
                                 </div>
-                                <div className="p-6">
+                                <div className="p-6 overflow-auto" style={{ 
+                                  maxHeight: widget.size.width === 'full' ? 'calc(100vh - 200px)' : 'calc(100vh - 250px)',
+                                  minHeight: '200px'
+                                }}>
                                   {renderWidget(widget)}
                                 </div>
                               </div>
