@@ -494,20 +494,23 @@ export const AgencyDashboard = () => {
                   <h2 className="text-xl font-semibold text-white mb-4">{bucket.title}</h2>
                   
                   <Droppable droppableId={bucket.id} direction="horizontal">
-                    {(provided) => (
+                    {(provided, snapshot) => (
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className={`grid gap-6 ${bucket.columns === 2 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'}`}
+                        className={`grid gap-6 ${bucket.columns === 2 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'} ${
+                          snapshot.isDraggingOver ? 'bg-blue-900/10 rounded-lg p-4 border-2 border-dashed border-blue-500/30' : ''
+                        }`}
                       >
                         {bucket.widgets.map((widget, index) => (
                           <Draggable key={widget.id} draggableId={widget.id} index={index}>
-                            {(provided) => (
+                            {(provided, snapshot) => (
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
-                                className={`bg-gray-800 rounded-lg shadow-xl shadow-blue-900/10 border border-gray-700 overflow-hidden
-                                  ${widget.size.width === 'full' ? 'col-span-full' : ''}`}
+                                className={`bg-gray-800 rounded-lg shadow-xl shadow-blue-900/10 border overflow-hidden transition-all duration-200
+                                  ${widget.size.width === 'full' ? 'col-span-full' : ''}
+                                  ${snapshot.isDragging ? 'border-blue-400 ring-2 ring-blue-400/30 scale-[1.02] rotate-1 z-50' : 'border-gray-700'}`}
                               >
                                 <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800">
                                   <div {...provided.dragHandleProps} className="mr-3">
