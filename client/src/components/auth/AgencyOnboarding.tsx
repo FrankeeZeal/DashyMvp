@@ -273,7 +273,7 @@ export const AgencyOnboarding = () => {
                     ${animationDirection === 'prev' && isAnimating ? '-translate-x-20' : ''}`}
                 >
                   <h2 className="text-xl font-semibold mb-6 text-white">
-                    How are you tracking your clients' email & SMS data outside of the platforms that provide them?
+                    How are you currently tracking your client(s) Email & Sms data?
                   </h2>
                   <FormField
                     control={form.control}
