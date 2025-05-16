@@ -9,6 +9,7 @@ import AgencyDashboard from "@/pages/dashboard/AgencyDashboard";
 import EcomDashboard from "@/pages/dashboard/EcomDashboard";
 import ReportsPage from "@/pages/analytics/Reports";
 import { ClientDetail } from "@/pages/clients/ClientDetail";
+import { AllClients } from "@/pages/clients/AllClients";
 import { useEffect } from "react";
 
 // Create a new query client for beta testing
@@ -34,6 +35,7 @@ function App() {
               <Route path="/dashboard/ecom" component={EcomDashboard} />
               <Route path="/dashboard/agency/analytics/reports" component={ReportsPage} />
               <Route path="/dashboard/ecom/analytics/reports" component={ReportsPage} />
+              <Route path="/dashboard/clients/all" component={AllClients} />
               <Route path="/dashboard/agency/clients/:id" component={ClientDetail} />
               
               {/* Fallback to 404 */}

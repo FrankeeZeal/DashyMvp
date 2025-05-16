@@ -87,6 +87,8 @@ export const clients = pgTable("clients", {
   organizationId: integer("organization_id").notNull(),
   name: varchar("name").notNull(),
   status: varchar("status").default("active"),
+  hasEmailData: boolean("has_email_data").default(false),
+  hasSmsData: boolean("has_sms_data").default(false),
   addedAt: timestamp("added_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
