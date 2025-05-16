@@ -93,6 +93,15 @@ export const ClientDetail = () => {
       hasEmailData: false, 
       hasSmsData: true,
       addedAt: new Date(2023, 0, 3)
+    },
+    { 
+      id: 4, 
+      organizationId: 1, 
+      name: "Fitlife Supplements", 
+      status: "active",
+      hasEmailData: true, 
+      hasSmsData: true,
+      addedAt: new Date(2023, 1, 15)
     }
   ];
   

@@ -40,23 +40,30 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
     {
       id: 1,
       organizationId: 1,
-      name: "Sunrise Clothing Co.",
+      name: "Earthly Goods",
       status: "active",
       addedAt: new Date(2023, 0, 12),
     },
     {
       id: 2,
       organizationId: 1,
-      name: "Mountain Wellness",
+      name: "Sista Teas",
       status: "active",
       addedAt: new Date(2023, 0, 8),
     },
     {
       id: 3,
       organizationId: 1,
-      name: "The Pet Shop",
-      status: "pending",
+      name: "Mountain Wellness",
+      status: "active",
       addedAt: new Date(2023, 0, 3),
+    },
+    {
+      id: 4,
+      organizationId: 1,
+      name: "Fitlife Supplements",
+      status: "active",
+      addedAt: new Date(2023, 1, 15),
     },
   ] as Client[];
 
