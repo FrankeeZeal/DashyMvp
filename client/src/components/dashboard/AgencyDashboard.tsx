@@ -173,6 +173,7 @@ interface DashboardBucket {
 export const AgencyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   
   // Define widget sizes
   interface WidgetSize {
@@ -477,7 +478,24 @@ export const AgencyDashboard = () => {
                   <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
                   <p className="mt-1 text-gray-400">Welcome back, here's what's happening today.</p>
                 </div>
-                <div className="mt-4 md:mt-0">
+                <div className="flex items-center gap-4 mt-4 md:mt-0">
+                  {/* Edit Mode Toggle */}
+                  <div className="relative">
+                    <Button 
+                      variant="ghost"
+                      className={`flex items-center gap-2 px-3 py-2 rounded-md ${editMode ? 'bg-blue-900/30 text-blue-300' : 'text-gray-300 hover:bg-gray-800'}`}
+                      onClick={() => setEditMode(!editMode)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="1" />
+                        <circle cx="12" cy="5" r="1" />
+                        <circle cx="12" cy="19" r="1" />
+                      </svg>
+                      <span>{editMode ? 'Exit Edit Mode' : 'Edit Dashboard'}</span>
+                    </Button>
+                  </div>
+                  
+                  {/* Add Campaign Button */}
                   <Button 
                     className="bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center p-0"
                     aria-label="Add new campaign"
@@ -510,7 +528,8 @@ export const AgencyDashboard = () => {
                                 {...provided.draggableProps}
                                 className={`bg-gray-800 rounded-lg shadow-xl shadow-blue-900/10 border overflow-hidden transition-all duration-200
                                   ${widget.size.width === 'full' ? 'col-span-full' : ''}
-                                  ${snapshot.isDragging ? 'border-blue-400 ring-2 ring-blue-400/30 scale-[1.02] rotate-1 z-50' : 'border-gray-700'}`}
+                                  ${snapshot.isDragging ? 'border-blue-400 ring-2 ring-blue-400/30 scale-[1.02] rotate-1 z-50' : 'border-gray-700'}
+                                  ${editMode && !snapshot.isDragging ? 'widget-edit-mode' : ''}`}
                               >
                                 <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800">
                                   <div {...provided.dragHandleProps} className="mr-3">

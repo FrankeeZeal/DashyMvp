@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-1deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.widget-edit-mode {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+/* Widget hover ghost animation */
+.widget-ghost {
+  opacity: 0.7;
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 2px dashed rgba(59, 130, 246, 0.5);
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 20 14.3% 4.1%;
