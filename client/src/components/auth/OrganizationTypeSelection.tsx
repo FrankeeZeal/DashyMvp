@@ -9,23 +9,29 @@ export const OrganizationTypeSelection = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleAgencySelection = () => {
-    setSelectedCard('agency');
-    setIsTransitioning(true);
-    
-    // Add a slight delay for the animation effect
-    setTimeout(() => {
-      navigate("/onboarding?type=agency");
-    }, 500);
+    // Only proceed if not already transitioning
+    if (!isTransitioning) {
+      setSelectedCard('agency');
+      setIsTransitioning(true);
+      
+      // Add a slight delay for the animation effect
+      setTimeout(() => {
+        window.location.href = "/onboarding?type=agency";
+      }, 500);
+    }
   };
 
   const handleEcomSelection = () => {
-    setSelectedCard('ecom');
-    setIsTransitioning(true);
-    
-    // Add a slight delay for the animation effect
-    setTimeout(() => {
-      navigate("/onboarding?type=ecom");
-    }, 500);
+    // Only proceed if not already transitioning
+    if (!isTransitioning) {
+      setSelectedCard('ecom');
+      setIsTransitioning(true);
+      
+      // Add a slight delay for the animation effect
+      setTimeout(() => {
+        window.location.href = "/onboarding?type=ecom";
+      }, 500);
+    }
   };
 
   return (
