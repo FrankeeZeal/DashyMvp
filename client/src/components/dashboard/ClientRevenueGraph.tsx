@@ -363,7 +363,25 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                   }}
                   labelStyle={{ color: '#e5e7eb', fontWeight: 'bold', marginBottom: '0.5rem' }}
                   itemStyle={{ color: '#e5e7eb' }}
-                  formatter={formatTooltipValue}
+                  formatter={(value, name, props) => {
+                    // Get the client name directly from the data point
+                    if (typeof name === 'string' && name.startsWith('client')) {
+                      const clientId = name.replace('client', '');
+                      const client = clientData.find(c => c.id.toString() === clientId);
+                      
+                      if (client && typeof value === 'number') {
+                        return [`$${value.toFixed(1)}k (${client.name})`, 'Revenue'];
+                      }
+                    }
+                    return [`$${value}k`, 'Revenue'];
+                  }}
+                  
+                  // Add cursor pointer with active dot highlight
+                  cursor={{
+                    stroke: 'rgba(255,255,255,0.3)',
+                    strokeWidth: 1,
+                    strokeDasharray: '5 5'
+                  }}
                 />
                 <Legend 
                   formatter={(value, entry) => {
@@ -382,16 +400,22 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                     dataKey={`client${client.id}`}
                     name={`client${client.id}`}
                     stroke={clientColors[index % clientColors.length]}
-                    strokeWidth={2}
+                    strokeWidth={3}
                     dot={<CustomizedDot />}
                     activeDot={{ 
                       r: 8, 
                       fill: clientColors[index % clientColors.length],
-                      filter: `url(#glow-${client.id})` 
+                      filter: `url(#glow-${client.id})`,
+                      strokeWidth: 2,
+                      stroke: "#fff"
                     }}
                     isAnimationActive={true}
                     animationDuration={1000}
                     connectNulls
+                    // Enhanced hover effect
+                    onMouseOver={(data) => {
+                      // We could add animation effects here if needed
+                    }}
                   />
                 ))}
               </LineChart>

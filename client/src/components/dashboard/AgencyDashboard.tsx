@@ -646,8 +646,8 @@ export const AgencyDashboard = () => {
               </div>
             </div>
             
-            {/* Client Revenue Graph - Fixed at top */}
-            <div className="px-6 mb-8">
+            {/* Client Revenue Graph - Fixed at top, independent of edit mode */}
+            <div className="px-6 mb-8" style={{ position: 'relative', zIndex: 1 }}>
               <ClientRevenueGraph 
                 clients={[
                   { id: 1, name: "Earthly Goods", revenue: 8.9, emailRevenue: 5.1, smsRevenue: 3.8, flowsRevenue: 6.2 },
