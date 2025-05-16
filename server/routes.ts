@@ -1,7 +1,6 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { z } from "zod";
 import { 
   agencyOnboardingSchema, 
@@ -13,16 +12,30 @@ import {
   insertIntegrationSchema
 } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+// Simple middleware for MVP to handle auth
+const isAuthenticated = (req: Request, res: any, next: any) => {
+  // For MVP, we're allowing all requests through
+  // In production, this would validate the session
+  next();
+};
 
+export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      // For MVP testing, return a mock user
+      const mockUser = {
+        id: "123456",
+        email: "test@example.com",
+        firstName: "Test",
+        lastName: "User",
+        profileImageUrl: null,
+        role: "owner",
+        onboardingComplete: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      res.json(mockUser);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });

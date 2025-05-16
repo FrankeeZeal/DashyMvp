@@ -1,14 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+// For beta testing, we'll use a simpler approach without React Query
+// This will make the app work more smoothly for testing
+
+// Test user for the beta version
+const testUser = {
+  id: "123456",
+  email: "test@example.com",
+  firstName: "Test",
+  lastName: "User",
+  profileImageUrl: null,
+  role: "owner",
+  onboardingComplete: false,
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
 
 export function useAuth() {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/auth/user"],
-    retry: false,
-  });
-
   return {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
+    user: testUser,
+    isLoading: false,
+    isAuthenticated: true // Always authenticated for beta testing
   };
 }
