@@ -195,11 +195,11 @@ export const AgencyDashboard = () => {
           setIsCollapsed={setSidebarCollapsed}
         />
         
-        <div className="flex flex-col flex-1 w-full overflow-hidden">
+        <div className="flex flex-col flex-1 w-full">
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
-          <main className="flex-1 relative overflow-y-auto p-6 w-full">
-            <div className="mb-6">
+          <main className="flex-1 relative overflow-y-auto bg-gray-900">
+            <div className="px-6 py-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
@@ -213,7 +213,7 @@ export const AgencyDashboard = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
+            <div className="px-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
               <StatsCard
                 title="Total Clients"
                 value="4"
@@ -248,7 +248,7 @@ export const AgencyDashboard = () => {
               />
             </div>
             
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 mb-6">
+            <div className="px-6 grid grid-cols-1 gap-6 xl:grid-cols-3 mb-6">
               <div className="col-span-2">
                 <CampaignTable
                   campaigns={campaigns}
@@ -264,7 +264,7 @@ export const AgencyDashboard = () => {
               </div>
             </div>
             
-            <div className="mt-4 border-t border-gray-700 pt-6">
+            <div className="px-6 mt-4 border-t border-gray-700 pt-6">
               <h2 className="text-xl font-semibold text-white mb-4">ROI & Campaign Analytics</h2>
               <Tabs defaultValue="roi" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
