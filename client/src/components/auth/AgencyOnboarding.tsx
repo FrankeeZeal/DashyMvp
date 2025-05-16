@@ -129,19 +129,31 @@ export const AgencyOnboarding = () => {
     options: string[],
     fieldName: keyof AgencyOnboardingData
   ) => {
+    const selectOption = (option: string) => {
+      // Set the value in the form
+      form.setValue(fieldName, option, { shouldValidate: true });
+      
+      // Add a small delay for visual feedback before moving to next step
+      setTimeout(() => {
+        nextStep();
+      }, 300);
+    };
+
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 gap-3 mb-8">
         {options.map((option) => (
           <Button
             key={option}
             type="button"
             variant={form.watch(fieldName) === option ? "default" : "outline"}
-            className={
-              form.watch(fieldName) === option
-                ? "bg-primary-50 text-primary-700 border-primary-500"
-                : ""
-            }
-            onClick={() => form.setValue(fieldName, option, { shouldValidate: true })}
+            className={`
+              transition-all duration-200
+              ${form.watch(fieldName) === option
+                ? "bg-blue-800 text-white border-blue-400 shadow-md shadow-blue-500/30"
+                : "text-gray-200 border-gray-600 hover:border-blue-400 hover:bg-gray-700/50"
+              }
+            `}
+            onClick={() => selectOption(option)}
           >
             {option}
           </Button>
@@ -253,12 +265,17 @@ export const AgencyOnboarding = () => {
                               key={option}
                               type="button"
                               variant={form.watch("trackingMethod") === option ? "default" : "outline"}
-                              className={
-                                form.watch("trackingMethod") === option
-                                  ? "bg-blue-800 text-white border-blue-400"
-                                  : "text-gray-200 border-gray-600"
-                              }
-                              onClick={() => form.setValue("trackingMethod", option, { shouldValidate: true })}
+                              className={`
+                                transition-all duration-200
+                                ${form.watch("trackingMethod") === option
+                                  ? "bg-blue-800 text-white border-blue-400 shadow-md shadow-blue-500/30"
+                                  : "text-gray-200 border-gray-600 hover:border-blue-400 hover:bg-gray-700/50"
+                                }
+                              `}
+                              onClick={() => {
+                                form.setValue("trackingMethod", option, { shouldValidate: true });
+                                setTimeout(() => nextStep(), 300);
+                              }}
                             >
                               {option}
                             </Button>
@@ -310,12 +327,17 @@ export const AgencyOnboarding = () => {
                               key={option}
                               type="button"
                               variant={form.watch("addTeamNow") === option ? "default" : "outline"}
-                              className={
-                                form.watch("addTeamNow") === option
-                                  ? "bg-blue-800 text-white border-blue-400"
-                                  : "text-gray-200 border-gray-600"
-                              }
-                              onClick={() => form.setValue("addTeamNow", option, { shouldValidate: true })}
+                              className={`
+                                transition-all duration-200
+                                ${form.watch("addTeamNow") === option
+                                  ? "bg-blue-800 text-white border-blue-400 shadow-md shadow-blue-500/30"
+                                  : "text-gray-200 border-gray-600 hover:border-blue-400 hover:bg-gray-700/50"
+                                }
+                              `}
+                              onClick={() => {
+                                form.setValue("addTeamNow", option, { shouldValidate: true });
+                                setTimeout(() => nextStep(), 300);
+                              }}
                             >
                               {option}
                             </Button>
