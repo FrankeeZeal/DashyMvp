@@ -373,10 +373,20 @@ export const AllClients = () => {
   
   const displayClients = clients?.length ? clients : demoClients;
   
-  // Filter clients based on search term
-  const filteredClients = displayClients.filter(
-    client => client.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Toggle for showing inactive clients
+  const [showInactive, setShowInactive] = useState(false);
+  
+  // Filter clients based on search term and active status
+  const filteredClients = displayClients.filter(client => {
+    // Filter by search term
+    const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Filter by active status based on contract end date
+    const clientData = clientsExtendedData[client.id];
+    const isActive = clientData?.isActive !== false; // Default to active if not specified
+    
+    return matchesSearch && (showInactive || isActive);
+  });
   
   const getClientInitials = (name: string) => {
     return name
@@ -387,16 +397,14 @@ export const AllClients = () => {
       .toUpperCase();
   };
   
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge className="bg-green-500/20 text-green-300 hover:bg-green-500/30 border-green-800">Active</Badge>;
-      case "pending":
-        return <Badge className="bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 border-yellow-800">Pending</Badge>;
-      case "inactive":
-        return <Badge className="bg-gray-500/20 text-gray-300 hover:bg-gray-500/30 border-gray-700">Inactive</Badge>;
-      default:
-        return null;
+  const getStatusBadge = (clientId: number) => {
+    const clientData = clientsExtendedData[clientId];
+    const isActive = clientData?.isActive !== false; // Default to active if not specified
+    
+    if (isActive) {
+      return <Badge className="bg-green-500/20 text-green-300 hover:bg-green-500/30 border-green-800">Active</Badge>;
+    } else {
+      return <Badge className="bg-gray-500/20 text-gray-300 hover:bg-gray-500/30 border-gray-700">Inactive</Badge>;
     }
   };
   
@@ -479,6 +487,23 @@ export const AllClients = () => {
                             <span>SMS Status</span>
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
+                        <DropdownMenuSeparator className="bg-gray-700" />
+                        <DropdownMenuItem 
+                          className="focus:bg-gray-700 flex items-center justify-between"
+                          onClick={() => setShowInactive(!showInactive)}
+                        >
+                          <div className="flex items-center">
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>Show Inactive Clients</span>
+                          </div>
+                          <div className={`w-4 h-4 rounded-full border ${
+                            showInactive 
+                              ? 'bg-blue-500 border-blue-600' 
+                              : 'bg-gray-700 border-gray-600'
+                          }`}>
+                            {showInactive && <Check className="h-3 w-3 text-white" />}
+                          </div>
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-gray-700" />
                         <DropdownMenuItem className="focus:bg-gray-700">
                           <ArrowDownUp className="mr-2 h-4 w-4" />
