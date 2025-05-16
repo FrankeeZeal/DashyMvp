@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -12,7 +12,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { format, addDays, subDays, subMonths, startOfQuarter, endOfQuarter } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
 // Types
 interface Client {
@@ -84,21 +88,30 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
   // State for filters
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [timeFilter, setTimeFilter] = useState<string>("30days");
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined;
+    to: Date | undefined;
+  }>({
+    from: subDays(new Date(), 30),
+    to: new Date()
+  });
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [dateSelectionStep, setDateSelectionStep] = useState<'from' | 'to'>('from');
   
   // Generate dates for the x-axis based on selected time period
   const dates = useMemo(() => {
     const today = new Date();
-    let dateRange: Date[] = [];
+    let result: Date[] = [];
     
     switch (timeFilter) {
       case "yesterday":
         // Just show yesterday and today
-        dateRange = [subDays(today, 1), today];
+        result = [subDays(today, 1), today];
         break;
         
       case "30days":
         // Show 5 points over 30 days
-        dateRange = [
+        result = [
           subDays(today, 30),
           subDays(today, 22),
           subDays(today, 15),
@@ -109,7 +122,7 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
         
       case "60days":
         // Show 6 points over 60 days
-        dateRange = [
+        result = [
           subDays(today, 60),
           subDays(today, 48),
           subDays(today, 36),
@@ -127,26 +140,42 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
         // Calculate number of months in the quarter
         const monthsInQuarter = Math.round((quarterEnd.getTime() - quarterStart.getTime()) / (30 * 24 * 60 * 60 * 1000));
         
-        dateRange = Array.from({ length: monthsInQuarter + 1 }, (_, i) => {
+        result = Array.from({ length: monthsInQuarter + 1 }, (_, i) => {
           return addDays(quarterStart, i * 30);
         });
         break;
         
       case "custom":
-        // Custom range (last 45 days with weekly points)
-        dateRange = [
-          subDays(today, 45),
-          subDays(today, 36),
-          subDays(today, 27),
-          subDays(today, 18),
-          subDays(today, 9),
-          today
-        ];
+        // Use the custom date range selected by the user
+        if (dateRange.from && dateRange.to) {
+          const diffTime = Math.abs(dateRange.to.getTime() - dateRange.from.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          
+          // Generate evenly spaced dates between from and to dates
+          const pointCount = Math.min(6, Math.max(2, Math.ceil(diffDays / 7)));
+          
+          result = Array.from({ length: pointCount }, (_, i) => {
+            const progress = i / (pointCount - 1);
+            return new Date(
+              dateRange.from!.getTime() + (dateRange.to!.getTime() - dateRange.from!.getTime()) * progress
+            );
+          });
+        } else {
+          // Default if no range selected
+          result = [
+            subDays(today, 45),
+            subDays(today, 36),
+            subDays(today, 27),
+            subDays(today, 18),
+            subDays(today, 9),
+            today
+          ];
+        }
         break;
     }
     
-    return dateRange;
-  }, [timeFilter]);
+    return result;
+  }, [timeFilter, dateRange.from, dateRange.to]);
   
   // Mock data if no clients provided
   const mockClients: Client[] = [
@@ -313,15 +342,77 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
             >
               Quarter
             </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="custom" 
-              className={cn(
-                "text-xs h-7 px-2 rounded data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-200",
-                timeFilter === "custom" ? "bg-blue-900/50 text-blue-200" : "text-gray-400"
-              )}
-            >
-              Custom
-            </ToggleGroupItem>
+            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setTimeFilter("custom")}
+                  className={cn(
+                    "text-xs h-7 px-2 rounded",
+                    timeFilter === "custom" 
+                      ? "bg-blue-900/50 text-blue-200" 
+                      : "text-gray-400 hover:bg-gray-700 hover:text-gray-200"
+                  )}
+                >
+                  {dateRange.from && dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "MM/dd")} - {format(dateRange.to, "MM/dd")}
+                    </>
+                  ) : (
+                    <span className="flex items-center">
+                      <CalendarIcon className="h-3 w-3 mr-1" />
+                      Custom
+                    </span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent 
+                className="w-auto p-0 bg-gray-800 border border-gray-700" 
+                align="center"
+              >
+                <div className="bg-gray-800 text-white p-3">
+                  <div className="flex space-x-2 justify-center mb-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className={cn(
+                        "rounded-full",
+                        dateSelectionStep === 'from' ? "bg-blue-900 text-white" : "bg-gray-700 text-gray-400"
+                      )}
+                      onClick={() => setDateSelectionStep('from')}
+                    >
+                      Start Date
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className={cn(
+                        "rounded-full",
+                        dateSelectionStep === 'to' ? "bg-blue-900 text-white" : "bg-gray-700 text-gray-400"
+                      )}
+                      onClick={() => setDateSelectionStep('to')}
+                    >
+                      End Date
+                    </Button>
+                  </div>
+                  <Calendar
+                    mode="single"
+                    selected={dateSelectionStep === 'from' ? dateRange.from : dateRange.to}
+                    onSelect={(date) => {
+                      if (dateSelectionStep === 'from') {
+                        setDateRange({ ...dateRange, from: date });
+                        setDateSelectionStep('to'); // Automatically switch to end date
+                      } else {
+                        setDateRange({ ...dateRange, to: date });
+                        setCalendarOpen(false); // Close after selecting end date
+                      }
+                    }}
+                    initialFocus
+                    className="rounded border border-gray-700"
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
           </ToggleGroup>
         </div>
       </CardHeader>
