@@ -11,7 +11,11 @@ import {
   MessageSquare,
   ArrowDownUp,
   UserPlus,
-  User
+  User,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Eye
 } from "lucide-react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
@@ -51,6 +55,7 @@ export const AllClients = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
+  const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   
   // Mock team members for assignment dropdown
   const teamMembers = [
@@ -70,6 +75,32 @@ export const AllClients = () => {
     // In a real app, this would make an API call to assign the user to the client
     console.log(`Assigning user ${userId} to client ${selectedClientId}`);
     setAssignDialogOpen(false);
+  };
+  
+  const toggleClientExpand = (clientId: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (expandedClientId === clientId) {
+      setExpandedClientId(null); // collapse if already expanded
+    } else {
+      setExpandedClientId(clientId); // expand this client
+    }
+  };
+  
+  const handleRemoveAssignment = (clientId: number, userId: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // In a real app, this would make an API call to remove the assignment
+    console.log(`Removing user ${userId} from client ${clientId}`);
+    // For demo purposes we can't actually modify the mock data
+  };
+  
+  // Mock assignments for demonstration
+  const clientAssignments = {
+    1: [teamMembers[0], teamMembers[1]],
+    2: [teamMembers[2]],
+    3: [teamMembers[3], teamMembers[4]],
+    4: []
   };
   
   // Get all clients
@@ -259,50 +290,112 @@ export const AllClients = () => {
                       renderSkeleton()
                     ) : filteredClients.length > 0 ? (
                       filteredClients.map((client) => (
-                        <li key={client.id}>
-                          <Link href={`/dashboard/clients/${client.id}`}>
-                            <div className="px-6 py-4 hover:bg-gray-700 cursor-pointer">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center shadow-inner shadow-blue-500/30">
-                                    <span className="text-blue-300 font-medium">{getClientInitials(client.name)}</span>
-                                  </div>
-                                  <div className="ml-4">
-                                    <div className="text-sm font-medium text-white">{client.name}</div>
-                                    <div className="text-sm text-gray-400">
-                                      Added {formatDistanceToNow(new Date(client.addedAt || new Date()), { addSuffix: true })}
-                                    </div>
+                        <li key={client.id} className={expandedClientId === client.id ? 'bg-gray-800' : ''}>
+                          <div 
+                            className="px-6 py-4 hover:bg-gray-700 cursor-pointer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toggleClientExpand(client.id, e);
+                            }}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center">
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center shadow-inner shadow-blue-500/30">
+                                  <span className="text-blue-300 font-medium">{getClientInitials(client.name)}</span>
+                                </div>
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-white">{client.name}</div>
+                                  <div className="text-sm text-gray-400">
+                                    Added {formatDistanceToNow(new Date(client.addedAt || new Date()), { addSuffix: true })}
                                   </div>
                                 </div>
-                                <div className="flex items-center space-x-4">
-                                  {(client as any).hasEmailData && (
-                                    <Badge className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border-blue-800 mr-2">
-                                      <Mail className="h-3 w-3 mr-1" /> Email
-                                    </Badge>
-                                  )}
-                                  {(client as any).hasSmsData && (
-                                    <Badge className="bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border-purple-800 mr-2">
-                                      <MessageSquare className="h-3 w-3 mr-1" /> SMS
-                                    </Badge>
-                                  )}
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="bg-gray-700 hover:bg-gray-600 border-gray-600 ml-1"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      handleAssignUserClick(client.id);
-                                    }}
-                                  >
-                                    <UserPlus className="h-3 w-3 mr-1" /> Assign
-                                  </Button>
+                              </div>
+                              <div className="flex items-center space-x-4">
+                                {(client as any).hasEmailData && (
+                                  <Badge className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border-blue-800 mr-2">
+                                    <Mail className="h-3 w-3 mr-1" /> Email
+                                  </Badge>
+                                )}
+                                {(client as any).hasSmsData && (
+                                  <Badge className="bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 border-purple-800 mr-2">
+                                    <MessageSquare className="h-3 w-3 mr-1" /> SMS
+                                  </Badge>
+                                )}
+                                <div className="flex items-center">
                                   {getStatusBadge(client.status || 'active')}
-                                  <RiArrowRightSLine className="ml-2 text-gray-400" />
+                                  <Link href={`/dashboard/clients/${client.id}`} onClick={(e) => e.stopPropagation()}>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="text-gray-400 hover:text-gray-300 hover:bg-gray-600 ml-2" 
+                                    >
+                                      <RiArrowRightSLine className="h-5 w-5" />
+                                    </Button>
+                                  </Link>
+                                  {expandedClientId === client.id ? (
+                                    <ChevronUp className="h-5 w-5 text-gray-400" />
+                                  ) : (
+                                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                                  )}
                                 </div>
                               </div>
                             </div>
-                          </Link>
+                          </div>
+                          
+                          {/* Expanded content - team assignments */}
+                          {expandedClientId === client.id && (
+                            <div className="px-6 py-3 pb-4 border-t border-gray-700 bg-gray-800/50">
+                              <div className="flex justify-between items-center mb-3">
+                                <h4 className="text-sm font-medium text-white">Team Assignments</h4>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="bg-gray-700 hover:bg-gray-600 border-gray-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    handleAssignUserClick(client.id);
+                                  }}
+                                >
+                                  <UserPlus className="h-4 w-4 mr-1" />
+                                  Assign
+                                </Button>
+                              </div>
+                              
+                              {(clientAssignments as any)[client.id]?.length > 0 ? (
+                                <div className="space-y-2 mt-2">
+                                  {(clientAssignments as any)[client.id].map((member: any) => (
+                                    <div 
+                                      key={member.id}
+                                      className="flex items-center justify-between p-2 rounded-md bg-gray-700 hover:bg-gray-600"
+                                    >
+                                      <div className="flex items-center">
+                                        <div className="h-8 w-8 rounded-full bg-blue-900 flex items-center justify-center">
+                                          <User className="h-4 w-4 text-blue-300" />
+                                        </div>
+                                        <div className="ml-2">
+                                          <div className="text-sm font-medium text-white">{member.name}</div>
+                                          <div className="text-xs text-gray-400">{member.role}</div>
+                                        </div>
+                                      </div>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="hover:bg-red-900/30 hover:text-red-300"
+                                        onClick={(e) => handleRemoveAssignment(client.id, member.id, e)}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-sm text-gray-400 py-2">
+                                  No team members assigned to this client yet.
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </li>
                       ))
                     ) : (
