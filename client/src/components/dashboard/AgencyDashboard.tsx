@@ -363,32 +363,21 @@ export const AgencyDashboard = () => {
             </TabsContent>
             
             <TabsContent value="reports" className="mt-0">
-              <Tabs defaultValue="roi-report" className="w-full">
-                <TabsList className="inline-flex h-10 bg-gray-700 p-1 mb-4">
-                  <TabsTrigger 
-                    value="roi-report" 
-                    className="px-3 py-1.5 text-sm data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                  >
-                    ROI Reports
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="campaign-report" 
-                    className="px-3 py-1.5 text-sm data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                  >
-                    Campaign Reports
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="roi-report" className="mt-0">
+              <div className="grid grid-cols-1 gap-8">
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-white mb-4">ROI Reports</h3>
                   <ROIReport 
                     campaigns={campaigns as any}
                   />
-                </TabsContent>
-                <TabsContent value="campaign-report" className="mt-0">
+                </div>
+                
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+                  <h3 className="text-lg font-medium text-white mb-4">Campaign Reports</h3>
                   <CampaignReport 
                     campaigns={campaigns as any}
                   />
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </TabsContent>
             
             <TabsContent value="integrations" className="mt-0">
