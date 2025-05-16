@@ -97,7 +97,7 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
     to: new Date()
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [dateSelectionMode, setDateSelectionMode] = useState<"dates" | "months">("dates");
+  const [dateSelectionMode, setDateSelectionMode] = useState<"dates" | "months" | "years">("dates");
   
   // Generate dates for the x-axis based on selected time period
   const dates = useMemo(() => {
@@ -385,7 +385,7 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                   <Tabs 
                     defaultValue="dates" 
                     value={dateSelectionMode} 
-                    onValueChange={(value) => setDateSelectionMode(value as "dates" | "months")}
+                    onValueChange={(value) => setDateSelectionMode(value as "dates" | "months" | "years")}
                     className="w-full"
                   >
                     <TabsList className="grid w-full grid-cols-3 bg-gray-700 rounded-full mb-4">
@@ -401,7 +401,12 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                       >
                         Months
                       </TabsTrigger>
-                      <div className="bg-transparent"></div>
+                      <TabsTrigger 
+                        value="years" 
+                        className="rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                      >
+                        Years
+                      </TabsTrigger>
                     </TabsList>
                     
                     <TabsContent value="dates" className="mt-0">
@@ -462,6 +467,36 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                               }}
                             >
                               {format(date, "MMM")}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="years" className="mt-0">
+                      <div className="grid grid-cols-3 gap-2 p-2">
+                        {Array.from({ length: 9 }, (_, i) => {
+                          const currentYear = new Date().getFullYear();
+                          const year = currentYear - 4 + i;
+                          return (
+                            <Button 
+                              key={i} 
+                              variant="outline"
+                              className={cn(
+                                "h-10 bg-gray-700 border-gray-600 hover:bg-gray-600",
+                                year === currentYear && "border-blue-500 border-2"
+                              )}
+                              onClick={() => {
+                                const start = new Date(year, 0, 1);
+                                const end = new Date(year, 11, 31);
+                                setDateRange({
+                                  from: start,
+                                  to: end
+                                });
+                                setCalendarOpen(false);
+                              }}
+                            >
+                              {year}
                             </Button>
                           );
                         })}
