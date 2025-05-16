@@ -15,12 +15,24 @@ import {
   ChevronUp,
   ChevronDown,
   X,
-  Eye
+  Eye,
+  Check
 } from "lucide-react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Navbar from "@/components/dashboard/Navbar";
+
+// Define types for team members and assignments
+interface TeamMember {
+  id: number;
+  name: string;
+  role: string;
+}
+
+interface ClientAssignments {
+  [clientId: number]: TeamMember[];
+}
 import {
   Card,
   CardContent,
@@ -57,8 +69,24 @@ export const AllClients = () => {
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   
+  // Initial client assignments state
+  const [clientAssignmentsState, setClientAssignmentsState] = useState<ClientAssignments>({
+    1: [
+      { id: 1, name: "Alex Johnson", role: "Email Specialist" },
+      { id: 2, name: "Sarah Williams", role: "Designer" }
+    ],
+    2: [
+      { id: 3, name: "Marcus Lee", role: "Account Manager" }
+    ],
+    3: [
+      { id: 4, name: "Taylor Swift", role: "Analyst" },
+      { id: 5, name: "Jordan Peterson", role: "Designer" }
+    ],
+    4: []
+  });
+  
   // Mock team members for assignment dropdown
-  const teamMembers = [
+  const teamMembers: TeamMember[] = [
     { id: 1, name: "Alex Johnson", role: "Email Specialist" },
     { id: 2, name: "Sarah Williams", role: "Designer" },
     { id: 3, name: "Marcus Lee", role: "Account Manager" },
@@ -72,8 +100,34 @@ export const AllClients = () => {
   };
   
   const handleAssignUser = (userId: number) => {
+    if (!selectedClientId) return;
+    
+    // Check if user is already assigned to this client
+    const currentAssignments = clientAssignmentsState[selectedClientId] || [];
+    const isAlreadyAssigned = currentAssignments.some((member) => member.id === userId);
+    
+    if (isAlreadyAssigned) {
+      // In a real app, we'd show a toast notification here
+      console.log(`User ${userId} is already assigned to client ${selectedClientId}`);
+      return;
+    }
+    
+    // Find the team member object
+    const memberToAssign = teamMembers.find(member => member.id === userId);
+    if (!memberToAssign) return;
+    
     // In a real app, this would make an API call to assign the user to the client
     console.log(`Assigning user ${userId} to client ${selectedClientId}`);
+    
+    // Update the clientAssignments state
+    setClientAssignmentsState(prev => ({
+      ...prev,
+      [selectedClientId]: [
+        ...(prev[selectedClientId] || []),
+        memberToAssign
+      ]
+    }));
+    
     setAssignDialogOpen(false);
   };
   
@@ -90,9 +144,21 @@ export const AllClients = () => {
   const handleRemoveAssignment = (clientId: number, userId: number, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
     // In a real app, this would make an API call to remove the assignment
     console.log(`Removing user ${userId} from client ${clientId}`);
-    // For demo purposes we can't actually modify the mock data
+    
+    // Update the clientAssignments state
+    setClientAssignmentsState(prev => {
+      // If there are no assignments for this client, return unchanged
+      if (!prev[clientId]) return prev;
+      
+      // Filter out the removed user
+      return {
+        ...prev,
+        [clientId]: prev[clientId].filter(member => member.id !== userId)
+      };
+    });
   };
   
   // Mock assignments for demonstration
@@ -424,30 +490,46 @@ export const AllClients = () => {
           
           <div className="space-y-4 my-4">
             <div className="grid gap-4">
-              {teamMembers.map(member => (
-                <div 
-                  key={member.id}
-                  className="flex items-center justify-between p-3 rounded-md bg-gray-700 hover:bg-gray-600 cursor-pointer"
-                  onClick={() => handleAssignUser(member.id)}
-                >
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center">
-                      <User className="h-5 w-5 text-blue-300" />
-                    </div>
-                    <div className="ml-3">
-                      <div className="font-medium">{member.name}</div>
-                      <div className="text-sm text-gray-400">{member.role}</div>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="hover:bg-blue-900/30 hover:text-blue-300"
+              {teamMembers.map(member => {
+                // Check if this member is already assigned to the selected client
+                const isAssigned = selectedClientId 
+                  ? ((clientAssignments as any)[selectedClientId] || []).some((m: any) => m.id === member.id)
+                  : false;
+                  
+                return (
+                  <div 
+                    key={member.id}
+                    className={`flex items-center justify-between p-3 rounded-md ${
+                      isAssigned 
+                        ? 'bg-blue-900/20 border border-blue-800' 
+                        : 'bg-gray-700 hover:bg-gray-600 cursor-pointer'
+                    }`}
+                    onClick={() => !isAssigned && handleAssignUser(member.id)}
                   >
-                    <UserPlus className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center">
+                        <User className="h-5 w-5 text-blue-300" />
+                      </div>
+                      <div className="ml-3">
+                        <div className="font-medium">{member.name}</div>
+                        <div className="text-sm text-gray-400">
+                          {member.role} {isAssigned && <span className="text-blue-300">(Already Assigned)</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      disabled={isAssigned}
+                      className={isAssigned 
+                        ? "text-blue-300 bg-blue-900/30" 
+                        : "hover:bg-blue-900/30 hover:text-blue-300"}
+                    >
+                      {isAssigned ? <Check className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </div>
           
