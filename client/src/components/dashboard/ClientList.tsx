@@ -105,9 +105,9 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
     <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
       <CardHeader className="pb-3 border-b border-gray-700 flex justify-between items-center">
         <CardTitle className="text-white">{title}</CardTitle>
-        <a href="#" className="text-sm font-medium text-blue-400 hover:text-blue-300">
-          View all
-        </a>
+        <Link href="/dashboard/clients/all" className="text-sm font-medium text-blue-400 hover:text-blue-300">
+          All Clients
+        </Link>
       </CardHeader>
       <CardContent className="p-0">
         <ul className="divide-y divide-gray-700">
