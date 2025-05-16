@@ -108,10 +108,10 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             </Button>
           </div>
           
-          {/* Circular collapse button positioned on the border */}
+          {/* Circular collapse button positioned on the right border */}
           <div 
             className={cn(
-              "absolute top-16 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-10",
+              "absolute top-1/2 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-10",
               collapsed ? "rotate-180" : ""
             )}
             onClick={toggleCollapse}
