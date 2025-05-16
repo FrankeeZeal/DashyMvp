@@ -55,11 +55,11 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
       ];
 
   return (
-    <div className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200">
+    <div className="relative z-10 flex-shrink-0 flex h-16 bg-gray-900 border-b border-gray-700">
       <Button 
         variant="ghost" 
         size="icon" 
-        className="md:hidden px-4 text-gray-500" 
+        className="md:hidden px-4 text-gray-400 hover:text-white hover:bg-gray-800" 
         onClick={onToggleSidebar}
       >
         <RiMenuLine className="h-6 w-6" />
@@ -68,13 +68,13 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
       <div className="flex-1 flex justify-between px-4 md:px-0">
         <div className="flex-1 flex items-center md:ml-6">
           <div className="w-full md:max-w-md">
-            <div className="relative text-gray-500 focus-within:text-gray-800">
+            <div className="relative text-gray-400 focus-within:text-blue-400">
               <div className="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
                 <RiSearchLine />
               </div>
               <Input
                 id="search"
-                className="block w-full bg-gray-50 py-2 pl-10 pr-3 border border-gray-300 rounded-md leading-5 text-gray-800 placeholder-gray-500 focus:outline-none focus:bg-white focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                className="block w-full bg-gray-800 py-2 pl-10 pr-3 border border-gray-700 rounded-md leading-5 text-white placeholder-gray-500 focus:outline-none focus:bg-gray-800 focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Search"
                 type="search"
                 name="search"
@@ -84,7 +84,7 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
         </div>
 
         <div className="ml-4 flex items-center md:ml-6">
-          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-900">
+          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
             <RiNotification3Line className="h-6 w-6" />
           </Button>
 

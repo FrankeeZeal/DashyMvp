@@ -61,10 +61,10 @@ export const Sidebar = ({ type, onLogout }: SidebarProps) => {
 
   return (
     <aside className="hidden md:flex md:flex-shrink-0">
-      <div className="flex flex-col w-64 bg-white border-r border-gray-200">
+      <div className="flex flex-col w-64 bg-gray-900 border-r border-gray-700">
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4">
-            <h1 className="text-xl font-bold text-gray-900">Dashy</h1>
+            <h1 className="text-xl font-bold text-white bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Dashy</h1>
           </div>
           <div className="mt-5 flex-1 flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
@@ -88,27 +88,27 @@ export const Sidebar = ({ type, onLogout }: SidebarProps) => {
             </nav>
           </div>
         </div>
-        <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
+        <div className="flex-shrink-0 flex border-t border-gray-700 p-4">
           <div className="flex-shrink-0 group block w-full">
             <div className="flex items-center">
               <div>
-                <Avatar>
+                <Avatar className="border-2 border-blue-500/30">
                   {user?.profileImageUrl ? (
                     <AvatarImage src={user.profileImageUrl} alt={getName()} />
                   ) : (
-                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                    <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
                   )}
                 </Avatar>
               </div>
               <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                <p className="text-sm font-medium text-white group-hover:text-blue-300">
                   {getName()}
                 </p>
-                <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                <p className="text-xs font-medium text-gray-400 group-hover:text-gray-300">
                   {isAgency ? "Agency Owner" : "Store Owner"}
                 </p>
               </div>
-              <Button variant="ghost" size="sm" onClick={onLogout}>
+              <Button variant="ghost" size="sm" onClick={onLogout} className="text-gray-400 hover:text-white hover:bg-gray-800">
                 <RiSettingsLine className="h-5 w-5" />
               </Button>
             </div>
