@@ -27,11 +27,11 @@ export const StatsCard = ({
     if (!change) return "";
     switch (change.type) {
       case "increase":
-        return "text-green-600";
+        return "bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent";
       case "decrease":
-        return "text-red-600";
+        return "bg-gradient-to-r from-rose-400 to-red-500 bg-clip-text text-transparent";
       default:
-        return "text-gray-600";
+        return "bg-gradient-to-r from-gray-400 to-gray-500 bg-clip-text text-transparent";
     }
   };
 
@@ -61,8 +61,9 @@ export const StatsCard = ({
                 {title}
               </dt>
               <dd className="flex flex-wrap items-baseline mt-1">
-                <div className="text-xl md:text-2xl font-semibold text-gray-900 mr-2 truncate">
-                  {value}
+                <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 bg-clip-text text-transparent mr-2 truncate relative">
+                  <span className="relative z-10">{value}</span>
+                  <div className="absolute inset-0 blur-sm opacity-30 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 -z-10"></div>
                 </div>
                 {change && (
                   <div
