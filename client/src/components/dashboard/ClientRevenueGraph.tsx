@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { format, addDays, subDays, subMonths, startOfQuarter, endOfQuarter } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { format, addDays, subDays, startOfQuarter, endOfQuarter } from "date-fns";
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 // Types
 interface Client {
@@ -96,7 +97,7 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
     to: new Date()
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [dateSelectionStep, setDateSelectionStep] = useState<'from' | 'to'>('from');
+  const [dateSelectionMode, setDateSelectionMode] = useState<"dates" | "months">("dates");
   
   // Generate dates for the x-axis based on selected time period
   const dates = useMemo(() => {
@@ -248,7 +249,15 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
     "#10b981", // emerald-500
     "#06b6d4", // cyan-500
   ];
-  
+
+  // Format date for display
+  const formatDateRange = () => {
+    if (dateRange.from && dateRange.to) {
+      return `${format(dateRange.from, "MM/dd")} - ${format(dateRange.to, "MM/dd")}`;
+    }
+    return "Custom";
+  };
+
   return (
     <Card className="w-full overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between px-6 pb-0">
@@ -342,6 +351,8 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
             >
               Quarter
             </ToggleGroupItem>
+            
+            {/* Custom date range picker */}
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button 
@@ -354,10 +365,10 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                       : "text-gray-400 hover:bg-gray-700 hover:text-gray-200"
                   )}
                 >
-                  {dateRange.from && dateRange.to ? (
-                    <>
-                      {format(dateRange.from, "MM/dd")} - {format(dateRange.to, "MM/dd")}
-                    </>
+                  {timeFilter === "custom" ? (
+                    <span className="flex items-center">
+                      {formatDateRange()}
+                    </span>
                   ) : (
                     <span className="flex items-center">
                       <CalendarIcon className="h-3 w-3 mr-1" />
@@ -367,49 +378,96 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
-                className="w-auto p-0 bg-gray-800 border border-gray-700" 
+                className="w-auto p-0 bg-gray-800 border border-gray-700 shadow-xl" 
                 align="center"
               >
-                <div className="bg-gray-800 text-white p-3">
-                  <div className="flex space-x-2 justify-center mb-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className={cn(
-                        "rounded-full",
-                        dateSelectionStep === 'from' ? "bg-blue-900 text-white" : "bg-gray-700 text-gray-400"
-                      )}
-                      onClick={() => setDateSelectionStep('from')}
-                    >
-                      Start Date
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className={cn(
-                        "rounded-full",
-                        dateSelectionStep === 'to' ? "bg-blue-900 text-white" : "bg-gray-700 text-gray-400"
-                      )}
-                      onClick={() => setDateSelectionStep('to')}
-                    >
-                      End Date
-                    </Button>
-                  </div>
-                  <Calendar
-                    mode="single"
-                    selected={dateSelectionStep === 'from' ? dateRange.from : dateRange.to}
-                    onSelect={(date) => {
-                      if (dateSelectionStep === 'from') {
-                        setDateRange({ ...dateRange, from: date });
-                        setDateSelectionStep('to'); // Automatically switch to end date
-                      } else {
-                        setDateRange({ ...dateRange, to: date });
-                        setCalendarOpen(false); // Close after selecting end date
-                      }
-                    }}
-                    initialFocus
-                    className="rounded border border-gray-700"
-                  />
+                <div className="bg-gray-800 text-white p-2">
+                  <Tabs 
+                    defaultValue="dates" 
+                    value={dateSelectionMode} 
+                    onValueChange={(value) => setDateSelectionMode(value as "dates" | "months")}
+                    className="w-full"
+                  >
+                    <TabsList className="grid w-full grid-cols-3 bg-gray-700 rounded-full mb-4">
+                      <TabsTrigger 
+                        value="dates" 
+                        className="rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                      >
+                        Dates
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="months" 
+                        className="rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                      >
+                        Months
+                      </TabsTrigger>
+                      <div className="bg-transparent"></div>
+                    </TabsList>
+                    
+                    <TabsContent value="dates" className="mt-0">
+                      <div className="flex flex-col space-y-4">
+                        <Calendar
+                          mode="range"
+                          selected={{
+                            from: dateRange.from,
+                            to: dateRange.to
+                          }}
+                          onSelect={(range) => {
+                            if (range) {
+                              setDateRange({
+                                from: range.from,
+                                to: range.to
+                              });
+                              if (range.from && range.to) {
+                                setCalendarOpen(false);
+                              }
+                            }
+                          }}
+                          initialFocus
+                          className="rounded border border-gray-700"
+                          classNames={{
+                            day_selected: "bg-blue-600 text-white hover:bg-blue-700",
+                            day_today: "bg-gray-600 text-white",
+                            day_range_middle: "bg-blue-500/40 text-white",
+                            day_range_end: "bg-blue-600 text-white",
+                            day_range_start: "bg-blue-600 text-white"
+                          }}
+                          components={{
+                            IconLeft: () => <ChevronLeftIcon className="h-4 w-4" />,
+                            IconRight: () => <ChevronRightIcon className="h-4 w-4" />,
+                          }}
+                        />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="months" className="mt-0">
+                      <div className="grid grid-cols-4 gap-2 p-2">
+                        {Array.from({ length: 12 }, (_, i) => {
+                          const date = new Date();
+                          date.setMonth(i);
+                          return (
+                            <Button 
+                              key={i} 
+                              variant="outline"
+                              className="h-10 bg-gray-700 border-gray-600 hover:bg-gray-600"
+                              onClick={() => {
+                                const year = new Date().getFullYear();
+                                const start = new Date(year, i, 1);
+                                const end = new Date(year, i + 1, 0);
+                                setDateRange({
+                                  from: start,
+                                  to: end
+                                });
+                                setCalendarOpen(false);
+                              }}
+                            >
+                              {format(date, "MMM")}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               </PopoverContent>
             </Popover>
