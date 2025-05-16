@@ -40,6 +40,28 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Animated badge */
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.coming-soon-badge {
+  animation: pulse 2s infinite;
+}
+
+/* Animated gradient background for coming soon card */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
 /* Dialog background overlay animation */
 [data-state="open"][data-dialog-overlay] {
   animation: fadeIn 0.15s ease-out;

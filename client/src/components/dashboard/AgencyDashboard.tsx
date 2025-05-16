@@ -572,6 +572,27 @@ export const AgencyDashboard = () => {
                           </div>
                         </div>
                         
+                        {/* More Coming Soon box */}
+                        <div className="border border-gray-700 border-dashed rounded-lg bg-gradient-to-br from-gray-800 via-gray-800/80 to-blue-900/20 p-6 group hover:border-blue-500/30 shadow-lg shadow-blue-900/10 template-card flex relative overflow-hidden animated-gradient">
+                          <div className="absolute -right-12 -top-12 w-32 h-32 bg-blue-500/10 rounded-full blur-xl"></div>
+                          <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-purple-500/10 rounded-full blur-xl"></div>
+                          
+                          <div className="mr-4 bg-blue-500/10 rounded-md w-12 h-12 flex items-center justify-center">
+                            <svg className="h-6 w-6 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 2v20"></path>
+                              <path d="M6 16l6 6 6-6"></path>
+                              <path d="M6 8l6-6 6 6"></path>
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-md font-medium text-white flex items-center">
+                              More Templates 
+                              <span className="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300 border border-blue-800 coming-soon-badge">Coming Soon</span>
+                            </h3>
+                            <p className="text-sm text-gray-400 mt-1">Exciting new templates are on the way!</p>
+                          </div>
+                        </div>
+                        
                         {/* Start from Scratch with Upgrade Button */}
                         <div className="border border-gray-700 rounded-lg bg-gray-800 p-6 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 col-span-1 md:col-span-2 shadow-lg shadow-blue-900/10 template-card">
                           <div className="flex justify-between items-center">
