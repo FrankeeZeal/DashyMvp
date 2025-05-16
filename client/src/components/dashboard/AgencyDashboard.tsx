@@ -195,7 +195,7 @@ export const AgencyDashboard = () => {
           setIsCollapsed={setSidebarCollapsed}
         />
         
-        <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ${sidebarCollapsed ? 'md:ml-16' : 'md:ml-0'}`}>
+        <div className="flex flex-col flex-1 w-full overflow-hidden transition-all duration-300">
           <Navbar type="agency" onToggleSidebar={toggleSidebar} />
           
           <main className="flex-1 relative overflow-y-auto focus:outline-none p-4 md:p-6">

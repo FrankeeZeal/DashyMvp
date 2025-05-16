@@ -91,11 +91,11 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
       ];
 
   return (
-    <aside className="hidden md:flex md:flex-shrink-0">
+    <aside className="hidden md:flex md:flex-shrink-0 h-screen">
       <div 
         className={cn(
-          "flex flex-col bg-gray-900 border-r border-gray-700 transition-all duration-300",
-          collapsed ? "w-16" : "w-64"
+          "flex flex-col bg-gray-900 border-r border-gray-700 transition-all duration-300 h-full",
+          collapsed ? "w-16" : "w-64 xl:w-72"
         )}
       >
         <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto relative">
