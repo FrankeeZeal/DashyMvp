@@ -12,6 +12,32 @@ import { ClientAnalytics } from '@/components/clients/ClientAnalytics';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Loader2, Mail, MessageSquare, BarChart3, Database, Zap } from "lucide-react";
 
+// Define client data interface
+interface ClientData {
+  id: number;
+  organizationId: number;
+  name: string;
+  status: string;
+  hasEmailData?: boolean;
+  hasSmsData?: boolean;
+  addedAt?: Date;
+}
+
+// Define campaign data interface
+interface CampaignData {
+  id: number;
+  clientId: number;
+  name: string;
+  type: string;
+  recipients: number;
+  opens: number;
+  clicks: number;
+  conversions: number;
+  revenue: number;
+  cost: number;
+  sentDate: Date;
+}
+
 export const ClientDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -19,7 +45,7 @@ export const ClientDetail = () => {
   const [displayMode, setDisplayMode] = useState<string>("analytics");
   
   // Get client details
-  const { data: client, isLoading: clientLoading } = useQuery({
+  const { data: client, isLoading: clientLoading } = useQuery<ClientData>({
     queryKey: [`/api/clients/${id}`],
     retry: false,
   });
@@ -39,33 +65,34 @@ export const ClientDetail = () => {
   };
   
   // For demo/beta test purposes - Enhanced demo data with real client names
-  let clientData = client;
+  let clientData: ClientData = client || {
+    id: parseInt(id as string, 10),
+    organizationId: 1,
+    name: 'Loading...',
+    status: 'active',
+    hasEmailData: false,
+    hasSmsData: false,
+    addedAt: new Date()
+  };
   
-  // If API returns null, try to find the client in demo data
-  if (!clientData) {
-    const demoClients = [
-      { id: 1, name: "Earthly Goods", hasEmailData: true, hasSmsData: false },
-      { id: 2, name: "Sista Teas", hasEmailData: true, hasSmsData: true },
-      { id: 3, name: "Mountain Wellness", hasEmailData: false, hasSmsData: true }
-    ];
-    
-    // Try to match by ID from the URL
-    const demoClient = demoClients.find(c => c.id === parseInt(id as string));
-    
-    clientData = demoClient || {
-      id: parseInt(id as string),
-      name: `Client ${id}`,
-      hasEmailData: true,
-      hasSmsData: true
+  if (clientLoading) {
+    clientData = {
+      id: parseInt(id as string, 10),
+      organizationId: 1,
+      name: 'Loading...',
+      status: 'active',
+      hasEmailData: false,
+      hasSmsData: false,
+      addedAt: new Date()
     };
   }
   
-  const hasData = (clientData.hasEmailData || clientData.hasSmsData);
+  const hasData = clientData ? (clientData.hasEmailData || clientData.hasSmsData) : false;
   
   // Filter campaigns based on data source type
   const filteredCampaigns = campaigns ? campaigns.filter((campaign: any) => {
     if (dataSourceType === "both") return true;
-    return campaign.type.toLowerCase() === dataSourceType.toLowerCase();
+    return campaign.type?.toLowerCase() === dataSourceType.toLowerCase();
   }) : [];
   
   return (

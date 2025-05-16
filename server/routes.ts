@@ -219,6 +219,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch clients" });
     }
   });
+  
+  // Get a specific client by ID
+  app.get('/api/clients/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // For MVP demo data - consistent with the client list
+      const demoClients = [
+        { 
+          id: 1, 
+          organizationId: 1, 
+          name: "Earthly Goods", 
+          status: "active", 
+          hasEmailData: true, 
+          hasSmsData: false,
+          addedAt: new Date(2023, 0, 12)
+        },
+        { 
+          id: 2, 
+          organizationId: 1, 
+          name: "Sista Teas", 
+          status: "active", 
+          hasEmailData: true, 
+          hasSmsData: true,
+          addedAt: new Date(2023, 0, 8)
+        },
+        { 
+          id: 3, 
+          organizationId: 1, 
+          name: "Mountain Wellness", 
+          status: "active",
+          hasEmailData: false, 
+          hasSmsData: true,
+          addedAt: new Date(2023, 0, 3)
+        }
+      ];
+      
+      const client = demoClients.find(c => c.id === parseInt(id));
+      
+      if (!client) {
+        return res.status(404).json({ message: "Client not found" });
+      }
+      
+      res.json(client);
+    } catch (error) {
+      console.error("Error fetching client:", error);
+      res.status(500).json({ message: "Failed to fetch client" });
+    }
+  });
+  
+  // Get campaigns for a specific client
+  app.get('/api/clients/:id/campaigns', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const clientId = parseInt(id, 10);
+      
+      // Demo campaigns data
+      const demoCampaigns = [
+        {
+          id: 1,
+          clientId: 1,
+          name: "Spring Sale Newsletter",
+          type: "email",
+          recipients: 4500,
+          opens: 1800,
+          clicks: 720,
+          conversions: 124,
+          revenue: 11340,
+          cost: 2500,
+          sentDate: new Date(2023, 2, 15) // March 15, 2023
+        },
+        {
+          id: 2,
+          clientId: 1,
+          name: "New Product Announcement",
+          type: "email",
+          recipients: 5000,
+          opens: 2200,
+          clicks: 950,
+          conversions: 187,
+          revenue: 14025,
+          cost: 3000,
+          sentDate: new Date(2023, 3, 1) // April 1, 2023
+        },
+        {
+          id: 3,
+          clientId: 2,
+          name: "Summer Collection Launch",
+          type: "email",
+          recipients: 8200,
+          opens: 4100,
+          clicks: 1640,
+          conversions: 328,
+          revenue: 29520,
+          cost: 4500,
+          sentDate: new Date(2023, 4, 10) // May 10, 2023
+        },
+        {
+          id: 4,
+          clientId: 2,
+          name: "Flash Sale Alert",
+          type: "sms",
+          recipients: 3200,
+          opens: 2800,
+          clicks: 1120,
+          conversions: 224,
+          revenue: 13440,
+          cost: 2000,
+          sentDate: new Date(2023, 4, 20) // May 20, 2023
+        },
+        {
+          id: 5,
+          clientId: 3,
+          name: "Weekly Wellness Tips",
+          type: "sms",
+          recipients: 2500,
+          opens: 2000,
+          clicks: 800,
+          conversions: 150,
+          revenue: 7500,
+          cost: 1500,
+          sentDate: new Date(2023, 5, 5) // June 5, 2023
+        }
+      ];
+      
+      // Filter campaigns by client ID
+      const clientCampaigns = demoCampaigns.filter(campaign => campaign.clientId === clientId);
+      
+      res.json(clientCampaigns);
+    } catch (error) {
+      console.error("Error fetching client campaigns:", error);
+      res.status(500).json({ message: "Failed to fetch client campaigns" });
+    }
+  });
+  
+  // Get integrations for a specific client
+  app.get('/api/clients/:id/integrations', isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const clientId = parseInt(id, 10);
+      
+      // Demo integrations data - initially empty for the MVP
+      // This allows the frontend to manage and display integration states
+      const clientIntegrations = [];
+      
+      res.json(clientIntegrations);
+    } catch (error) {
+      console.error("Error fetching client integrations:", error);
+      res.status(500).json({ message: "Failed to fetch client integrations" });
+    }
+  });
 
   // Integration routes
   app.post('/api/integrations', isAuthenticated, async (req: any, res) => {
