@@ -216,6 +216,14 @@ export const AgencyOnboarding = () => {
                           <Input
                             placeholder="Enter your agency name"
                             className="text-lg p-3 bg-gray-700 border-gray-600 text-white"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                if (field.value) {
+                                  nextStep();
+                                }
+                              }
+                            }}
                             {...field}
                           />
                         </FormControl>
