@@ -17,7 +17,8 @@ import {
   X,
   Eye,
   Check,
-  FileText
+  FileText,
+  Pencil
 } from "lucide-react";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
@@ -89,6 +90,7 @@ export const AllClients = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
+  const [editingDocUrl, setEditingDocUrl] = useState<number | null>(null);
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   
   // Initial client assignments state
@@ -508,7 +510,7 @@ export const AllClients = () => {
                           
                           {/* Expanded content - team assignments and client details */}
                           {expandedClientId === client.id && (
-                            <div className="px-6 py-3 pb-4 border-t border-gray-700 bg-gray-800/50">
+                            <div className="px-6 py-3 pb-8 border-t border-gray-700 bg-gray-800/50">
                               {/* Team Assignments Section */}
                               <div className="mb-6">
                                 <div className="flex justify-between items-center mb-3">
@@ -571,22 +573,12 @@ export const AllClients = () => {
                                   <div>
                                     <label className="block text-xs text-gray-400 mb-1">Client Documents</label>
                                     <div className="flex items-center">
-                                      <a 
-                                        href={clientsExtendedData[client.id]?.docsUrl || '#'} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="flex items-center bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2 text-sm text-white"
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        <FileText className="h-4 w-4 mr-2 text-blue-400" />
-                                        View Docs
-                                      </a>
-                                      {isAdmin && (
-                                        <div className="relative ml-2">
+                                      {editingDocUrl === client.id ? (
+                                        <div className="flex items-center">
                                           <Input
                                             type="text"
-                                            placeholder="Update docs URL"
-                                            className="bg-gray-700 border-gray-600 text-white text-xs h-9 w-48"
+                                            placeholder="Enter document URL"
+                                            className="bg-gray-700 border-gray-600 text-white text-xs h-9 w-48 mr-2"
                                             value={clientsExtendedData[client.id]?.docsUrl || ''}
                                             onChange={(e) => {
                                               e.stopPropagation();
@@ -594,7 +586,43 @@ export const AllClients = () => {
                                             }}
                                             onClick={(e) => e.stopPropagation()}
                                           />
+                                          <Button
+                                            size="sm"
+                                            className="bg-green-600 hover:bg-green-700 h-9 px-2"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setEditingDocUrl(null);
+                                            }}
+                                          >
+                                            <Check className="h-4 w-4" />
+                                          </Button>
                                         </div>
+                                      ) : (
+                                        <>
+                                          <a 
+                                            href={clientsExtendedData[client.id]?.docsUrl || '#'} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="flex items-center bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2 text-sm text-white"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <FileText className="h-4 w-4 mr-2 text-blue-400" />
+                                            View Docs
+                                          </a>
+                                          {isAdmin && (
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="ml-2 h-9 px-2 hover:bg-gray-700"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingDocUrl(client.id);
+                                              }}
+                                            >
+                                              <Pencil className="h-4 w-4 text-gray-400" />
+                                            </Button>
+                                          )}
+                                        </>
                                       )}
                                     </div>
                                   </div>
