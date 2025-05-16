@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { type Client } from "@shared/schema";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "wouter";
 
 interface ClientListProps {
   clients: Client[];
@@ -70,7 +71,7 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
       .toUpperCase();
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string | null) => {
     switch (status) {
       case "active":
         return (
@@ -107,7 +108,7 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
             ? renderSkeleton()
             : displayClients.map((client) => (
                 <li key={client.id}>
-                  <a href="#" className="block hover:bg-gray-700">
+                  <Link href={`/dashboard/agency/clients/${client.id}`} className="block hover:bg-gray-700">
                     <div className="px-4 py-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -117,7 +118,7 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
                           <div className="ml-4">
                             <div className="text-sm font-medium text-white">{client.name}</div>
                             <div className="text-sm text-gray-400">
-                              Added {formatDistanceToNow(new Date(client.addedAt), { addSuffix: true })}
+                              Added {formatDistanceToNow(new Date(client.addedAt || new Date()), { addSuffix: true })}
                             </div>
                           </div>
                         </div>
@@ -127,7 +128,7 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
                         </div>
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 </li>
               ))}
         </ul>
