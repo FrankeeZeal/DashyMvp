@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, isAfter, isBefore } from "date-fns";
 import {
   Search,
   Filter,
@@ -18,8 +18,10 @@ import {
   Eye,
   Check,
   FileText,
-  Pencil
+  Pencil,
+  RotateCcw
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -993,7 +995,35 @@ export const AllClients = () => {
                                   
                                   {/* Contract Dates - Admin only */}
                                   <div>
-                                    <label className="block text-xs text-gray-400 mb-1">Contract Period</label>
+                                    <div className="flex justify-between items-center mb-1">
+                                      <label className="block text-xs text-gray-400">Contract Period</label>
+                                      {isAdmin && clientDataBackup[client.id] && (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-7 px-2 text-xs hover:bg-red-900/30 text-red-400"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Restore from backup
+                                            if (clientDataBackup[client.id]) {
+                                              setClientsExtendedData(prev => ({
+                                                ...prev,
+                                                [client.id]: clientDataBackup[client.id]
+                                              }));
+                                              // Clear backup after using it
+                                              setClientDataBackup(prev => {
+                                                const newBackup = {...prev};
+                                                delete newBackup[client.id];
+                                                return newBackup;
+                                              });
+                                            }
+                                          }}
+                                        >
+                                          <RotateCcw className="h-3 w-3 mr-1" />
+                                          Revert Changes
+                                        </Button>
+                                      )}
+                                    </div>
                                     {isAdmin ? (
                                       <div className="flex space-x-2">
                                         <Input
@@ -1002,6 +1032,13 @@ export const AllClients = () => {
                                           value={clientsExtendedData[client.id]?.contractStart || ''}
                                           onChange={(e) => {
                                             e.stopPropagation();
+                                            // Save backup if this is the first edit
+                                            if (!clientDataBackup[client.id]) {
+                                              setClientDataBackup(prev => ({
+                                                ...prev,
+                                                [client.id]: {...clientsExtendedData[client.id]}
+                                              }));
+                                            }
                                             handleUpdateClientData(client.id, 'contractStart', e.target.value);
                                           }}
                                           onClick={(e) => e.stopPropagation()}
@@ -1009,11 +1046,26 @@ export const AllClients = () => {
                                         <span className="text-gray-400 self-center">to</span>
                                         <Input
                                           type="date"
-                                          className="bg-gray-700 border-gray-600 text-white text-xs h-9"
+                                          className={cn(
+                                            "bg-gray-700 border-gray-600 text-white text-xs h-9",
+                                            isContractExpired(clientsExtendedData[client.id]?.contractEnd) && "border-red-400"
+                                          )}
                                           value={clientsExtendedData[client.id]?.contractEnd || ''}
                                           onChange={(e) => {
                                             e.stopPropagation();
+                                            // Save backup if this is the first edit
+                                            if (!clientDataBackup[client.id]) {
+                                              setClientDataBackup(prev => ({
+                                                ...prev,
+                                                [client.id]: {...clientsExtendedData[client.id]}
+                                              }));
+                                            }
                                             handleUpdateClientData(client.id, 'contractEnd', e.target.value);
+                                            
+                                            // Auto update active status based on end date
+                                            const newEndDate = e.target.value;
+                                            const isActive = newEndDate ? !isContractExpired(newEndDate) : true;
+                                            handleUpdateClientData(client.id, 'isActive', isActive);
                                           }}
                                           onClick={(e) => e.stopPropagation()}
                                         />
