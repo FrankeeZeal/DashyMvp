@@ -344,8 +344,19 @@ export const AllClients = () => {
     }
   };
   
+  // Check if contract is expired (opposite of isClientActive)
+  const isContractExpired = (endDate?: string): boolean => {
+    return endDate ? !isClientActive(endDate) : false;
+  };
+  
   // We'll use the state-based clientAssignmentsState instead of this static data
   // This line is kept for reference but won't be used
+  
+  // Helper function to safely get client documents
+  const getClientDocuments = (clientId: number): ClientDocument[] => {
+    const docs = clientsExtendedData[clientId]?.documents;
+    return Array.isArray(docs) ? docs : [];
+  };
   
   // Get all clients
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -899,9 +910,8 @@ export const AllClients = () => {
 
                                     {/* Documents List */}
                                     <div className="space-y-2 mt-1">
-                                      {clientsExtendedData[client.id]?.documents && 
-                                       clientsExtendedData[client.id]?.documents?.length > 0 ? (
-                                        clientsExtendedData[client.id]?.documents?.map((doc) => (
+                                      {getClientDocuments(client.id).length > 0 ? (
+                                        getClientDocuments(client.id).map((doc) => (
                                           <div 
                                             key={doc.id}
                                             className="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md px-3 py-2"
@@ -1048,10 +1058,9 @@ export const AllClients = () => {
                                         <span className="text-gray-400 self-center">to</span>
                                         <Input
                                           type="date"
-                                          className={cn(
-                                            "bg-gray-700 border-gray-600 text-white text-xs h-9",
-                                            isContractExpired(clientsExtendedData[client.id]?.contractEnd) && "border-red-400"
-                                          )}
+                                          className={`bg-gray-700 border-gray-600 text-white text-xs h-9 ${
+                                            isContractExpired(clientsExtendedData[client.id]?.contractEnd) ? "border-red-400" : ""
+                                          }`}
                                           value={clientsExtendedData[client.id]?.contractEnd || ''}
                                           onChange={(e) => {
                                             e.stopPropagation();
