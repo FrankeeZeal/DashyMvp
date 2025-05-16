@@ -39,38 +39,38 @@ export const CampaignTable = ({ campaigns, isLoading }: CampaignTableProps) => {
   }
 
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Upcoming Campaigns</h3>
-        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+    <div className="bg-gray-800 overflow-hidden shadow-xl shadow-blue-500/20 rounded-lg border border-gray-700">
+      <div className="px-4 py-5 sm:px-6 border-b border-gray-700">
+        <h3 className="text-lg leading-6 font-medium text-white">Upcoming Campaigns</h3>
+        <p className="mt-1 max-w-2xl text-sm text-gray-400">
           View and manage scheduled email and SMS campaigns
         </p>
       </div>
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-700">
             <TableRow>
-              <TableHead>Campaign Name</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>End Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-gray-300">Campaign Name</TableHead>
+              <TableHead className="text-gray-300">Client</TableHead>
+              <TableHead className="text-gray-300">Start Date</TableHead>
+              <TableHead className="text-gray-300">End Date</TableHead>
+              <TableHead className="text-gray-300">Status</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="bg-gray-800">
             {campaigns.length > 0 ? (
               campaigns.map((campaign) => (
-                <TableRow key={campaign.id} className="hover:bg-gray-50 cursor-pointer">
-                  <TableCell className="font-medium">{campaign.name}</TableCell>
-                  <TableCell>{(campaign as any).clientName || `Client ${(campaign as any).clientId}`}</TableCell>
-                  <TableCell>{format(new Date((campaign as any).startDate || campaign.sentDate || new Date()), 'MMM d, yyyy')}</TableCell>
-                  <TableCell>{format(new Date((campaign as any).endDate || campaign.updatedAt || new Date()), 'MMM d, yyyy')}</TableCell>
+                <TableRow key={campaign.id} className="hover:bg-gray-700 cursor-pointer border-b border-gray-700">
+                  <TableCell className="font-medium text-white">{campaign.name}</TableCell>
+                  <TableCell className="text-gray-300">{(campaign as any).clientName || `Client ${(campaign as any).clientId}`}</TableCell>
+                  <TableCell className="text-gray-300">{format(new Date((campaign as any).startDate || campaign.sentDate || new Date()), 'MMM d, yyyy')}</TableCell>
+                  <TableCell className="text-gray-300">{format(new Date((campaign as any).endDate || campaign.updatedAt || new Date()), 'MMM d, yyyy')}</TableCell>
                   <TableCell>{renderStatus(campaign.status)}</TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-6 text-gray-400">
                   No campaigns found
                 </TableCell>
               </TableRow>

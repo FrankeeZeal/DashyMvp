@@ -14,15 +14,15 @@ export const IntegrationCard = ({ integrations, isLoading }: IntegrationCardProp
   const getIntegrationIcon = (type: string) => {
     switch (type) {
       case "email":
-        return <RiMailLine className="text-blue-600 text-xl" />;
+        return <RiMailLine className="text-blue-400 text-xl" />;
       case "sms":
-        return <RiMessage2Line className="text-purple-600 text-xl" />;
+        return <RiMessage2Line className="text-purple-400 text-xl" />;
       case "ecommerce":
-        return <RiShoppingCartLine className="text-indigo-600 text-xl" />;
+        return <RiShoppingCartLine className="text-indigo-400 text-xl" />;
       case "analytics":
-        return <RiBarChartBoxLine className="text-blue-600 text-xl" />;
+        return <RiBarChartBoxLine className="text-blue-400 text-xl" />;
       default:
-        return <RiMailLine className="text-gray-600 text-xl" />;
+        return <RiMailLine className="text-gray-400 text-xl" />;
     }
   };
 
@@ -105,9 +105,9 @@ export const IntegrationCard = ({ integrations, isLoading }: IntegrationCardProp
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3 border-b border-gray-200">
-        <CardTitle>Integration Status</CardTitle>
+    <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
+      <CardHeader className="pb-3 border-b border-gray-700">
+        <CardTitle className="text-white">Integration Status</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="space-y-4">

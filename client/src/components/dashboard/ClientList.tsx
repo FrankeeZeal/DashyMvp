@@ -74,49 +74,49 @@ export const ClientList = ({ clients, isLoading, title = "Recent Clients" }: Cli
     switch (status) {
       case "active":
         return (
-          <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
+          <Badge variant="outline" className="bg-green-900 text-green-300 border-green-700 shadow-sm shadow-green-500/30">
             Active
           </Badge>
         );
       case "pending":
         return (
-          <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+          <Badge variant="outline" className="bg-yellow-900 text-yellow-300 border-yellow-700 shadow-sm shadow-yellow-500/30">
             Pending
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">
-            {status}
+          <Badge variant="outline" className="bg-gray-900 text-gray-300 border-gray-700">
+            {status || "Unknown"}
           </Badge>
         );
     }
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3 border-b border-gray-200 flex justify-between items-center">
-        <CardTitle>{title}</CardTitle>
-        <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+    <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
+      <CardHeader className="pb-3 border-b border-gray-700 flex justify-between items-center">
+        <CardTitle className="text-white">{title}</CardTitle>
+        <a href="#" className="text-sm font-medium text-blue-400 hover:text-blue-300">
           View all
         </a>
       </CardHeader>
       <CardContent className="p-0">
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-gray-700">
           {isLoading
             ? renderSkeleton()
             : displayClients.map((client) => (
                 <li key={client.id}>
-                  <a href="#" className="block hover:bg-gray-50">
+                  <a href="#" className="block hover:bg-gray-700">
                     <div className="px-4 py-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-500 font-medium">{getClientInitials(client.name)}</span>
+                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-900 flex items-center justify-center shadow-inner shadow-blue-500/30">
+                            <span className="text-blue-300 font-medium">{getClientInitials(client.name)}</span>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{client.name}</div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm font-medium text-white">{client.name}</div>
+                            <div className="text-sm text-gray-400">
                               Added {formatDistanceToNow(new Date(client.addedAt), { addSuffix: true })}
                             </div>
                           </div>
