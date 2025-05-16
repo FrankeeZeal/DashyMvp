@@ -585,10 +585,10 @@ export const AgencyDashboard = () => {
                             </svg>
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-md font-medium text-white flex items-center">
-                              More Templates 
-                              <span className="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300 border border-blue-800 coming-soon-badge">Coming Soon</span>
-                            </h3>
+                            <div className="flex items-center justify-between w-full">
+                              <h3 className="text-md font-medium text-white">More Templates</h3>
+                              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-900/50 text-blue-300 border border-blue-800 coming-soon-badge shadow-md shadow-blue-900/50">Coming Soon</span>
+                            </div>
                             <p className="text-sm text-gray-400 mt-1">Exciting new templates are on the way!</p>
                           </div>
                         </div>
