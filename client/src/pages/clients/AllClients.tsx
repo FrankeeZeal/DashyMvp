@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { format, formatDistanceToNow, isAfter, isBefore } from "date-fns";
+import { format, formatDistanceToNow, isAfter, isBefore, parseISO } from "date-fns";
 import {
   Search,
   Filter,
@@ -302,6 +302,8 @@ export const AllClients = () => {
       };
     });
   };
+  
+
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -1065,7 +1067,7 @@ export const AllClients = () => {
                                             // Auto update active status based on end date
                                             const newEndDate = e.target.value;
                                             const isActive = newEndDate ? !isContractExpired(newEndDate) : true;
-                                            handleUpdateClientData(client.id, 'isActive', isActive);
+                                            handleUpdateClientData(client.id, 'isActive', isActive ? 'true' : 'false');
                                           }}
                                           onClick={(e) => e.stopPropagation()}
                                         />
