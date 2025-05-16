@@ -15,6 +15,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine, RiCheckLine } from "react-icons/ri";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+// Function to make widget draggable only in edit mode
+const getDragHandleProps = (editMode: boolean, provided: any) => {
+  return editMode ? provided.dragHandleProps : {};
+};
+
 // Mock data for beta testing
 const mockClients = [
   { 
@@ -647,20 +652,13 @@ export const AgencyDashboard = () => {
                                   ${snapshot.isDragging ? 'border-blue-400 ring-2 ring-blue-400/30 scale-[1.02] rotate-1 z-50' : 'border-gray-700'}
                                   ${editMode && !snapshot.isDragging ? 'widget-edit-mode' : ''}`}
                               >
-                                <div className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800 relative">
-                                  {/* Regular drag handle (hidden in edit mode) */}
-                                  {!editMode && (
-                                    <div {...provided.dragHandleProps} className="mr-3">
-                                      <DragHandle />
-                                    </div>
-                                  )}
-                                  
+                                <div 
+                                  {...provided.dragHandleProps}
+                                  className="flex items-center px-6 py-4 border-b border-gray-700 bg-gray-800 relative cursor-default"
+                                >
                                   {/* Edit mode drag handle - centered inside widget */}
                                   {editMode && (
-                                    <div 
-                                      {...provided.dragHandleProps} 
-                                      className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 edit-mode-drag-handle"
-                                    >
+                                    <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 edit-mode-drag-handle">
                                       <div className="flex items-center justify-center w-6 h-6">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M8 5H6V7H8V5Z" fill="#60A5FA" />

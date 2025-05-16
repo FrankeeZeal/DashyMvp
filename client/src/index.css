@@ -12,6 +12,7 @@
 
 .widget-edit-mode {
   animation: wiggle 2s ease-in-out infinite;
+  cursor: grab;
 }
 
 /* Widget hover ghost animation */
