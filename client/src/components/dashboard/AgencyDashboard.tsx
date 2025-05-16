@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Navbar } from "@/components/dashboard/Navbar";
@@ -9,33 +8,38 @@ import { IntegrationCard } from "@/components/dashboard/IntegrationCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine } from "react-icons/ri";
 
+// Mock data for beta testing
+const mockClients = [
+  { id: 1, name: "Earthly Goods", industry: "Health & Wellness", logo: null, createdAt: new Date(), status: "active" },
+  { id: 2, name: "Sista Teas", industry: "Food & Beverage", logo: null, createdAt: new Date(), status: "active" },
+  { id: 3, name: "Green Valley", industry: "Home & Garden", logo: null, createdAt: new Date(), status: "active" },
+  { id: 4, name: "FitLife Supplements", industry: "Health & Wellness", logo: null, createdAt: new Date(), status: "active" },
+];
+
+const mockCampaigns = [
+  { id: 1, name: "Summer Sale", status: "active", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 1 },
+  { id: 2, name: "Fall Collection", status: "draft", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 2 },
+  { id: 3, name: "Holiday Special", status: "active", startDate: new Date(), endDate: new Date(), organizationId: 1, clientId: 1 },
+];
+
+const mockIntegrations = [
+  { id: 1, name: "Klaviyo", status: "connected", apiKey: "******", organizationId: 1, type: "email" },
+  { id: 2, name: "Twilio", status: "pending", apiKey: null, organizationId: 1, type: "sms" },
+  { id: 3, name: "Omnisend", status: "connected", apiKey: "******", organizationId: 1, type: "email" },
+];
+
 export const AgencyDashboard = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const { data: organizations, isLoading: orgsLoading } = useQuery({
-    queryKey: ["/api/organizations"],
-  });
-
-  // Use the first organization found for the agency (in a real app, we'd want to handle multiple orgs)
-  const activeOrganization = organizations && organizations.length > 0 
-    ? organizations.find(org => org.type === 'agency') 
-    : null;
-
-  const { data: clients, isLoading: clientsLoading } = useQuery({
-    queryKey: activeOrganization ? [`/api/organizations/${activeOrganization.id}/clients`] : null,
-    enabled: !!activeOrganization,
-  });
-
-  const { data: campaigns, isLoading: campaignsLoading } = useQuery({
-    queryKey: activeOrganization ? [`/api/organizations/${activeOrganization.id}/campaigns`] : null,
-    enabled: !!activeOrganization,
-  });
-
-  const { data: integrations, isLoading: integrationsLoading } = useQuery({
-    queryKey: activeOrganization ? [`/api/organizations/${activeOrganization.id}/integrations`] : null,
-    enabled: !!activeOrganization,
-  });
+  
+  // Using mock data for beta testing
+  const clients = mockClients;
+  const campaigns = mockCampaigns;
+  const integrations = mockIntegrations;
+  
+  const clientsLoading = false;
+  const campaignsLoading = false;
+  const integrationsLoading = false;
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);

@@ -1,54 +1,22 @@
-import { useEffect, useState } from "react";
-import { useLocation, useRoute } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { useLocation } from "wouter";
 import OrganizationTypeSelection from "@/components/auth/OrganizationTypeSelection";
 import AgencyOnboarding from "@/components/auth/AgencyOnboarding";
 import EcomOnboarding from "@/components/auth/EcomOnboarding";
-import { Loader2 } from "lucide-react";
 
 export default function Onboarding() {
-  const { user, isLoading, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
-  const [, params] = useRoute("/onboarding");
-  const { toast } = useToast();
-  const [step, setStep] = useState<"type-selection" | "agency-form" | "ecom-form">("type-selection");
-
-  useEffect(() => {
-    // If user is not authenticated, redirect to login
-    if (!isLoading && !isAuthenticated) {
-      navigate("/");
-      return;
-    }
-
-    // Check if the user has already completed onboarding
-    if (user?.onboardingComplete) {
-      // In a real app, we would get the user's organizations and redirect to the right dashboard
-      navigate("/dashboard/agency");
-      return;
-    }
-
-    // Check for URL params to determine step
+  const [step, setStep] = useState<string>(() => {
+    // Check URL params to determine step on initial load
     const searchParams = new URLSearchParams(window.location.search);
     const type = searchParams.get("type");
     
-    if (type === "agency") {
-      setStep("agency-form");
-    } else if (type === "ecom") {
-      setStep("ecom-form");
-    } else {
-      setStep("type-selection");
-    }
-  }, [isLoading, isAuthenticated, user, navigate]);
+    if (type === "agency") return "agency-form";
+    if (type === "ecom") return "ecom-form";
+    return "type-selection";
+  });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
+  // Simplified for beta testing
   return (
     <>
       {step === "type-selection" && <OrganizationTypeSelection />}
