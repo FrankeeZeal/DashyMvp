@@ -413,6 +413,20 @@ export const AgencyOnboarding = () => {
                           className="bg-blue-600 hover:bg-blue-500 text-white h-10 px-4"
                           onClick={() => {
                             if (newMemberEmail && newMemberRole) {
+                              // Check if email already exists
+                              const emailExists = teamMembers.some(
+                                member => member.email.toLowerCase() === newMemberEmail.toLowerCase()
+                              );
+                              
+                              if (emailExists) {
+                                toast({
+                                  title: "Email already added",
+                                  description: "This email address has already been added to the team.",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              
                               setTeamMembers([...teamMembers, {
                                 email: newMemberEmail,
                                 role: newMemberRole,
@@ -435,7 +449,7 @@ export const AgencyOnboarding = () => {
                           {teamMembers.map((member, index) => (
                             <div key={index} className="flex items-center justify-between p-3 rounded-md bg-gray-800 border border-gray-700 relative">
                               <div className="flex items-center">
-                                <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                                <div className={`w-2 h-2 rounded-full ${member.invited ? 'bg-green-500' : 'bg-blue-500'} mr-2`}></div>
                                 <div>
                                   <p className="text-white">{member.email}</p>
                                   <p className="text-sm text-gray-400">{member.role}</p>
@@ -443,7 +457,9 @@ export const AgencyOnboarding = () => {
                               </div>
                               {member.invited ? (
                                 <div className="flex items-center text-green-500">
-                                  <RiCheckLine className="mr-1" /> Invited
+                                  <div className="bg-green-500/20 px-3 py-1 rounded-full flex items-center">
+                                    <RiCheckLine className="mr-1" /> Invited
+                                  </div>
                                 </div>
                               ) : (
                                 <div className="flex gap-2">
