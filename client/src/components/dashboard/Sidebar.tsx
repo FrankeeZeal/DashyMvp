@@ -115,6 +115,12 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
         label: "ROI Calculator",
         icon: <div className="w-2 h-2 rounded-full bg-purple-500 mr-2 ml-6"></div>,
         isSubItem: true
+      },
+      {
+        path: `${basePath}/analytics/reports`,
+        label: "Reports",
+        icon: <div className="w-2 h-2 rounded-full bg-purple-500 mr-2 ml-6"></div>,
+        isSubItem: true
       }
     ];
   };
