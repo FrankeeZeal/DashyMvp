@@ -23,7 +23,7 @@ function App() {
       <TooltipProvider>
         <div className="min-h-screen bg-gray-900 text-gray-100">
           <Toaster />
-          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="w-full">
             <Switch>
               {/* For beta testing - direct routing */}
               <Route path="/" component={Login} />
