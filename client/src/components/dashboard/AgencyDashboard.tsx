@@ -172,7 +172,7 @@ export const AgencyDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="flex h-screen overflow-hidden">
         <Sidebar type="agency" onLogout={handleLogout} />
         
@@ -183,12 +183,12 @@ export const AgencyDashboard = () => {
             <div className="pb-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Agency Dashboard</h1>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Welcome back! Here's an overview of your agency's performance.</p>
+                  <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
+                  <p className="mt-1 text-sm text-gray-400">Welcome back! Here's an overview of your agency's performance.</p>
                 </div>
                 <div className="mt-4 md:mt-0">
                   <div className="inline-flex rounded-md shadow">
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <button className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                       Export Reports
                     </button>
                   </div>
@@ -238,53 +238,53 @@ export const AgencyDashboard = () => {
             {/* Main Content Grid */}
             <div className="mt-6 grid grid-cols-1 gap-6">
               {/* Campaign Table */}
-              <div className="overflow-hidden shadow rounded-lg">
+              <div className="overflow-hidden shadow-xl shadow-blue-500/20 rounded-lg border border-gray-800">
                 <CampaignTable
-                  campaigns={campaigns}
+                  campaigns={campaigns as any}
                   isLoading={campaignsLoading}
                 />
               </div>
             
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Client Performance Chart */}
-                <Card className="dark:bg-gray-800 shadow-xl">
-                  <CardHeader className="pb-3 border-b dark:border-gray-700">
-                    <CardTitle className="text-gray-900 dark:text-white">Client Performance</CardTitle>
+                <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
+                  <CardHeader className="pb-3 border-b border-gray-700">
+                    <CardTitle className="text-white">Client Performance</CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead className="bg-gray-50 dark:bg-gray-700">
+                      <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-gray-700">
                           <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Client</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Emails Sent</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Open Rate</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Click Rate</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Revenue</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Client</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Emails Sent</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Open Rate</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Click Rate</th>
+                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Revenue</th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="bg-gray-800 divide-y divide-gray-700">
                           {clientPerformance.map((client, index) => (
-                            <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{client.name}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{client.emailsSent.toLocaleString()}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                            <tr key={index} className="hover:bg-gray-700">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{client.name}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.emailsSent.toLocaleString()}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 <div className="flex items-center">
                                   <span className="mr-2">{Math.round((client.opened / client.emailsSent) * 100)}%</span>
-                                  <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${(client.opened / client.emailsSent) * 100}%` }}></div>
+                                  <div className="w-16 bg-gray-600 rounded-full h-2">
+                                    <div className="bg-blue-500 h-2 rounded-full shadow-sm shadow-blue-500/50" style={{ width: `${(client.opened / client.emailsSent) * 100}%` }}></div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 <div className="flex items-center">
                                   <span className="mr-2">{Math.round((client.clicked / client.emailsSent) * 100)}%</span>
-                                  <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                    <div className="bg-green-500 h-2 rounded-full" style={{ width: `${(client.clicked / client.emailsSent) * 100}%` }}></div>
+                                  <div className="w-16 bg-gray-600 rounded-full h-2">
+                                    <div className="bg-blue-400 h-2 rounded-full shadow-sm shadow-blue-400/50" style={{ width: `${(client.clicked / client.emailsSent) * 100}%` }}></div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">${client.revenue.toLocaleString()}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${client.revenue.toLocaleString()}</td>
                             </tr>
                           ))}
                         </tbody>
