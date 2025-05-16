@@ -69,19 +69,21 @@ export const Sidebar = ({ type, onLogout }: SidebarProps) => {
           <div className="mt-5 flex-1 flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
               {navItems.map((item) => (
-                <Link key={item.path} href={item.path}>
-                  <a
-                    className={cn(
-                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md",
-                      location === item.path
-                        ? "bg-primary-50 text-primary-700"
-                        : "text-gray-700 hover:bg-gray-50"
-                    )}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </a>
-                </Link>
+                <div key={item.path} className="w-full">
+                  <Link href={item.path}>
+                    <div
+                      className={cn(
+                        "group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer",
+                        location === item.path
+                          ? "bg-primary-50 text-primary-700"
+                          : "text-gray-700 hover:bg-gray-50"
+                      )}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </div>
+                  </Link>
+                </div>
               ))}
             </nav>
           </div>
