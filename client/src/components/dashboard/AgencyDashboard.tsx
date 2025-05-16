@@ -11,7 +11,8 @@ import { CampaignReport } from "@/components/dashboard/CampaignReport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine } from "react-icons/ri";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { RiUserLine, RiMoneyDollarCircleLine, RiMailSendLine, RiTeamLine, RiAddLine, RiCheckLine } from "react-icons/ri";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // Mock data for beta testing
@@ -505,13 +506,95 @@ export const AgencyDashboard = () => {
                     </Button>
                   </div>
                   
-                  {/* Add Campaign Button */}
-                  <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center p-0"
-                    aria-label="Add new campaign"
-                  >
-                    <RiAddLine className="h-5 w-5" />
-                  </Button>
+                  {/* Add Campaign Button with Dialog */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="bg-blue-600 hover:bg-blue-700 text-white h-10 w-10 rounded-full shadow-lg shadow-blue-500/30 flex items-center justify-center p-0"
+                        aria-label="Add new campaign"
+                      >
+                        <RiAddLine className="h-5 w-5" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800 text-white shadow-xl shadow-blue-900/20">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-semibold text-center">Choose a Dashboard template</DialogTitle>
+                        <DialogDescription className="text-gray-400 text-center mt-2">
+                          Get started with a Dashboard template or create a custom Dashboard to fit your exact needs.
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                        {/* Starter Template - Selected */}
+                        <div className="relative border border-green-500 rounded-lg bg-gray-800 p-5 group hover:bg-gray-800/80 transition-all duration-200 shadow-lg shadow-green-900/10">
+                          <div className="absolute -top-2 -right-2 bg-green-500 rounded-full p-1 shadow-md shadow-green-900/30">
+                            <RiCheckLine className="h-4 w-4 text-white" />
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <div className="mb-3 bg-green-600/20 rounded-md w-12 h-12 flex items-center justify-center">
+                              <RiMailSendLine className="h-6 w-6 text-green-500" />
+                            </div>
+                            <h3 className="text-md font-medium text-white">Starter</h3>
+                            <p className="text-sm text-gray-400 mt-1">Basic campaign setup with essential features</p>
+                          </div>
+                        </div>
+                        
+                        {/* Client Portal */}
+                        <div className="border border-gray-700 rounded-lg bg-gray-800 p-5 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 shadow-lg shadow-blue-900/10">
+                          <div className="flex flex-col h-full">
+                            <div className="mb-3 bg-blue-600/20 rounded-md w-12 h-12 flex items-center justify-center">
+                              <RiUserLine className="h-6 w-6 text-blue-500" />
+                            </div>
+                            <h3 className="text-md font-medium text-white">Client Portal</h3>
+                            <p className="text-sm text-gray-400 mt-1">Collaborate with clients on tasks and projects</p>
+                          </div>
+                        </div>
+                        
+                        {/* Campaign Management */}
+                        <div className="border border-gray-700 rounded-lg bg-gray-800 p-5 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 shadow-lg shadow-blue-900/10">
+                          <div className="flex flex-col h-full">
+                            <div className="mb-3 bg-purple-600/20 rounded-md w-12 h-12 flex items-center justify-center">
+                              <RiMailSendLine className="h-6 w-6 text-purple-500" />
+                            </div>
+                            <h3 className="text-md font-medium text-white">Campaign Management</h3>
+                            <p className="text-sm text-gray-400 mt-1">Plan and track detailed campaign performance</p>
+                          </div>
+                        </div>
+                        
+                        {/* Client ROI */}
+                        <div className="border border-gray-700 rounded-lg bg-gray-800 p-5 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 shadow-lg shadow-blue-900/10">
+                          <div className="flex flex-col h-full">
+                            <div className="mb-3 bg-amber-600/20 rounded-md w-12 h-12 flex items-center justify-center">
+                              <RiMoneyDollarCircleLine className="h-6 w-6 text-amber-500" />
+                            </div>
+                            <h3 className="text-md font-medium text-white">Client ROI</h3>
+                            <p className="text-sm text-gray-400 mt-1">Track and analyze return on investment metrics</p>
+                          </div>
+                        </div>
+                        
+                        {/* Start from Scratch with Upgrade Button */}
+                        <div className="border border-gray-700 rounded-lg bg-gray-800 p-5 group hover:bg-gray-800/80 transition-all duration-200 hover:border-blue-600/50 col-span-1 sm:col-span-2 shadow-lg shadow-blue-900/10">
+                          <div className="flex justify-between items-center h-full">
+                            <div className="flex items-center">
+                              <div className="bg-gray-700 rounded-md w-12 h-12 flex items-center justify-center mr-4">
+                                <svg className="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                              </div>
+                              <div>
+                                <h3 className="text-md font-medium text-white">Start from Scratch</h3>
+                                <p className="text-sm text-gray-400">Build a custom dashboard with advanced features</p>
+                              </div>
+                            </div>
+                            <Button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm px-4 py-2 rounded-md shadow-lg shadow-blue-900/30">
+                              Upgrade
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
             </div>

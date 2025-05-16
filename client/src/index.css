@@ -30,6 +30,66 @@
   box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
 }
 
+/* Template selection card hover effects */
+.template-card {
+  transition: all 0.2s ease;
+}
+
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Dialog background overlay animation */
+[data-state="open"][data-dialog-overlay] {
+  animation: fadeIn 0.15s ease-out;
+}
+
+[data-state="closed"][data-dialog-overlay] {
+  animation: fadeOut 0.15s ease-in;
+}
+
+/* Dialog content animation */
+[data-state="open"][data-dialog-content] {
+  animation: scaleIn 0.2s ease-out;
+}
+
+[data-state="closed"][data-dialog-content] {
+  animation: scaleOut 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to { 
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 20 14.3% 4.1%;
