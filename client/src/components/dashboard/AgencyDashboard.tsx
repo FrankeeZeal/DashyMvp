@@ -8,6 +8,7 @@ import { IntegrationCard } from "@/components/dashboard/IntegrationCard";
 import { CampaignTable } from "@/components/dashboard/CampaignTable";
 import { ROICalculator } from "@/components/dashboard/ROICalculator";
 import { CampaignReport } from "@/components/dashboard/CampaignReport";
+import { ClientRevenueGraph } from "@/components/dashboard/ClientRevenueGraph";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -162,7 +163,7 @@ const mockIntegrations = [
 ];
 
 // Define the dashboard widget types
-type WidgetType = 'stats' | 'campaigns' | 'clients' | 'roi-analytics';
+type WidgetType = 'stats' | 'campaigns' | 'clients' | 'roi-analytics' | 'client-revenue';
 
 interface DashboardWidget {
   id: string;
@@ -230,6 +231,12 @@ export const AgencyDashboard = () => {
       title: 'Analytics',
       columns: 1,
       widgets: [
+        {
+          id: 'client-revenue-widget',
+          type: 'client-revenue',
+          title: 'Client Revenue',
+          size: { width: 'full', height: 'auto' }
+        },
         { 
           id: 'roi-widget', 
           type: 'roi-analytics', 
