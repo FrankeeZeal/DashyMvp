@@ -91,24 +91,24 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
           <div className="ml-3 relative">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="bg-white">
-                  <Avatar>
+                <Button variant="ghost" size="icon" className="bg-gray-800 hover:bg-gray-700">
+                  <Avatar className="border-2 border-blue-500/30">
                     <AvatarImage src={user?.profileImageUrl} alt={getName()} />
-                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                    <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
                   </Avatar>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="md:hidden">
+              <SheetContent side="right" className="md:hidden bg-gray-900 border-l border-gray-700">
                 <div className="flex flex-col h-full">
-                  <div className="py-4 border-b border-gray-200">
+                  <div className="py-4 border-b border-gray-700">
                     <div className="flex items-center">
-                      <Avatar>
+                      <Avatar className="border-2 border-blue-500/30">
                         <AvatarImage src={user?.profileImageUrl} alt={getName()} />
-                        <AvatarFallback>{getInitials()}</AvatarFallback>
+                        <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
                       </Avatar>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-700">{getName()}</p>
-                        <p className="text-xs font-medium text-gray-500">
+                        <p className="text-sm font-medium text-white">{getName()}</p>
+                        <p className="text-xs font-medium text-gray-400">
                           {isAgency ? "Agency Owner" : "Store Owner"}
                         </p>
                       </div>
@@ -118,22 +118,22 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
                   <nav className="flex-1 py-4 space-y-1">
                     {navItems.map((item) => (
                       <Link key={item.path} href={item.path}>
-                        <a className={`flex items-center px-2 py-2 text-base font-medium rounded-md ${
+                        <div className={`flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer ${
                           location === item.path
-                            ? "bg-primary-50 text-primary-700"
-                            : "text-gray-700 hover:bg-gray-50"
+                            ? "bg-blue-900/50 text-blue-300"
+                            : "text-gray-300 hover:bg-gray-800"
                         }`}>
                           {item.icon}
                           {item.label}
-                        </a>
+                        </div>
                       </Link>
                     ))}
                   </nav>
 
-                  <div className="border-t border-gray-200 py-4">
+                  <div className="border-t border-gray-700 py-4">
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-blue-700 text-blue-300 hover:bg-blue-900/50"
                       onClick={() => (window.location.href = "/api/logout")}
                     >
                       Sign Out

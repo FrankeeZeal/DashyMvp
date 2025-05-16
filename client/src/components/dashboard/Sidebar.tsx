@@ -75,8 +75,8 @@ export const Sidebar = ({ type, onLogout }: SidebarProps) => {
                       className={cn(
                         "group flex items-center px-2 py-2 text-sm font-medium rounded-md cursor-pointer",
                         location === item.path
-                          ? "bg-primary-50 text-primary-700"
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "bg-blue-900/50 text-blue-300 shadow-sm shadow-blue-500/20"
+                          : "text-gray-300 hover:bg-gray-800 hover:text-white"
                       )}
                     >
                       {item.icon}
