@@ -297,7 +297,7 @@ export const AgencyOnboarding = () => {
                       type="button"
                       variant="ghost"
                       onClick={prevStep}
-                      className="text-gray-600 hover:bg-gray-100"
+                      className="text-gray-300 hover:bg-gray-700"
                       disabled={createAgencyMutation.isPending}
                     >
                       <RiArrowLeftLine className="mr-1" /> Back
@@ -307,6 +307,7 @@ export const AgencyOnboarding = () => {
                     <Button
                       type="button"
                       onClick={nextStep}
+                      className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-8 shadow-lg hover:shadow-blue-500/50"
                       disabled={createAgencyMutation.isPending}
                     >
                       {step === totalSteps ? "Finish Setup" : "Continue"}
