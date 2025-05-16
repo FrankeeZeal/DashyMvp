@@ -146,41 +146,41 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
             <div className="hidden md:block">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-gray-800 hover:bg-gray-700">
-                    <Avatar className="border-2 border-blue-500/30">
+                  <Button variant="ghost" size="icon" className="bg-gradient-to-b from-gray-800 to-gray-900 hover:from-blue-900/40 hover:to-blue-800/20 transition-all duration-200 border border-blue-500/10 hover:border-blue-500/30 shadow-sm hover:shadow-md hover:shadow-blue-500/20 rounded-full p-0.5">
+                    <Avatar className="border-2 border-blue-500/40 hover:border-blue-400/60 transition-all">
                       <AvatarImage src={user?.profileImageUrl} alt={getName()} />
-                      <AvatarFallback className="bg-blue-900 text-blue-100">{getInitials()}</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-blue-800 to-blue-900 text-blue-100 font-medium">{getInitials()}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-gray-900 border-gray-700 text-gray-200">
-                  <div className="p-2 border-b border-gray-700">
+                <DropdownMenuContent className="w-64 bg-gradient-to-b from-gray-900 to-gray-950 border border-blue-500/20 shadow-lg shadow-blue-500/10 rounded-xl overflow-hidden text-gray-200">
+                  <div className="p-3 border-b border-blue-500/20 bg-gradient-to-r from-blue-900/20 to-blue-700/10">
                     <div className="flex items-center">
-                      <Avatar className="border-2 border-blue-500/30 h-8 w-8">
+                      <Avatar className="border-2 border-blue-500/50 h-10 w-10 shadow-md shadow-blue-500/20">
                         <AvatarImage src={user?.profileImageUrl} alt={getName()} />
-                        <AvatarFallback className="bg-blue-900 text-blue-100 text-xs">{getInitials()}</AvatarFallback>
+                        <AvatarFallback className="bg-gradient-to-br from-blue-800 to-blue-900 text-blue-100 text-xs">{getInitials()}</AvatarFallback>
                       </Avatar>
-                      <div className="ml-2">
-                        <p className="text-sm font-medium text-white">{getName()}</p>
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-white bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent">{getName()}</p>
                         <p className="text-xs font-medium text-gray-400">
                           {isAgency ? "Agency Owner" : "Store Owner"}
                         </p>
                       </div>
                     </div>
                   </div>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem className="cursor-pointer hover:bg-gray-800">
-                    <RiSettingsLine className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-gray-700" />
-                  <DropdownMenuItem 
-                    className="cursor-pointer hover:bg-gray-800" 
-                    onClick={() => (window.location.href = "/api/logout")}
-                  >
-                    <RiLogoutBoxRLine className="mr-2 h-4 w-4" />
-                    <span>Logout</span>
-                  </DropdownMenuItem>
+                  <div className="px-1 py-1">
+                    <DropdownMenuItem className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150">
+                      <RiSettingsLine className="mr-2 h-4 w-4 text-gray-400" />
+                      <span>Settings</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="cursor-pointer my-1 rounded-lg flex items-center h-9 px-2 py-0 text-sm hover:bg-blue-900/30 hover:text-blue-200 focus:bg-blue-900/40 transition-colors duration-150" 
+                      onClick={() => (window.location.href = "/api/logout")}
+                    >
+                      <RiLogoutBoxRLine className="mr-2 h-4 w-4 text-gray-400" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
