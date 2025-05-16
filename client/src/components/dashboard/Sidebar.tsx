@@ -90,7 +90,7 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
           collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+        <div className="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto relative">
           <div className={cn(
             "flex items-center flex-shrink-0",
             collapsed ? "justify-center px-2" : "px-4"
@@ -101,17 +101,16 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={toggleCollapse}
               className="text-gray-400 hover:text-white hover:bg-gray-800 ml-auto"
             >
               <RiSearchLine className="h-5 w-5" />
             </Button>
           </div>
           
-          {/* Circular collapse button positioned on the right border */}
+          {/* Circular collapse button positioned on the navigation area */}
           <div 
             className={cn(
-              "absolute top-1/2 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-10",
+              "absolute top-24 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-10",
               collapsed ? "rotate-180" : ""
             )}
             onClick={toggleCollapse}
