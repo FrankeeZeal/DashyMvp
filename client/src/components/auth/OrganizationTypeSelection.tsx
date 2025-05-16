@@ -15,19 +15,19 @@ export const OrganizationTypeSelection = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="w-full max-w-xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-white mb-3">Who are you?</h1>
           <p className="text-gray-300 max-w-md mx-auto">We'll customize your experience based on your selection</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 max-w-md mx-auto">
+        <div className="flex flex-col md:flex-row justify-center gap-6">
           {/* Agency Card */}
-          <div className="cursor-pointer group" onClick={handleAgencySelection}>
-            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20">
-              <div className="p-8 flex flex-col text-center">
+          <div className="cursor-pointer group flex-1" onClick={handleAgencySelection}>
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20 h-full">
+              <div className="p-8 flex flex-col text-center h-full">
                 <h2 className="text-2xl font-semibold mb-3 text-white">Agency</h2>
-                <p className="text-gray-300 mb-6">
+                <p className="text-gray-300 mb-6 flex-grow">
                   For email, SMS, and loyalty program agencies managing multiple clients and tracking ROI
                 </p>
                 <div className="mt-auto mx-auto">
@@ -40,11 +40,11 @@ export const OrganizationTypeSelection = () => {
           </div>
 
           {/* Ecom Store Card */}
-          <div className="cursor-pointer group" onClick={handleEcomSelection}>
-            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20">
-              <div className="p-8 flex flex-col text-center">
+          <div className="cursor-pointer group flex-1" onClick={handleEcomSelection}>
+            <Card className="bg-gray-800 border-2 border-transparent hover:border-primary-500 transition-all duration-200 shadow-xl hover:shadow-blue-500/20 h-full">
+              <div className="p-8 flex flex-col text-center h-full">
                 <h2 className="text-2xl font-semibold mb-3 text-white">Ecom Store</h2>
-                <p className="text-gray-300 mb-6">
+                <p className="text-gray-300 mb-6 flex-grow">
                   For individual e-commerce stores tracking campaign performance and accessing training resources
                 </p>
                 <div className="mt-auto mx-auto">
