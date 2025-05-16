@@ -17,6 +17,7 @@ import {
   FaCogs, 
   FaEnvelope 
 } from 'react-icons/fa';
+import klaviyoLogo from '@/assets/klaviyo-logo.png';
 import { Loader2, PlusCircle } from 'lucide-react';
 
 interface ClientIntegrationsProps {
@@ -44,7 +45,7 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
   
   // Integrations list
   const availableIntegrations: Integration[] = [
-    { id: 1, name: 'Klaviyo', type: 'email', icon: <FaEnvelope className="w-6 h-6 text-[#4CC7F2]" />, isConnected: false },
+    { id: 1, name: 'Klaviyo', type: 'email', icon: <img src={klaviyoLogo} alt="Klaviyo" className="w-8 h-8" />, isConnected: false },
     { id: 2, name: 'Omnisend', type: 'email', icon: <SiMongodb className="w-6 h-6 text-[#28724F]" />, isConnected: false },
     { id: 3, name: 'Mailchimp', type: 'email', icon: <SiMailchimp className="w-6 h-6 text-[#FFE01B]" />, isConnected: false },
     { id: 4, name: 'Shopify', type: 'ecommerce', icon: <SiShopify className="w-6 h-6 text-[#95BF47]" />, isConnected: false, comingSoon: true },
@@ -131,7 +132,10 @@ export const ClientIntegrations: React.FC<ClientIntegrationsProps> = ({ clientId
                   </span>
                 </div>
                 <CardDescription>
-                  {integration.type.charAt(0).toUpperCase() + integration.type.slice(1)} Integration
+                  {integration.type === 'sms' 
+                    ? 'SMS Integrations' 
+                    : integration.type.charAt(0).toUpperCase() + integration.type.slice(1)
+                  }
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-0">
