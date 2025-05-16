@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'wouter';
+import { useParams, Link } from 'wouter';
+import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Navbar } from '@/components/dashboard/Navbar';
 import { Card } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { ManualDataTable } from '@/components/clients/ManualDataTable';
 import { ClientIntegrations } from '@/components/clients/ClientIntegrations';
 import { ClientAnalytics } from '@/components/clients/ClientAnalytics';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Loader2, Mail, MessageSquare, BarChart3, Database, Zap } from "lucide-react";
+import { Loader2, Mail, MessageSquare, BarChart3, Database, Zap, Users } from "lucide-react";
 
 // Define client data interface
 interface ClientData {
@@ -173,6 +174,14 @@ export const ClientDetail = () => {
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-4">
                   <div>
                     <h1 className="text-2xl font-bold text-white">{clientData.name}</h1>
+                  </div>
+                  <div className="mt-3 md:mt-0">
+                    <Link href="/dashboard/clients/all">
+                      <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Users className="h-4 w-4 mr-2" />
+                        Manage Clients
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
