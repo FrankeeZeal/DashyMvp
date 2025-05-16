@@ -118,35 +118,46 @@ const mockIntegrations = [
     type: "email", 
     organizationId: 1, 
     updatedAt: new Date(), 
-    createdAt: new Date() 
+    createdAt: new Date(),
+    description: "Email marketing automation platform"
   },
   { 
     id: 2, 
-    name: "Twilio", 
-    status: "pending", 
-    type: "sms", 
+    name: "Shopify", 
+    status: "connected", 
+    type: "ecommerce", 
     organizationId: 1, 
     updatedAt: new Date(), 
-    createdAt: new Date() 
+    createdAt: new Date(),
+    description: "E-commerce platform"
   },
   { 
     id: 3, 
+    name: "Twilio", 
+    status: "disconnected", 
+    type: "sms", 
+    organizationId: 1, 
+    updatedAt: new Date(), 
+    createdAt: new Date(),
+    description: "SMS messaging service"
+  },
+  { 
+    id: 4, 
     name: "Omnisend", 
-    status: "connected", 
+    status: "pending", 
     type: "email", 
     organizationId: 1, 
     updatedAt: new Date(), 
-    createdAt: new Date() 
+    createdAt: new Date(),
+    description: "Marketing automation platform for ecommerce"
   },
 ];
 
 export const AgencyDashboard = () => {
-  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
-  // Using data for development
-  const clients = mockClients;
-  // Add client names to campaign data
+  // Map client id to name for ease of display
   const campaignsWithClientNames = mockCampaigns.map(campaign => ({
     ...campaign,
     clientName: clientNameMap[(campaign as any).clientId] || 'Unknown Client'
@@ -192,163 +203,108 @@ export const AgencyDashboard = () => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-white">Agency Dashboard</h1>
-                  <p className="mt-1 text-sm text-gray-400">Welcome back! Here's an overview of your agency's performance.</p>
+                  <p className="mt-1 text-gray-400">Welcome back, here's what's happening today.</p>
                 </div>
                 <div className="mt-4 md:mt-0">
-                  <div className="inline-flex rounded-md shadow">
-                    <button className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                      Export Reports
+                  <div className="inline-flex gap-2">
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow-lg shadow-blue-500/30">
+                      + New Campaign
                     </button>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-6">
               <StatsCard
                 title="Total Clients"
-                value={clients?.length || 0}
-                change={{ value: "8%", type: "increase" }}
+                value="4"
+                change={{ value: "+1", type: "increase" }}
                 icon={RiUserLine}
-                iconBgColor="bg-primary-50"
-                iconColor="text-primary-700"
+                iconBgColor="bg-blue-500/20"
+                iconColor="text-blue-500"
               />
-              
               <StatsCard
                 title="Monthly Revenue"
-                value="$48,924"
-                change={{ value: "12%", type: "increase" }}
+                value="$34,592"
+                change={{ value: "+5.2%", type: "increase" }}
                 icon={RiMoneyDollarCircleLine}
-                iconBgColor="bg-green-50"
-                iconColor="text-green-700"
+                iconBgColor="bg-green-500/20"
+                iconColor="text-green-500"
               />
-              
               <StatsCard
-                title="Active Campaigns"
-                value={campaigns?.filter(c => c.status === 'active').length || 0}
-                change={{ value: "4%", type: "increase" }}
+                title="Campaigns Sent"
+                value="24"
+                change={{ value: "+8", type: "increase" }}
                 icon={RiMailSendLine}
-                iconBgColor="bg-blue-50"
-                iconColor="text-blue-700"
+                iconBgColor="bg-purple-500/20"
+                iconColor="text-purple-500"
               />
-              
               <StatsCard
-                title="Team Members"
-                value="9"
-                change={{ value: "2 new", type: "increase" }}
+                title="Team Size"
+                value="8"
+                change={{ value: "0", type: "neutral" }}
                 icon={RiTeamLine}
-                iconBgColor="bg-purple-50"
-                iconColor="text-purple-700"
+                iconBgColor="bg-amber-500/20"
+                iconColor="text-amber-500"
               />
             </div>
             
-            {/* Main Content Grid */}
-            <div className="mt-6 grid grid-cols-1 gap-6">
-              {/* Campaign Table */}
-              <div className="overflow-hidden shadow-xl shadow-blue-500/20 rounded-lg border border-gray-800">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 mb-6">
+              <div className="col-span-2">
                 <CampaignTable
-                  campaigns={campaigns as any}
+                  campaigns={campaigns}
                   isLoading={campaignsLoading}
                 />
               </div>
-            
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Client Performance Chart */}
-                <Card className="bg-gray-800 shadow-xl shadow-blue-500/20 border border-gray-700">
-                  <CardHeader className="pb-3 border-b border-gray-700">
-                    <CardTitle className="text-white">Client Performance</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-700">
-                        <thead className="bg-gray-700">
-                          <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Client</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Emails Sent</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Open Rate</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Click Rate</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Revenue</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-gray-800 divide-y divide-gray-700">
-                          {clientPerformance.map((client, index) => (
-                            <tr key={index} className="hover:bg-gray-700">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{client.name}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{client.emailsSent.toLocaleString()}</td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                <div className="flex items-center">
-                                  <span className="mr-2">{Math.round((client.opened / client.emailsSent) * 100)}%</span>
-                                  <div className="w-16 bg-gray-600 rounded-full h-2">
-                                    <div className="bg-blue-500 h-2 rounded-full shadow-sm shadow-blue-500/50" style={{ width: `${(client.opened / client.emailsSent) * 100}%` }}></div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                <div className="flex items-center">
-                                  <span className="mr-2">{Math.round((client.clicked / client.emailsSent) * 100)}%</span>
-                                  <div className="w-16 bg-gray-600 rounded-full h-2">
-                                    <div className="bg-blue-400 h-2 rounded-full shadow-sm shadow-blue-400/50" style={{ width: `${(client.clicked / client.emailsSent) * 100}%` }}></div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${client.revenue.toLocaleString()}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Recent Clients */}
+              <div>
                 <ClientList
-                  clients={clients || []}
+                  clients={mockClients as any}
                   isLoading={clientsLoading}
                   title="Recent Clients"
                 />
               </div>
-              
-              <div className="mt-4 border-t border-gray-700 pt-6">
-                <h2 className="text-xl font-semibold text-white mb-4">ROI & Campaign Analytics</h2>
-                <Tabs defaultValue="roi" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
-                    <TabsTrigger 
-                      value="roi" 
-                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                    >
-                      ROI Calculator
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="report" 
-                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                    >
-                      Campaign Reports
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="integrations" 
-                      className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
-                    >
-                      Integrations
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="roi">
-                    <ROICalculator campaigns={campaigns as any} />
-                  </TabsContent>
-                  
-                  <TabsContent value="report">
-                    <CampaignReport campaigns={campaigns as any} />
-                  </TabsContent>
-                  
-                  <TabsContent value="integrations">
-                    <IntegrationCard
-                      integrations={integrations || []}
-                      isLoading={integrationsLoading}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </div>
+            </div>
+            
+            <div className="mt-4 border-t border-gray-700 pt-6">
+              <h2 className="text-xl font-semibold text-white mb-4">ROI & Campaign Analytics</h2>
+              <Tabs defaultValue="roi" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-gray-700 mb-6">
+                  <TabsTrigger 
+                    value="roi" 
+                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                  >
+                    ROI Calculator
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="report" 
+                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                  >
+                    Campaign Reports
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="integrations" 
+                    className="data-[state=active]:bg-gray-800 data-[state=active]:text-white text-gray-300"
+                  >
+                    Integrations
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="roi">
+                  <ROICalculator campaigns={campaigns as any} />
+                </TabsContent>
+                
+                <TabsContent value="report">
+                  <CampaignReport campaigns={campaigns as any} />
+                </TabsContent>
+                
+                <TabsContent value="integrations">
+                  <IntegrationCard
+                    integrations={integrations || []}
+                    isLoading={integrationsLoading}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </main>
         </div>
