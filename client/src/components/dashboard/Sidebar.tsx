@@ -14,7 +14,8 @@ import {
   RiSettingsLine,
   RiBookOpenLine,
   RiArrowLeftSLine,
-  RiArrowRightSLine
+  RiArrowRightSLine,
+  RiSearchLine
 } from "react-icons/ri";
 
 interface SidebarProps {
@@ -103,8 +104,19 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
               onClick={toggleCollapse}
               className="text-gray-400 hover:text-white hover:bg-gray-800 ml-auto"
             >
-              {collapsed ? <RiArrowRightSLine className="h-5 w-5" /> : <RiArrowLeftSLine className="h-5 w-5" />}
+              <RiSearchLine className="h-5 w-5" />
             </Button>
+          </div>
+          
+          {/* Circular collapse button positioned on the border */}
+          <div 
+            className={cn(
+              "absolute top-16 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-10",
+              collapsed ? "rotate-180" : ""
+            )}
+            onClick={toggleCollapse}
+          >
+            <RiArrowLeftSLine className="h-4 w-4 text-gray-400" />
           </div>
           <div className="mt-5 flex-1 flex flex-col">
             <nav className={cn(
