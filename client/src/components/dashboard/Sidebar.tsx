@@ -107,16 +107,15 @@ export const Sidebar = ({ type, onLogout, isCollapsed = false, setIsCollapsed }:
             </Button>
           </div>
           
-          {/* Circular collapse button positioned on the navigation area */}
+          {/* Circular collapse button positioned on the right of nav */}
           <div 
             className={cn(
-              "absolute top-24 -right-3 h-6 w-6 rounded-full bg-gray-800 border border-gray-700 shadow-md flex items-center justify-center cursor-pointer z-50",
-              collapsed ? "rotate-180" : ""
+              "fixed right-0 top-32 w-6 h-6 -mr-3 rounded-full bg-gray-800 border border-gray-700 shadow-lg flex items-center justify-center cursor-pointer z-50",
+              collapsed ? "ml-14 rotate-180" : "ml-62"
             )}
-            style={{ position: 'fixed' }}
             onClick={toggleCollapse}
           >
-            <RiArrowLeftSLine className="h-4 w-4 text-gray-400" />
+            <RiArrowLeftSLine className="h-4 w-4 text-blue-400" />
           </div>
           <div className="mt-5 flex-1 flex flex-col">
             <nav className={cn(
