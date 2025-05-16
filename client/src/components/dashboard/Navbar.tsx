@@ -70,33 +70,10 @@ export const Navbar = ({ type, onToggleSidebar }: NavbarProps) => {
 
       <div className="flex-1 flex justify-between px-4 md:px-0">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-white bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent mr-2">Dashy</h1>
-          
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="text-gray-400 hover:text-white hover:bg-gray-800 ml-2"
-              >
-                <RiSearchLine className="h-5 w-5" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-0 bg-gray-800 border-gray-700">
-              <div className="p-4">
-                <div className="relative">
-                  <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <Input
-                    placeholder="Search..."
-                    className="pl-9 bg-gray-700 border-gray-600 text-white focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* Placeholder for any future elements */}
         </div>
 
-        <div className="flex items-center md:ml-6">
+        <div className="flex items-center ml-auto">
           <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800">
             <RiNotification3Line className="h-6 w-6" />
           </Button>
