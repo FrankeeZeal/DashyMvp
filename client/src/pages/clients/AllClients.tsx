@@ -813,7 +813,7 @@ export const AllClients = () => {
                       filteredClients.map((client) => (
                         <li key={client.id} className={expandedClientId === client.id ? 'bg-gray-800' : ''}>
                           <div 
-                            className="px-6 py-4 hover:bg-gray-700 cursor-pointer"
+                            className="px-6 py-4 cursor-pointer"
                             onClick={(e) => {
                               // Don't trigger if clicking specific elements or inputs
                               const target = e.target as HTMLElement;
