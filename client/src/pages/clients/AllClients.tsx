@@ -139,13 +139,12 @@ export const AllClients = () => {
     try {
       localStorage.setItem('clientsExtendedData', JSON.stringify(data));
       const now = new Date();
-      const timestamp = now.toLocaleTimeString();
       setLastSaved(now);
       setSaveStatus('saved');
       
       // Hide notification after 3 seconds
       setTimeout(() => {
-        setSaveStatus(null);
+        setLastSaved(null);
       }, 3000);
     } catch (error) {
       console.error("Error saving client data to localStorage:", error);
@@ -639,7 +638,7 @@ export const AllClients = () => {
       
       // Hide notification after 3 seconds
       setTimeout(() => {
-        setSaveStatus(null);
+        setLastSaved(null);
       }, 3000);
     }
   };
