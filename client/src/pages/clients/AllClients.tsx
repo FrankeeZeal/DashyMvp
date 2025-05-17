@@ -100,6 +100,7 @@ import { Badge } from "@/components/ui/badge";
 export const AllClients = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const [editingDocUrl, setEditingDocUrl] = useState<number | null>(null);
@@ -476,12 +477,12 @@ export const AllClients = () => {
   };
   
   // Our demo clients if no API data is available
-  const demoClients: Client[] = [
-    { id: 1, name: "Earthly Goods Co.", industry: "Health & Wellness" },
-    { id: 2, name: "Sista Teas", industry: "Food & Beverage" },
-    { id: 3, name: "Mountain Wellness", industry: "Health & Wellness" },
-    { id: 4, name: "Fitlife Supplements", industry: "Health & Wellness" }
-  ];
+  const demoClients = [
+    { id: 1, name: "Earthly Goods Co.", industry: "Health & Wellness", organizationId: 1, status: "active", hasEmailData: true, hasSmsData: true },
+    { id: 2, name: "Sista Teas", industry: "Food & Beverage", organizationId: 1, status: "active", hasEmailData: true, hasSmsData: false },
+    { id: 3, name: "Mountain Wellness", industry: "Health & Wellness", organizationId: 1, status: "active", hasEmailData: false, hasSmsData: true },
+    { id: 4, name: "Fitlife Supplements", industry: "Health & Wellness", organizationId: 1, status: "active", hasEmailData: true, hasSmsData: true }
+  ] as unknown as Client[];
   
   const { data: clients, isLoading } = useQuery<Client[]>({
     queryKey: ['/api/clients'],

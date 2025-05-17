@@ -86,6 +86,7 @@ export const clients = pgTable("clients", {
   id: serial("id").primaryKey(),
   organizationId: integer("organization_id").notNull(),
   name: varchar("name").notNull(),
+  industry: varchar("industry"),
   status: varchar("status").default("active"),
   hasEmailData: boolean("has_email_data").default(false),
   hasSmsData: boolean("has_sms_data").default(false),
