@@ -653,6 +653,19 @@ export const AllClients = () => {
   
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Save Notification Banner */}
+      {saveNotification?.show && (
+        <div className="fixed bottom-16 right-4 px-4 py-2 bg-blue-600 border border-blue-700 rounded-lg shadow-lg z-50 flex items-center">
+          <Check className="h-4 w-4 mr-2 text-white" />
+          <div>
+            <span className="text-white font-medium">Changes saved</span>
+            <span className="text-blue-200 text-xs ml-2">
+              {saveNotification.timestamp}
+            </span>
+          </div>
+        </div>
+      )}
+      
       {/* Save Status Indicator */}
       {lastSaved && (
         <div className="fixed bottom-4 right-4 bg-black/80 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-3 z-50">
