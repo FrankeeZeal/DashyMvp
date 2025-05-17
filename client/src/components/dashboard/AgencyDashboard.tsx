@@ -150,8 +150,34 @@ interface DashboardBucket {
 
 export const AgencyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+      return savedSidebarState ? JSON.parse(savedSidebarState) : false;
+    } catch (error) {
+      return false;
+    }
+  });
   const [editMode, setEditMode] = useState(false);
+  
+  // User's filter preferences
+  const [filterPreferences, setFilterPreferences] = useState(() => {
+    try {
+      const savedFilters = localStorage.getItem('dashboardFilters');
+      return savedFilters ? JSON.parse(savedFilters) : {
+        dateRange: '30days',
+        selectedClients: [],
+        selectedCampaignTypes: ['email', 'sms']
+      };
+    } catch (error) {
+      console.error("Error loading filter preferences:", error);
+      return {
+        dateRange: '30days',
+        selectedClients: [],
+        selectedCampaignTypes: ['email', 'sms']
+      };
+    }
+  });
   
   // Define widget sizes
   interface WidgetSize {
@@ -171,7 +197,7 @@ export const AgencyDashboard = () => {
   }
 
   // Initial dashboard layout with buckets and sizing
-  const [dashboardBuckets, setDashboardBuckets] = useState<EnhancedBucket[]>([
+  const defaultDashboardLayout: EnhancedBucket[] = [
     {
       id: 'main-bucket',
       title: 'Main Dashboard',
@@ -210,7 +236,18 @@ export const AgencyDashboard = () => {
         }
       ]
     }
-  ]);
+  ];
+  
+  // Load dashboard layout from localStorage if available
+  const [dashboardBuckets, setDashboardBuckets] = useState<EnhancedBucket[]>(() => {
+    try {
+      const savedLayout = localStorage.getItem('dashboardLayout');
+      return savedLayout ? JSON.parse(savedLayout) : defaultDashboardLayout;
+    } catch (error) {
+      console.error("Error loading dashboard layout:", error);
+      return defaultDashboardLayout;
+    }
+  });
   
   // Map client id to name for ease of display
   const campaignsWithClientNames = mockCampaigns.map(campaign => ({
@@ -231,6 +268,40 @@ export const AgencyDashboard = () => {
   const handleLogout = () => {
     window.location.href = "/api/logout";
   };
+  
+  // Save sidebar state to localStorage
+  const toggleSidebarCollapse = (collapsed: boolean) => {
+    setSidebarCollapsed(collapsed);
+    try {
+      localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsed));
+    } catch (error) {
+      console.error("Error saving sidebar state:", error);
+    }
+  };
+  
+  // Save filter preferences to localStorage
+  const updateFilterPreferences = (newFilters: any) => {
+    setFilterPreferences(newFilters);
+    try {
+      localStorage.setItem('dashboardFilters', JSON.stringify(newFilters));
+    } catch (error) {
+      console.error("Error saving filter preferences:", error);
+    }
+  };
+  
+  // Sync localStorage when component changes
+  useEffect(() => {
+    // This will run when the component unmounts or before a re-render
+    return () => {
+      try {
+        localStorage.setItem('dashboardLayout', JSON.stringify(dashboardBuckets));
+        localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
+        localStorage.setItem('dashboardFilters', JSON.stringify(filterPreferences));
+      } catch (error) {
+        console.error("Error syncing to localStorage:", error);
+      }
+    };
+  }, [dashboardBuckets, sidebarCollapsed, filterPreferences]);
   
   // Handle drag end event for rearranging widgets
   const handleDragEnd = (result: any) => {
@@ -255,6 +326,13 @@ export const AgencyDashboard = () => {
       newBuckets[bucketIndex].widgets = widgets;
       
       setDashboardBuckets(newBuckets);
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('dashboardLayout', JSON.stringify(newBuckets));
+      } catch (error) {
+        console.error("Error saving dashboard layout:", error);
+      }
     } 
     // Moving between buckets
     else {
@@ -274,6 +352,13 @@ export const AgencyDashboard = () => {
       newBuckets[destBucketIndex].widgets = destWidgets;
       
       setDashboardBuckets(newBuckets);
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('dashboardLayout', JSON.stringify(newBuckets));
+      } catch (error) {
+        console.error("Error saving dashboard layout:", error);
+      }
     }
   };
   
