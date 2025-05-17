@@ -300,6 +300,16 @@ export const AllClients = () => {
     }
   };
   
+  // Helper function to safely parse a date string
+  const safeParseDate = (dateStr?: string): Date | undefined => {
+    if (!dateStr) return undefined;
+    try {
+      return parseISO(dateStr);
+    } catch (err) {
+      return undefined;
+    }
+  };
+
   // Check if contract is expired (opposite of isClientActive)
   const isContractExpired = (endDate?: string): boolean => {
     return endDate ? !isClientActive(endDate) : false;
@@ -918,7 +928,7 @@ export const AllClients = () => {
                                       <div>
                                         <label className="block text-gray-400 mb-1 text-xs">Contract Start</label>
                                         <DatePicker
-                                          date={clientsExtendedData[client.id]?.contractStart ? parseISO(clientsExtendedData[client.id]?.contractStart) : undefined}
+                                          date={safeParseDate(clientsExtendedData[client.id]?.contractStart)}
                                           onSelect={(date) => handleDateChange(client.id, 'contractStart', date)}
                                           placeholder="Select start date"
                                         />
@@ -933,7 +943,7 @@ export const AllClients = () => {
                                           )}
                                         </label>
                                         <DatePicker
-                                          date={clientsExtendedData[client.id]?.contractEnd ? parseISO(clientsExtendedData[client.id]?.contractEnd) : undefined}
+                                          date={safeParseDate(clientsExtendedData[client.id]?.contractEnd)}
                                           onSelect={(date) => handleDateChange(client.id, 'contractEnd', date)}
                                           placeholder="Select end date"
                                         />
