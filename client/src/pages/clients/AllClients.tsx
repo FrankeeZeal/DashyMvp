@@ -618,6 +618,10 @@ export const AllClients = () => {
   // Restore backup data for a client
   const handleUndoChanges = (clientId: number) => {
     if (clientDataBackup[clientId]) {
+      // Avoid reload by keeping expanded state
+      const wasExpanded = expandedClientId === clientId;
+      
+      // Update client data with backup
       setClientsExtendedData(prev => {
         const updated = { ...prev };
         updated[clientId] = clientDataBackup[clientId];
@@ -630,6 +634,18 @@ export const AllClients = () => {
         delete updated[clientId];
         return updated;
       });
+      
+      // Show save notification
+      const now = new Date();
+      setSaveNotification({ 
+        show: true, 
+        timestamp: now.toLocaleTimeString()
+      });
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setSaveNotification(null);
+      }, 3000);
     }
   };
   
