@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { format, formatDistanceToNow, isAfter, isBefore, parseISO } from "date-fns";
-import { zonedTimeToUtc, utcToZonedTime, format as formatTz } from 'date-fns-tz';
+import { format as formatTz } from 'date-fns-tz';
 import {
   Search,
   Filter,
@@ -178,7 +178,7 @@ export const AllClients = () => {
       performancePercent: 12,
       performanceType: 'profit'
     }
-  });
+  };
   
   // Is user admin/owner - in a real app, this would come from user context/auth
   const [isAdmin, setIsAdmin] = useState(true);
