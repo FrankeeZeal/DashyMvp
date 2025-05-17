@@ -470,7 +470,7 @@ export const AllClients = () => {
   const [showInactive, setShowInactive] = useState(false);
   
   // Filter clients based on search term and active status
-  const filteredClients = displayClients.filter(client => {
+  const filteredClients = displayClients?.filter(client => {
     // Filter by search term
     const matchesSearch = client.name.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -661,12 +661,12 @@ export const AllClients = () => {
                     {(() => {
                       // Calculate inactive clients only when needed
                       if (!showInactive) {
-                        const inactiveClients = displayClients.filter(client => {
+                        const inactiveClients = displayClients?.filter(client => {
                           const clientData = clientsExtendedData[client.id];
                           return clientData?.isActive === false;
                         });
                         
-                        if (inactiveClients.length > 0) {
+                        if (inactiveClients && inactiveClients.length > 0) {
                           return (
                             <li className="px-4 py-2 bg-blue-900/20 border border-blue-800 rounded-md mx-4 mt-2 mb-2">
                               <div className="flex items-center text-sm text-blue-200">
@@ -690,7 +690,7 @@ export const AllClients = () => {
                     
                     {isLoading ? (
                       renderSkeleton()
-                    ) : filteredClients.length > 0 ? (
+                    ) : filteredClients && filteredClients.length > 0 ? (
                       filteredClients.map((client) => (
                         <li key={client.id} className={expandedClientId === client.id ? 'bg-gray-800' : ''}>
                           <div 
