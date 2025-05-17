@@ -114,7 +114,7 @@ export const AllClients = () => {
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
   const [clientsExtendedData, setClientsExtendedData] = useState<ClientsExtendedDataMap>({});
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'saving' | 'unsaved'>('idle');
   const [location] = useLocation();
   
   // Initial client assignments state
@@ -140,13 +140,11 @@ export const AllClients = () => {
     setSaveStatus('saving');
     try {
       localStorage.setItem('clientsExtendedData', JSON.stringify(data));
-      const now = new Date();
-      setLastSaved(now);
       setSaveStatus('saved');
       
-      // Hide notification after 3 seconds
+      // Auto-hide the notification after 3 seconds
       setTimeout(() => {
-        setLastSaved(null);
+        setSaveStatus('idle');
       }, 3000);
     } catch (error) {
       console.error("Error saving client data to localStorage:", error);
@@ -676,8 +674,8 @@ export const AllClients = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       
-      {/* Save Status Indicator */}
-      {lastSaved && (
+      {/* Save Status Indicator - Only shows on changes and auto-disappears */}
+      {saveStatus !== 'idle' && (
         <div className="fixed bottom-4 right-4 bg-black/80 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-3 z-50">
           <div className="flex items-center">
             {saveStatus === 'saving' && 
@@ -687,30 +685,34 @@ export const AllClients = () => {
             {saveStatus === 'unsaved' && <X className="w-4 h-4 text-red-400 mr-2" />}
             <span className="text-sm">
               {saveStatus === 'saving' && 'Saving...'}
-              {saveStatus === 'saved' && (lastSaved ? `Saved ${formatDistanceToNow(lastSaved, { addSuffix: true })}` : 'Saved')}
+              {saveStatus === 'saved' && 'Saved successfully'}
               {saveStatus === 'unsaved' && 'Failed to save'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-7 px-2 text-xs"
-              onClick={() => {
-                setClientsExtendedData({...clientDataBackup});
-              }}
-            >
-              <RotateCcw className="w-3 h-3 mr-1" /> Undo
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-7 px-2 text-xs"
-              onClick={() => saveToLocalStorage(clientsExtendedData)}
-            >
-              <Check className="w-3 h-3 mr-1" /> Save
-            </Button>
-          </div>
+          {(saveStatus === 'saving' || saveStatus === 'unsaved') && (
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 px-2 text-xs"
+                onClick={() => {
+                  setClientsExtendedData({...clientDataBackup});
+                  setClientDataBackup({});
+                  setSaveStatus('idle');
+                }}
+              >
+                <RotateCcw className="w-3 h-3 mr-1" /> Undo
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 px-2 text-xs"
+                onClick={() => saveToLocalStorage(clientsExtendedData)}
+              >
+                <Check className="w-3 h-3 mr-1" /> Save
+              </Button>
+            </div>
+          )}
         </div>
       )}
         
