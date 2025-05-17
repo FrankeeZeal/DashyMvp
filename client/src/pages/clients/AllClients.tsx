@@ -147,7 +147,15 @@ export const AllClients = () => {
   const loadSavedClientData = (): ClientsExtendedDataMap => {
     try {
       const savedData = localStorage.getItem('clientsExtendedData');
-      return savedData ? JSON.parse(savedData) : {
+      if (savedData) {
+        return JSON.parse(savedData);
+      }
+    } catch (error) {
+      console.error("Error loading client data from localStorage:", error);
+    }
+    
+    // Default data if nothing in localStorage or error occurs
+    return {
   
     1: {
       docsUrl: 'https://docs.google.com/document/d/1e8XcfZSD-EarthlyGoods',
@@ -518,6 +526,44 @@ export const AllClients = () => {
   
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      {/* Save Status Indicator */}
+      {lastSaved && (
+        <div className="fixed bottom-4 right-4 bg-black/80 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-3 z-50">
+          <div className="flex items-center">
+            {saveStatus === 'saving' && 
+              <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+            }
+            {saveStatus === 'saved' && <Check className="w-4 h-4 text-green-400 mr-2" />}
+            {saveStatus === 'unsaved' && <X className="w-4 h-4 text-red-400 mr-2" />}
+            <span className="text-sm">
+              {saveStatus === 'saving' && 'Saving...'}
+              {saveStatus === 'saved' && `Saved ${formatDistanceToNow(lastSaved, { addSuffix: true })}`}
+              {saveStatus === 'unsaved' && 'Failed to save'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 px-2 text-xs"
+              onClick={() => {
+                setClientsExtendedData({...clientDataBackup});
+              }}
+            >
+              <RotateCcw className="w-3 h-3 mr-1" /> Undo
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 px-2 text-xs"
+              onClick={() => saveToLocalStorage(clientsExtendedData)}
+            >
+              <Check className="w-3 h-3 mr-1" /> Save
+            </Button>
+          </div>
+        </div>
+      )}
+        
       <div className="flex h-screen overflow-hidden">
         <Sidebar
           type="agency"
