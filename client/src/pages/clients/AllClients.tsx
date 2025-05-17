@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
+import debounce from "lodash/debounce";
 import { format, formatDistanceToNow, isAfter, isBefore, parseISO } from "date-fns";
 import { format as formatTz } from 'date-fns-tz';
 import {
@@ -315,6 +316,17 @@ export const AllClients = () => {
       return undefined;
     }
   };
+  
+  // For auto-hiding the notification after save
+  useEffect(() => {
+    // Reset status to 'idle' after notification has shown
+    if (saveStatus === 'saved') {
+      const timer = setTimeout(() => {
+        setSaveStatus('idle');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveStatus]);
 
   // Check if contract is expired (opposite of isClientActive)
   const isContractExpired = (endDate?: string): boolean => {
