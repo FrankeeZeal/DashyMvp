@@ -217,6 +217,12 @@
   }
 }
 
+@layer utilities {
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  }
+}
+
 /* Typeform transitions for onboarding flow */
 .typeform-transition {
   transition: transform 0.5s ease, opacity 0.5s ease;

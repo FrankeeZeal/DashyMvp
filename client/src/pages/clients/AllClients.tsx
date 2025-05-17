@@ -56,6 +56,7 @@ interface ClientExtendedData {
   performancePercent?: number;
   performanceType?: 'rev' | 'profit';
   isActive?: boolean;
+  industry?: string;
 }
 
 interface ClientsExtendedDataMap {
@@ -887,7 +888,7 @@ export const AllClients = () => {
                             
                             {/* Expanded client details */}
                             {expandedClientId === client.id && (
-                              <div className="mt-4 text-sm grid gap-5 pb-2 pt-3 border-t border-gray-700">
+                              <div className="mt-4 text-sm grid gap-5 pb-2 pt-3 border-t border-gray-700 hover:border hover:border-blue-500 hover:shadow-glow transition-all duration-200 rounded-md p-2">
                                 {/* Client Details Section */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <div>
