@@ -486,7 +486,7 @@ export const AgencyDashboard = () => {
         type="agency"
         onLogout={handleLogout}
         isCollapsed={sidebarCollapsed}
-        setIsCollapsed={setSidebarCollapsed}
+        setIsCollapsed={toggleSidebarCollapse}
       />
       
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -652,6 +652,13 @@ export const AgencyDashboard = () => {
               <ClientRevenueGraph 
                 clients={clientData}
                 isLoading={false}
+                filterPreferences={filterPreferences}
+                onFilterChange={(newFilters) => {
+                  updateFilterPreferences({
+                    ...filterPreferences,
+                    ...newFilters
+                  });
+                }}
               />
             </div>
             

@@ -32,6 +32,12 @@ interface Client {
 interface ClientRevenueGraphProps {
   clients?: Client[];
   isLoading?: boolean;
+  filterPreferences?: {
+    dateRange?: string;
+    selectedClients?: number[];
+    selectedCampaignTypes?: string[];
+  };
+  onFilterChange?: (newFilters: any) => void;
 }
 
 // Custom dot with glow effect
@@ -85,10 +91,26 @@ const formatTooltipValue = (value: number) => {
   return [`$${value.toFixed(1)}k`, 'Revenue'];
 };
 
-export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRevenueGraphProps) => {
-  // State for filters
-  const [channelFilter, setChannelFilter] = useState<string>("all");
-  const [timeFilter, setTimeFilter] = useState<string>("30days");
+export const ClientRevenueGraph = ({ 
+  clients = [], 
+  isLoading = false, 
+  filterPreferences, 
+  onFilterChange 
+}: ClientRevenueGraphProps) => {
+  // State for filters - initialize from filterPreferences if available
+  const [channelFilter, setChannelFilter] = useState<string>(
+    filterPreferences?.selectedCampaignTypes?.includes("email") &&
+    filterPreferences?.selectedCampaignTypes?.includes("sms") ? 
+    "all" : 
+    filterPreferences?.selectedCampaignTypes?.includes("email") ? 
+    "email" : 
+    filterPreferences?.selectedCampaignTypes?.includes("sms") ? 
+    "sms" : 
+    "all"
+  );
+  const [timeFilter, setTimeFilter] = useState<string>(
+    filterPreferences?.dateRange || "30days"
+  );
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
     to: Date | undefined;
@@ -98,6 +120,19 @@ export const ClientRevenueGraph = ({ clients = [], isLoading = false }: ClientRe
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [dateSelectionMode, setDateSelectionMode] = useState<"dates" | "months" | "years">("dates");
+  
+  // Save filter changes to parent component
+  const updateFilters = (channel: string, time: string) => {
+    if (onFilterChange) {
+      onFilterChange({
+        dateRange: time,
+        selectedCampaignTypes: channel === "all" ? ["email", "sms"] : 
+                              channel === "email" ? ["email"] : 
+                              channel === "sms" ? ["sms"] : 
+                              channel === "flows" ? ["flows"] : ["email", "sms"]
+      });
+    }
+  };
   
   // Generate dates for the x-axis based on selected time period
   const dates = useMemo(() => {
