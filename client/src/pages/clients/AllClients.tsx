@@ -587,7 +587,7 @@ export const AllClients = () => {
   // Handle changes to select fields
   const handleSelectChange = (
     clientId: number, 
-    field: 'performanceType', 
+    field: 'performanceType' | 'industry', 
     value: string
   ) => {
     // Backup current state before modifying
@@ -893,6 +893,25 @@ export const AllClients = () => {
                                   <div>
                                     <h4 className="font-medium text-xs uppercase tracking-wider text-gray-500 mb-2">Contract Details</h4>
                                     <div className="space-y-3">
+                                      {/* Industry Selection */}
+                                      <div>
+                                        <label className="block text-gray-400 mb-1 text-xs">Industry/Niche</label>
+                                        <Select
+                                          value={clientsExtendedData[client.id]?.industry || client.industry || ''}
+                                          onValueChange={(value) => handleSelectChange(client.id, 'industry', value)}
+                                        >
+                                          <SelectTrigger className="w-full bg-gray-700 border-gray-600 h-9">
+                                            <SelectValue placeholder="Select industry" />
+                                          </SelectTrigger>
+                                          <SelectContent className="bg-gray-800 border-gray-700">
+                                            <SelectItem value="Health & Wellness">Health & Wellness</SelectItem>
+                                            <SelectItem value="Fashion">Fashion</SelectItem>
+                                            <SelectItem value="General">General</SelectItem>
+                                            <SelectItem value="Other">Other</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      
                                       {/* Contract Start Date */}
                                       <div>
                                         <label className="block text-gray-400 mb-1 text-xs">Contract Start</label>
