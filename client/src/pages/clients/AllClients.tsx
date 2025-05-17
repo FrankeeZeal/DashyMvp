@@ -537,7 +537,7 @@ export const AllClients = () => {
             {saveStatus === 'unsaved' && <X className="w-4 h-4 text-red-400 mr-2" />}
             <span className="text-sm">
               {saveStatus === 'saving' && 'Saving...'}
-              {saveStatus === 'saved' && `Saved ${formatDistanceToNow(lastSaved, { addSuffix: true })}`}
+              {saveStatus === 'saved' && (lastSaved ? `Saved ${formatDistanceToNow(lastSaved, { addSuffix: true })}` : 'Saved')}
               {saveStatus === 'unsaved' && 'Failed to save'}
             </span>
           </div>
