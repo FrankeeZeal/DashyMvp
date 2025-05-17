@@ -108,6 +108,9 @@ export const AllClients = () => {
   const [documentFormData, setDocumentFormData] = useState<{name: string, url: string}>({name: '', url: ''});
   const [clientDataBackup, setClientDataBackup] = useState<{[clientId: number]: ClientExtendedData}>({});
   const [expandedClientId, setExpandedClientId] = useState<number | null>(null);
+  const [clientsExtendedData, setClientsExtendedData] = useState<ClientsExtendedDataMap>({});
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
   
   // Initial client assignments state
   const [clientAssignmentsState, setClientAssignmentsState] = useState<ClientAssignments>({
@@ -126,6 +129,20 @@ export const AllClients = () => {
   });
   
   // Initial extended client data
+  // Save data to localStorage with status indicators
+  const saveToLocalStorage = useCallback((data: ClientsExtendedDataMap) => {
+    setSaveStatus('saving');
+    try {
+      localStorage.setItem('clientsExtendedData', JSON.stringify(data));
+      const now = new Date();
+      setLastSaved(now);
+      setSaveStatus('saved');
+    } catch (error) {
+      console.error("Error saving client data to localStorage:", error);
+      setSaveStatus('unsaved');
+    }
+  }, []);
+
   // Load client data from localStorage if it exists
   const loadSavedClientData = (): ClientsExtendedDataMap => {
     try {
@@ -182,6 +199,27 @@ export const AllClients = () => {
   
   // Is user admin/owner - in a real app, this would come from user context/auth
   const [isAdmin, setIsAdmin] = useState(true);
+  
+  // Effect to initialize client data from local storage
+  useEffect(() => {
+    const savedData = loadSavedClientData();
+    setClientsExtendedData(savedData);
+  }, []);
+  
+  // Effect to save data when client data changes
+  useEffect(() => {
+    if (Object.keys(clientsExtendedData).length > 0) {
+      saveToLocalStorage(clientsExtendedData);
+    }
+  }, [clientsExtendedData, saveToLocalStorage]);
+  
+  // Track location changes to save before navigating away
+  const [location] = useLocation();
+  useEffect(() => {
+    if (Object.keys(clientsExtendedData).length > 0) {
+      saveToLocalStorage(clientsExtendedData);
+    }
+  }, [location, clientsExtendedData, saveToLocalStorage]);
   
   // Initialize client active status based on contract end dates
   useEffect(() => {
