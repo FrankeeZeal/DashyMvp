@@ -302,7 +302,12 @@ export const ClientRevenueGraph = ({
           <ToggleGroup 
             type="single" 
             value={channelFilter}
-            onValueChange={(value) => value && setChannelFilter(value)}
+            onValueChange={(value) => {
+              if (value) {
+                setChannelFilter(value);
+                updateFilters(value, timeFilter);
+              }
+            }}
             className="bg-gray-800 border border-gray-700 p-1 rounded-lg"
           >
             <ToggleGroupItem 
@@ -347,7 +352,12 @@ export const ClientRevenueGraph = ({
           <ToggleGroup 
             type="single" 
             value={timeFilter}
-            onValueChange={(value) => value && setTimeFilter(value)}
+            onValueChange={(value) => {
+              if (value) {
+                setTimeFilter(value);
+                updateFilters(channelFilter, value);
+              }
+            }}
             className="bg-gray-800 border border-gray-700 p-1 rounded-lg"
           >
             <ToggleGroupItem 
@@ -460,6 +470,8 @@ export const ClientRevenueGraph = ({
                               });
                               if (range.from && range.to) {
                                 setCalendarOpen(false);
+                                // Update with custom date range
+                                updateFilters(channelFilter, "custom");
                               }
                             }
                           }}
