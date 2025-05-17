@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { Client } from "@shared/schema";
 import Sidebar from "@/components/dashboard/Sidebar";
+import { DatePicker } from "@/components/ui/date-picker";
 import Navbar from "@/components/dashboard/Navbar";
 
 // Define types for team members and assignments
