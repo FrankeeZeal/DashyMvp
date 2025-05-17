@@ -102,6 +102,7 @@ export const AllClients = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [saveNotification, setSaveNotification] = useState<{show: boolean, timestamp: string} | null>(null);
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
   const [editingDocUrl, setEditingDocUrl] = useState<number | null>(null);
   const [addingDocument, setAddingDocument] = useState<number | null>(null);
