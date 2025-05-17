@@ -769,7 +769,7 @@ export const AllClients = () => {
                 <CardHeader className="flex flex-row justify-between items-center pb-2">
                   <CardTitle className="text-xl">Clients</CardTitle>
                   
-                  <Button variant="outline" size="sm" className="border-gray-600 bg-gray-700">
+                  <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Plus className="h-4 w-4 mr-1" />
                     Add Client
                   </Button>
@@ -816,12 +816,17 @@ export const AllClients = () => {
                           <div 
                             className="px-6 py-4 hover:bg-gray-700 cursor-pointer"
                             onClick={(e) => {
-                              // Don't trigger if clicking specific elements
+                              // Don't trigger if clicking specific elements or inputs
                               const target = e.target as HTMLElement;
                               if (
                                 target.closest('.actions-container') || 
                                 target.closest('button') ||
-                                target.closest('a')
+                                target.closest('a') ||
+                                target.closest('input') ||
+                                target.closest('select') ||
+                                target.tagName === 'INPUT' ||
+                                target.tagName === 'SELECT' ||
+                                target.tagName === 'TEXTAREA'
                               ) {
                                 return;
                               }
@@ -1187,21 +1192,9 @@ export const AllClients = () => {
                                   </div>
                                 </div>
                                 
-                                {/* Save and Undo Buttons */}
-                                <div className="flex justify-end space-x-2">
-                                  {/* Save Button */}
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="text-xs bg-blue-600 hover:bg-blue-700 text-white"
-                                    onClick={() => saveToLocalStorage(clientsExtendedData)}
-                                  >
-                                    <Check className="h-3.5 w-3.5 mr-1.5" />
-                                    Save
-                                  </Button>
-                                  
-                                  {/* Undo Changes Button */}
-                                  {clientDataBackup[client.id] && (
+                                {/* Undo Button */}
+                                {clientDataBackup[client.id] && (
+                                  <div className="flex justify-end mb-2">
                                     <Button 
                                       variant="ghost" 
                                       size="sm" 
@@ -1209,10 +1202,10 @@ export const AllClients = () => {
                                       onClick={() => handleUndoChanges(client.id)}
                                     >
                                       <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                                      Undo
+                                      Undo Changes
                                     </Button>
-                                  )}
-                                </div>
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>
