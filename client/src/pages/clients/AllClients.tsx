@@ -139,8 +139,17 @@ export const AllClients = () => {
     try {
       localStorage.setItem('clientsExtendedData', JSON.stringify(data));
       const now = new Date();
+      const timestamp = now.toLocaleTimeString();
       setLastSaved(now);
       setSaveStatus('saved');
+      
+      // Show save notification
+      setSaveNotification({ show: true, timestamp });
+      
+      // Hide notification after 5 seconds
+      setTimeout(() => {
+        setSaveNotification(null);
+      }, 5000);
     } catch (error) {
       console.error("Error saving client data to localStorage:", error);
       setSaveStatus('unsaved');
@@ -1165,9 +1174,21 @@ export const AllClients = () => {
                                   </div>
                                 </div>
                                 
-                                {/* Undo Changes Button */}
-                                {clientDataBackup[client.id] && (
-                                  <div className="flex justify-end">
+                                {/* Save and Undo Buttons */}
+                                <div className="flex justify-end space-x-2">
+                                  {/* Save Button */}
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                                    onClick={() => saveToLocalStorage(clientsExtendedData)}
+                                  >
+                                    <Check className="h-3.5 w-3.5 mr-1.5" />
+                                    Save
+                                  </Button>
+                                  
+                                  {/* Undo Changes Button */}
+                                  {clientDataBackup[client.id] && (
                                     <Button 
                                       variant="ghost" 
                                       size="sm" 
@@ -1175,10 +1196,10 @@ export const AllClients = () => {
                                       onClick={() => handleUndoChanges(client.id)}
                                     >
                                       <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                                      Undo Changes
+                                      Undo
                                     </Button>
-                                  </div>
-                                )}
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
