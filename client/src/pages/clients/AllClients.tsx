@@ -527,7 +527,7 @@ export const AllClients = () => {
   };
   
   // Handle changes to date fields
-  const handleDateChange = (clientId: number, field: 'contractStart' | 'contractEnd', value: string) => {
+  const handleDateChange = (clientId: number, field: 'contractStart' | 'contractEnd', date: Date | undefined) => {
     // Backup current state before modifying
     if (!clientDataBackup[clientId]) {
       setClientDataBackup(prev => ({
@@ -544,12 +544,12 @@ export const AllClients = () => {
       
       updated[clientId] = {
         ...updated[clientId],
-        [field]: value
+        [field]: date ? format(date, 'yyyy-MM-dd') : ''
       };
       
       // If we're updating the end date, also update the active status
       if (field === 'contractEnd') {
-        updated[clientId].isActive = isClientActive(value);
+        updated[clientId].isActive = date ? isClientActive(format(date, 'yyyy-MM-dd')) : true;
       }
       
       return updated;
@@ -917,11 +917,10 @@ export const AllClients = () => {
                                       {/* Contract Start Date */}
                                       <div>
                                         <label className="block text-gray-400 mb-1 text-xs">Contract Start</label>
-                                        <input 
-                                          type="date" 
-                                          className="w-full bg-gray-700 border-gray-600 rounded-md text-sm h-9"
-                                          value={clientsExtendedData[client.id]?.contractStart || ''}
-                                          onChange={(e) => handleDateChange(client.id, 'contractStart', e.target.value)}
+                                        <DatePicker
+                                          date={clientsExtendedData[client.id]?.contractStart ? parseISO(clientsExtendedData[client.id]?.contractStart) : undefined}
+                                          onSelect={(date) => handleDateChange(client.id, 'contractStart', date)}
+                                          placeholder="Select start date"
                                         />
                                       </div>
                                       
@@ -933,11 +932,10 @@ export const AllClients = () => {
                                             <span className="text-red-400 ml-1">(Expired)</span>
                                           )}
                                         </label>
-                                        <input 
-                                          type="date" 
-                                          className="w-full bg-gray-700 border-gray-600 rounded-md text-sm h-9"
-                                          value={clientsExtendedData[client.id]?.contractEnd || ''}
-                                          onChange={(e) => handleDateChange(client.id, 'contractEnd', e.target.value)}
+                                        <DatePicker
+                                          date={clientsExtendedData[client.id]?.contractEnd ? parseISO(clientsExtendedData[client.id]?.contractEnd) : undefined}
+                                          onSelect={(date) => handleDateChange(client.id, 'contractEnd', date)}
+                                          placeholder="Select end date"
                                         />
                                       </div>
                                     </div>
