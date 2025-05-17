@@ -151,6 +151,14 @@ export const AllClients = () => {
       setSaveStatus('unsaved');
     }
   }, []);
+  
+  // Create a debounced version of saveToLocalStorage
+  const debouncedSave = useCallback(
+    debounce(() => {
+      saveToLocalStorage(clientsExtendedData);
+    }, 1000),
+    [clientsExtendedData, saveToLocalStorage]
+  );
 
   // Load client data from localStorage if it exists
   const loadSavedClientData = (): ClientsExtendedDataMap => {
@@ -544,6 +552,9 @@ export const AllClients = () => {
       }));
     }
     
+    // Set status to saving when making changes
+    setSaveStatus('saving');
+    
     setClientsExtendedData(prev => {
       const updated = { ...prev };
       if (!updated[clientId]) {
@@ -562,6 +573,9 @@ export const AllClients = () => {
       
       return updated;
     });
+    
+    // Auto-save after a delay
+    debouncedSave();
   };
   
   // Handle changes to numeric fields
@@ -581,6 +595,9 @@ export const AllClients = () => {
     const numericValue = parseFloat(value);
     if (isNaN(numericValue)) return;
     
+    // Set status to saving when making changes
+    setSaveStatus('saving');
+    
     setClientsExtendedData(prev => {
       const updated = { ...prev };
       if (!updated[clientId]) {
@@ -592,6 +609,9 @@ export const AllClients = () => {
       };
       return updated;
     });
+    
+    // Auto-save after a delay
+    debouncedSave();
   };
   
   // Handle changes to select fields
@@ -608,6 +628,9 @@ export const AllClients = () => {
       }));
     }
     
+    // Set status to saving when making changes
+    setSaveStatus('saving');
+    
     setClientsExtendedData(prev => {
       const updated = { ...prev };
       if (!updated[clientId]) {
@@ -619,6 +642,11 @@ export const AllClients = () => {
       };
       return updated;
     });
+    
+    // Auto-save after a delay
+    setTimeout(() => {
+      saveToLocalStorage(clientsExtendedData);
+    }, 1000);
   };
   
   // Restore backup data for a client
